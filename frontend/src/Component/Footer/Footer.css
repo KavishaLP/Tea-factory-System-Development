@@ -1,0 +1,61 @@
+/* Footer.css */
+.footer {
+    background-color: #1c2b39; /* Same dark blue/navy as the sidebar */
+    color: white;
+    padding: 20px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+  }
+  
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .footer-left p {
+    margin: 0;
+    font-size: 14px;
+  }
+  
+  .footer-right ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .footer-right ul li {
+    display: inline;
+  }
+  
+  .footer-right ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .footer-right ul li a:hover {
+    color: #20b486; /* Light green/teal on hover */
+    text-decoration: underline;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      text-align: center;
+      padding: 0 20px;
+    }
+  
+    .footer-right ul {
+      margin-top: 10px;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  

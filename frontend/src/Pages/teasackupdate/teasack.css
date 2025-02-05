@@ -1,0 +1,133 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.tea-sack-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  background-color: #f1f1f1;
+}
+
+.content {
+  flex: 1;
+  padding: 10px;
+  background-color: #e8ffdd;
+}
+
+.search-bar {
+  display:flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+
+}
+
+.search-bar label {
+  font-weight: bold;
+
+}
+
+.search-bar input {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.tea-sack-form {
+  background-color: #ccffcc;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5px;
+}
+
+.tea-sack-form label {
+  font-weight: bold;
+}
+
+.tea-sack-form input[type="text"],
+.tea-sack-form input[type="date"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.deduction-section {
+  margin-top: 10px;
+}
+
+.deduction-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px; /* Reduces space between rows */
+  margin-top: 5px; /* Reduces space above the deduction fields */
+}
+
+.deduction-fields div {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Reduces space between label and input */
+}
+
+.deduction-fields span {
+  flex: 1;
+  font-size: 0.9em; /* Reduces label font size */
+  text-align: left;
+}
+
+.deduction-fields input {
+  flex: 1;
+  padding: 4px; /* Reduces input padding */
+  font-size: 0.9em; /* Reduces input font size */
+  border-radius: 3px; /* Slightly smaller border radius */
+  border: 1px solid #ccc;
+}
+
+
+.submit-button {
+  background-color: #006400;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  width: 50%;
+  margin-top: 0.25px;
+  text-align: center;
+  align-items: center;
+}
+
+.submit-button:hover {
+  background-color: #004d00;
+}
+.fertilizer-amount {
+  display: flex;
+  align-items: center;
+  gap: 1px; /* Sets consistent space between label and input */
+  margin-top: 5px;
+}
+
+.fertilizer-amount label {
+  width: 25%; /* Makes label width match the deduction labels */
+  font-size: 0.9em;
+  text-align: left;
+}
+
+.fertilizer-amount input {
+  width: 50%; /* Ensures input aligns next to label with matching size */
+  padding: 4px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  font-size: 0.9em;
+}

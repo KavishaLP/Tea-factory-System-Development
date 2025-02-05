@@ -1,0 +1,117 @@
+/* Container to center the form */
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Form container styling */
+.form-container {
+    background-color: rgba(0, 0, 0, 0.8); /* Dark translucent background */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Login heading */
+.form-container h2 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    border: 2px solid white;
+    padding: 10px;
+    display: inline-block;
+    border-radius: 25px;
+}
+
+/* Input fields */
+input {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/* Placeholder text color */
+input::placeholder {
+    color: #999;
+}
+
+/* Submit button */
+.form-container button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 15px;
+    background-color: #28a745; /* Green background */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.form-container button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Register navigation */
+.navigate-register {
+    margin-top: 20px;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+/* Link styling for 'Register' */
+.navigate-register a {
+    color: #ff6347; /* Orange-red color for link */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+/* Link hover effect */
+.navigate-register a:hover {
+    color: #dc3545; /* Darker red on hover */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 30px;
+        max-width: 90%;
+    }
+
+    .form-container h2 {
+        font-size: 1.5rem;
+    }
+
+    input, button {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 20px;
+    }
+
+    .form-container h2 {
+        font-size: 1.2rem;
+    }
+
+    input, button {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+}

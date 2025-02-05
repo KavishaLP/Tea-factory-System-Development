@@ -1,0 +1,58 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: white;
+  max-height:max-content;
+  width: 100%;
+}
+
+.navbar-left .logo {
+  width: 50px;
+  height: 50px;
+  margin: 0px 3px;
+  margin-top: 4px;
+}
+
+.navbar-center {
+  flex-grow: 1;
+  display: flex;
+  font-size: 30px;
+  justify-content:flex-start;
+  margin-left:130px;
+}
+
+.search-bar {
+  width: 300px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.ri-notification-3-fill {
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.admin-name {
+  font-weight: bold;
+  align-items: flex-end;
+}

@@ -1,0 +1,85 @@
+.stats-container {
+  display: flex;
+  flex-wrap: wrap; /* Ensures that items wrap on smaller screens */
+  justify-content: space-around; /* Ensures equal spacing */
+  align-items: center;
+  margin: 4px;
+  width: 100%; /* Ensures full width */
+  box-sizing: border-box; /* Ensures padding does not affect the container width */
+}
+
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: calc(33.33% - 20px); /* Three cards per row, with spacing between */
+  height: 100px;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 10px; /* Add space between cards */
+  box-sizing: border-box; /* Ensures padding and margin are included in width */
+}
+
+.stats-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.stats-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.stats-content h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #000;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats-card {
+    width: calc(50% - 20px); /* Two cards per row on medium screens */
+    height: 90px;
+    padding: 10px;
+  }
+
+  .stats-icon {
+    font-size: 30px; /* Reduce icon size */
+  }
+
+  .stats-content h3 {
+    font-size: 20px; /* Reduce number size */
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-container {
+    justify-content: center; /* Center cards on very small screens */
+  }
+
+  .stats-card {
+    width: calc(100% - 16px); /* Single card per row on very small screens */
+    height: 80px;
+    padding: 8px;
+  }
+
+  .stats-icon {
+    font-size: 25px;
+  }
+
+  .stats-content h3 {
+    font-size: 18px;
+  }
+}
