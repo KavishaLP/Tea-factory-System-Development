@@ -28,7 +28,7 @@ function App() {
     <div className="container">
       {shouldDisplayNavbar() && <Navbar />}
       <div className="content-wrapper">
-        
+        {shouldDisplaySidebar() && <Sidebar />}
         
         <main className={`main-content ${shouldDisplaySidebar() ? 'with-sidebar' : ''}`}>
           <Routes>
