@@ -8,19 +8,19 @@ const Sidebar = () => {
 
     return (
         <div className="sidebar">
-            <div className="sidebar-item active" onClick={() => navigate('/dashboard')}>
+            <div className="sidebar-item active" onClick={() => navigate('/Mng-Dashboard')}>
                 <img src={assets.b} alt="Logo"/> <p>Dashboard</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/create-farmer')}>
+            <div className="sidebar-item" onClick={() => navigate('/Mng-Create-Farmer-Account')}>
                 <img src={assets.g} alt="Logo"/> <p>Create Farmer Account</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/payment-logs')}>
+            <div className="sidebar-item" onClick={() => navigate('/Mng-AddNew-Payment')}>
                 <img src={assets.h} alt="Logo"/> <p>Payment Logs</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/productivity-reports')}>
+            <div className="sidebar-item" onClick={() => navigate('/Mng-Productivity-Report')}>
                 <img src={assets.k} alt="Logo"/> <p>Productivity Reports</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/fertilizer-distribution')}>
+            <div className="sidebar-item" onClick={() => navigate('/Mng-Fertilizer-dis')}>
                 <img src={assets.i} alt="Logo"/> <p>Fertilizer Distribution</p>
             </div>
             <div className="sidebar-item" onClick={() => navigate('/')}>
