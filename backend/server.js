@@ -6,7 +6,7 @@
 
 //npm i -D nodemon ->developer depemdancy
 
-// import sqldb from './config/sqldb';
+import sqldb from './config/sqldb.js';
 
 import dotenv from 'dotenv';
 import express from 'express';
