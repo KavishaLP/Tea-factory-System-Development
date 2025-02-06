@@ -33,7 +33,6 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
-         
             <Route path="/addnewpayment" element={<AddNewPayment />} />
             <Route path="/admin-dashboard" element={<Sidebar2 />} />
             <Route path="/user-dashboard" element={<Sidebar />} />
