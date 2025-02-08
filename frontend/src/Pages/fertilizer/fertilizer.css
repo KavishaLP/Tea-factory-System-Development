@@ -1,132 +1,157 @@
-/* Container */
+/* Modern styling for Fertilizer Requests Table */
 .fertilizer-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
-  padding: 20px;
-  background-color: #f4f4f4;
+  padding: 2rem;
+  background-color: #f8f9fa; /* Light gray background */
   min-height: 100vh;
-}
-
-/* Left Column - Fertilizer Request Form */
-.column-left {
-  width: 40%;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.fertilizer-distribution h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.distribution-form label {
-  display: block;
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-.distribution-form input,
-.distribution-form select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.submit-button {
-  width: 100%;
-  padding: 10px;
-  background-color: green;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: darkgreen;
 }
 
 /* Right Column - Requests Table */
 .column-right {
-  width: 55%;
+  width: 100%;
+  max-width: 1200px;
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
+/* Requests Header */
 .requests-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 1.5rem;
 }
 
 .requests-header h2 {
   margin: 0;
+  font-size: 1.75rem;
+  color: #2c3e50; /* Dark gray for headings */
 }
 
 .history-button {
-  background-color: blue;
+  background: linear-gradient(135deg, #007bff, #0056b3); /* Gradient blue */
   color: white;
   border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .history-button:hover {
-  background-color: darkblue;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.history-button:active {
+  transform: translateY(0);
 }
 
 /* Requests Table */
 .requests-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 1rem;
 }
 
 .requests-table th,
 .requests-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 1rem;
+  border: 1px solid #e2e8f0; /* Light border color */
   text-align: center;
+  font-size: 1rem;
 }
 
 .requests-table th {
-  background-color: #f0f0f0;
-  font-weight: bold;
+  background-color: #f8f9fa; /* Light gray for header */
+  font-weight: 600;
+  color: #4a5568; /* Dark gray for text */
+}
+
+.requests-table tr:hover {
+  background-color: #f0f4f8; /* Light hover effect */
 }
 
 .confirm-button {
-  background-color: orange;
+  background: linear-gradient(135deg, #ffa500, #ff8c00); /* Gradient orange */
   color: white;
   border: none;
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .confirm-button:hover {
-  background-color: darkorange;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 165, 0, 0.3);
+}
+
+.confirm-button:active {
+  transform: translateY(0);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .fertilizer-container {
-    flex-direction: column;
-    align-items: center;
+    padding: 1rem;
   }
 
-  .column-left,
   .column-right {
-    width: 90%;
-    margin-bottom: 20px;
+    padding: 1.5rem;
+  }
+
+  .requests-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .history-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .requests-table th,
+  .requests-table td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .confirm-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .column-right {
+    padding: 1rem;
+  }
+
+  .requests-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .history-button {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .requests-table th,
+  .requests-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .confirm-button {
+    padding: 0.5rem;
+    font-size: 0.75rem;
   }
 }

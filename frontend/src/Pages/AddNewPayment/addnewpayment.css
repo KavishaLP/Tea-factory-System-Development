@@ -1,62 +1,144 @@
+/* Modern styling for Add New Payment form */
 .add-payment-container {
-    background-color: #e8ffdd;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  background-color: #f0faf0; /* Light green background */
+  padding: 2rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 2rem auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Page Header */
+.page-header {
+  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+  color: white;
+  padding: 1rem;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Payment Form */
+.payment-form {
+  width: 100%;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Labels */
+.payment-form label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+/* Input Fields */
+.payment-form input[type="text"] {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f8fafc;
+}
+
+.payment-form input[type="text"]:focus {
+  outline: none;
+  border-color: #00a000;
+  box-shadow: 0 0 0 3px rgba(0, 160, 0, 0.1);
+  background-color: white;
+}
+
+.payment-form input[type="text"]:hover {
+  border-color: #cbd5e0;
+}
+
+/* Deduction Fields */
+.deduction-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+/* Submit Button */
+.submit-button {
+  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 160, 0, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .add-payment-container {
+    padding: 1.5rem;
+    margin: 1rem;
   }
-  
+
   .page-header {
-    background-color: #00a000;
-    color: white;
-    padding: 10px;
-    width: 100%;
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: bold;
-    border-radius: 5px;
+    font-size: 1.3rem;
+    padding: 0.75rem;
   }
-  
+
   .payment-form {
-    width: 100%;
-    background-color: #ccffcc;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    padding: 1.5rem;
   }
-  
-  .payment-form label {
-    font-weight: bold;
-  }
-  
-  .payment-form input[type="text"] {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 100%;
-  }
-  
+
   .deduction-fields {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr;
   }
-  
+}
+
+@media screen and (max-width: 480px) {
+  .add-payment-container {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+
+  .page-header {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+  }
+
+  .payment-form {
+    padding: 1rem;
+  }
+
+  .payment-form input[type="text"] {
+    padding: 0.625rem;
+  }
+
   .submit-button {
-    background-color: #006400;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    width: 50%;
+    padding: 0.875rem;
   }
-  
-  .submit-button:hover {
-    background-color: #004d00;
-  }
-  
+}

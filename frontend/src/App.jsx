@@ -40,7 +40,7 @@ function App() {
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport/>} />
           </Routes>
         </main>
-      </div>0
+      </div>
       
       {shouldDisplayNavbar() && <Footer />}
     </div>
