@@ -75,26 +75,9 @@ const CreateFarmerAccount = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Farmer Name</label>
-            <input
-              type="text"
-              value={farmerName}
-              onChange={(e) => setFarmerName(e.target.value)}
-              required
-            />
-          </div>
+          
 
-          <div className="form-group">
-            <label>Registration Number</label>
-            <input
-              type="text"
-              value={registrationNumber}
-              onChange={(e) => setRegistrationNumber(e.target.value)}
-              required
-            />
-          </div>
-
+         
           <div className="form-group">
             <label>Contact Number</label>
             <input
