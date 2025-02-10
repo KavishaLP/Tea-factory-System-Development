@@ -1,0 +1,123 @@
+/* Modern styling for AdvanceUpdate page */
+.advance-update-container {
+    background-color: #f0faf0; /* Light green background */
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    margin: 2rem auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Page Header */
+  .page-header {
+    background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+    color: white;
+    padding: 1rem;
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Requests Table */
+  .requests-table {
+    width: 100%;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .requests-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .requests-table th,
+  .requests-table td {
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+  }
+  
+  .requests-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #4a5568;
+  }
+  
+  .requests-table tr:hover {
+    background-color: #f0f4f8;
+  }
+  
+  /* Confirm Button */
+  .confirm-button {
+    background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .confirm-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 160, 0, 0.3);
+  }
+  
+  .confirm-button:active {
+    transform: translateY(0);
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .advance-update-container {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+  
+    .requests-table {
+      padding: 1.5rem;
+    }
+  
+    .requests-table th,
+    .requests-table td {
+      padding: 0.75rem;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .advance-update-container {
+      padding: 1rem;
+      margin: 0.5rem;
+    }
+  
+    .page-header {
+      font-size: 1.2rem;
+      padding: 0.5rem;
+    }
+  
+    .requests-table {
+      padding: 1rem;
+    }
+  
+    .requests-table th,
+    .requests-table td {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+  
+    .confirm-button {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
