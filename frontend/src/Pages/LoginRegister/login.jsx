@@ -9,18 +9,39 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    
+  
     try {
+      await loginValidationSchema.validate(values); // Validate form data
+  
       const response = await axios.post('http://localhost:8081/auth/login', values, {
-        withCredentials: true
+        withCredentials: true,
       });
-
-      localStorage.setItem('token', response.data.token);
-      navigate('/Mng-Dashboard');  // Redirect after successful login
+  
+      if (response.data && response.data.Status === "Success") {
+        console.log("JWT Token Received:", response.data.token);
+        localStorage.setItem("token", response.data.token);
+        navigate('/Mng-Dashboard');  // Redirect after successful login
+      } else {
+        setError(response.data.Error || 'Invalid login credentials. Please try again.');
+      }
     } catch (error) {
-      setError(error.response?.data?.message || 'Login failed. Try again.');
+      if (error.response) {
+        console.error('Server Error:', error.response.data);
+        setError(error.response.data.message || 'Server error. Please try again.');
+      } else if (error.inner) {
+        // Handling validation errors
+        const validationErrors = {};
+        error.inner.forEach(err => {
+          validationErrors[err.path] = err.message;
+        });
+        setError(Object.values(validationErrors).join(', ')); // Show validation errors
+      } else {
+        console.error('Login error:', error);
+        setError('An error occurred. Please try again.');
+      }
     }
   };
+  
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
