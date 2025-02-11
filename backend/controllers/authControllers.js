@@ -6,14 +6,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const login = (req, res) => {
-    console.log("Received Login Request Headers:", req.headers);
-    console.log("Received Login Request Body:", req.body);
-    
+    const { username, password } = req.body;
+
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and password are required' });
     }
 
-    const sql = "SELECT * FROM users WHERE username = ?";
+    const sql = "SELECT * FROM USER WHERE username = ?";
     sqldb.query(sql, [username], (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error', error: err });
         if (results.length === 0) {
@@ -21,8 +20,9 @@ export const login = (req, res) => {
         }
 
         const user = results[0];
+        const hashedPassword = results[0].PASSWORD;
 
-        bcrypt.compare(password, user.password, (err, isMatch) => {
+        bcrypt.compare(password, hashedPassword, (err, isMatch) => {
             if (err) return res.status(500).json({ message: 'Error comparing passwords' });
 
             if (!isMatch) {
@@ -35,14 +35,18 @@ export const login = (req, res) => {
 
             res.cookie('token', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', 
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict'
             });
 
-            res.json({ message: 'Login successful', token });
+            console.log("Token created and sent:", token);
+
+            // Only one response should be sent here
+            return res.status(200).json({ Status: "Success", token });
         });
     });
 };
+
 
 export const logout = (req, res) => {
     res.clearCookie('token');

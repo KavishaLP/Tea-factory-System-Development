@@ -1,6 +1,8 @@
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import axios from 'axios';
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,13 +12,12 @@ const Login = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
   
-    try {
-      await loginValidationSchema.validate(values); // Validate form data
-  
+    try {  
       const response = await axios.post('http://localhost:8081/auth/login', values, {
         withCredentials: true,
       });
-  
+      console.log(response)
+
       if (response.data && response.data.Status === "Success") {
         console.log("JWT Token Received:", response.data.token);
         localStorage.setItem("token", response.data.token);
