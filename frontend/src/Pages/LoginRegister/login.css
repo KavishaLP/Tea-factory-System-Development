@@ -1,12 +1,39 @@
-/* Container to center the form */
+/* Full-window layout */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Upper white bar */
+.upper-bar {
+    width: 100%;
+    height: 60px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.upper-bar h1 {
+    color: #2a6b4e; /* Dark green for contrast */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Main container with tea-themed gradient */
 .signup-container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100vh;
-    background: linear-gradient(135deg, #1e3c72, #2a5298); /* Gradient background */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: calc(100vh - 60px); /* Subtract upper bar height */
+    background: linear-gradient(135deg, #d4e8d9, #a8d5b5); /* Light green gradient */
 }
 
 /* Form container styling */
@@ -28,7 +55,7 @@
 
 /* Login heading */
 .form-container h2 {
-    color: #333;
+    color: #2a6b4e; /* Dark green for tea theme */
     font-size: 2rem;
     margin-bottom: 30px;
     font-weight: 600;
@@ -49,8 +76,8 @@ input {
 }
 
 input:focus {
-    border-color: #2a5298;
-    box-shadow: 0 0 8px rgba(42, 82, 152, 0.3);
+    border-color: #2a6b4e; /* Dark green for focus */
+    box-shadow: 0 0 8px rgba(42, 107, 78, 0.3);
     outline: none;
 }
 
@@ -64,7 +91,7 @@ input::placeholder {
     width: 100%;
     padding: 15px;
     margin-top: 20px;
-    background-color: #2a5298; /* Blue background */
+    background-color: #2a6b4e; /* Dark green for tea theme */
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -76,7 +103,7 @@ input::placeholder {
 
 /* Button hover effect */
 .form-container button:hover {
-    background-color: #1e3c72; /* Darker blue on hover */
+    background-color: #1e4f3a; /* Darker green on hover */
     transform: translateY(-2px);
 }
 
@@ -93,7 +120,7 @@ input::placeholder {
 
 /* Link styling for 'Register' */
 .navigate-register a {
-    color: #2a5298; /* Blue color for link */
+    color: #2a6b4e; /* Dark green for tea theme */
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
@@ -101,7 +128,7 @@ input::placeholder {
 
 /* Link hover effect */
 .navigate-register a:hover {
-    color: #1e3c72; /* Darker blue on hover */
+    color: #1e4f3a; /* Darker green on hover */
 }
 
 /* Responsive design for smaller screens */
