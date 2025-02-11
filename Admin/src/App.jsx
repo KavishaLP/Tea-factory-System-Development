@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import AdvanceUpdate from './Pages/AdvanceUpdate/AdvanceUpdate';
 
+
 function App() {
   const location = useLocation();
 
@@ -21,7 +22,7 @@ function App() {
         
         <main className={`main-content ${shouldDisplaySidebar() ? 'with-sidebar' : ''}`}>
           <Routes>
-          
+            <Route path="/" element={<AdvanceUpdate/>} />
             <Route path="/Admin-Advance-Update" element={<AdvanceUpdate/>} />
           </Routes>
         </main>
