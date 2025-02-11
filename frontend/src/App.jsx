@@ -1,5 +1,8 @@
-import './App.css';
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 
+import './App.css';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import AddNewPayment from './Pages/AddNewPayment/addnewpayment';

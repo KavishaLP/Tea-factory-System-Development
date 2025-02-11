@@ -1,35 +1,36 @@
-/* Modern styling for Fertilizer Requests Table */
-.fertilizer-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+/* Reuse the same styles as CFA.css */
+.cfa-content {
+  flex: 1;
   padding: 2rem;
-  background-color: #f8f9fa; /* Light gray background */
-  min-height: 100vh;
+  margin-left: 280px;
+  margin-top: 70px;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 70px);
 }
 
-/* Right Column - Requests Table */
-.column-right {
-  width: 100%;
+.cfa-grid {
   max-width: 1200px;
+  margin: 0 auto;
   background: white;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cfa-content h2 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 /* Requests Header */
 .requests-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
   margin-bottom: 1.5rem;
-}
-
-.requests-header h2 {
-  margin: 0;
-  font-size: 1.75rem;
-  color: #2c3e50; /* Dark gray for headings */
 }
 
 .history-button {
@@ -100,13 +101,26 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .fertilizer-container {
+@media screen and (max-width: 1024px) {
+  .cfa-content {
+    margin-left: 240px;
+    padding: 1.5rem;
+  }
+
+  .cfa-grid {
+    padding: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .cfa-content {
+    margin-left: 80px;
+    margin-top: 60px;
     padding: 1rem;
   }
 
-  .column-right {
-    padding: 1.5rem;
+  .cfa-grid {
+    padding: 1.25rem;
   }
 
   .requests-header h2 {
@@ -130,9 +144,14 @@
   }
 }
 
-@media (max-width: 480px) {
-  .column-right {
+@media screen and (max-width: 480px) {
+  .cfa-content {
+    padding: 0.75rem;
+  }
+
+  .cfa-grid {
     padding: 1rem;
+    border-radius: 8px;
   }
 
   .requests-header h2 {
