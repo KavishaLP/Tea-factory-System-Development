@@ -6,8 +6,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const login = (req, res) => {
-    const { username, password } = req.body;
-
+    console.log("Received Login Request Headers:", req.headers);
+    console.log("Received Login Request Body:", req.body);
+    
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and password are required' });
     }
@@ -15,7 +16,6 @@ export const login = (req, res) => {
     const sql = "SELECT * FROM users WHERE username = ?";
     sqldb.query(sql, [username], (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error', error: err });
-
         if (results.length === 0) {
             return res.status(401).json({ message: 'Invalid username or password' });
         }

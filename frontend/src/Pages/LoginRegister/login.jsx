@@ -9,14 +9,14 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
+    
     try {
       const response = await axios.post('http://localhost:8081/auth/login', values, {
         withCredentials: true
       });
 
       localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');  // Redirect after successful login
+      navigate('/Mng-Dashboard');  // Redirect after successful login
     } catch (error) {
       setError(error.response?.data?.message || 'Login failed. Try again.');
     }
@@ -61,7 +61,6 @@ const Login = () => {
             </div>
             <button type="submit">Login</button>
           </form>
-          <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
         </div>
       </div>
     </div>

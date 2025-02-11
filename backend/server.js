@@ -6,25 +6,26 @@
 
 //npm i -D nodemon ->developer depemdancy
 
+import authRoutes from './routes/authRoutes.js'; // Import auth routes
+
 import dotenv from 'dotenv';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import authRoutes from './routes/authRoutes.js'; // Import auth routes
 dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(express.json()); // ✅ Must be placed before routes
+
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    methods: ["POST", "GET"],
+    credentials: true
+}));
+
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: ['http://localhost:5173'], // Allow requests from this origin
-    methods: ['GET', 'POST'], // Allow these HTTP methods
-    credentials: true, // Allow cookies and credentials
-  })
-);
 
 // Routes
 app.use('/auth', authRoutes);
