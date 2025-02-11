@@ -13,14 +13,6 @@ const Login = () => {
   const handleLogin = (event) => {
     event.preventDefault();
 
-    const adminCredentials = {
-      username: 'admin@example.com',
-      password: 'admin'
-    };
-
-    
-
-
   };
 
   const handleChange = (e) => {
