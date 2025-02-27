@@ -18,7 +18,7 @@ export const login = (req, res) => {
 
     // SQL query to find user by username or email
     const sql = isEmail
-        ? "SELECT * FROM USER WHERE email = ?" // Check for email
+        ? "SELECT * FROM USER WHERE ADMINMAIL = ?" // Check for email
         : "SELECT * FROM USER WHERE username = ?"; // Check for username
 
     sqldb.query(sql, [usernamemail], (err, results) => {
