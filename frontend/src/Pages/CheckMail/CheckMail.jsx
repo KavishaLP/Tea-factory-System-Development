@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MdMarkEmailRead } from 'react-icons/md';
 import axios from 'axios';
 import './CheckMail.css';
+
+
 
 const CheckMail = () => {
     const navigate = useNavigate();
@@ -11,6 +13,9 @@ const CheckMail = () => {
     const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
     const [timer, setTimer] = useState(30); // 30 seconds countdown
     const [isTimerActive, setIsTimerActive] = useState(true);
+
+    const location = useLocation();
+    const email = location.state?.email;
 
     useEffect(() => {
         let interval = null;

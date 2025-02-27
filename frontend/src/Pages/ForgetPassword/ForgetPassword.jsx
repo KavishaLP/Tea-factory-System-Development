@@ -25,7 +25,7 @@ const ForgetPassword = () => {
             if (response.ok) {
                 setMessage('Reset code sent to your email.');
                 setTimeout(() => {
-                    navigate('/check-mail');
+                    navigate('/check-mail', { state: { email } });
                 }, 2000);
             } else {
                 setMessage(data.message || 'Error occurred. Please try again.');
