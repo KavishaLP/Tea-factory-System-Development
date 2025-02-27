@@ -27,7 +27,7 @@ const CheckMail = () => {
     const handleResendCode = async () => {
         setIsResending(true);
         setMessage('');
-    
+        console.log(email)
         try {
             const response = await fetch('http://localhost:8081/auth/send-again', {
                 method: 'POST',
