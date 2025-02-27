@@ -165,6 +165,9 @@ export const sendAgain = (req, res) => {
     // Update the user's reset code and expiry time in the database
     const updateSql = "UPDATE USER SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
     sqldb.query(updateSql, [resetCode, expiryTime, email], (updateErr, results) => {
+        console.log('Update query result:', results); // Log query result
+        console.log('Update query error:', updateErr); // Log query error, if any
+
         if (updateErr) return res.status(500).json({ message: 'Error updating reset code', error: updateErr });
 
         // If no user found
@@ -190,16 +193,18 @@ export const sendAgain = (req, res) => {
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
+                console.log('Error sending email:', error); // Log error
                 return res.status(500).json({ message: 'Error sending email', error });
             }
 
-            console.log('Email sent: ' + info.response);
+            console.log('Email sent: ' + info.response); // Log successful email send
         });
 
         // Send success response
         return res.status(200).json({ message: 'A new reset code has been sent to your email' });
     });
 };
+
 
 export const resetPassword = async (req, res) => {
     try {

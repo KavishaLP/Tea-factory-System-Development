@@ -29,7 +29,7 @@ const CheckMail = () => {
         setMessage('');
     
         try {
-            const response = await fetch('/api/auth/send-again', {
+            const response = await fetch('http://localhost:8081/auth/send-again', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const CheckMail = () => {
     
         setMessage('');
         try {
-            const response = await fetch('/api/auth/check-code', {
+            const response = await fetch('http://localhost:8081/auth/check-code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
