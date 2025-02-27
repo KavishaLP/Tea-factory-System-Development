@@ -6,33 +6,53 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const login = (req, res) => {
-    const { username, password } = req.body;
+    const { usernamemail, password } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password are required' });
+    // Validate input
+    if (!usernamemail || !password) {
+        return res.status(400).json({ message: 'Username/Email and password are required' });
     }
 
-    const sql = "SELECT * FROM USER WHERE username = ?";
-    sqldb.query(sql, [username], (err, results) => {
-        if (err) return res.status(500).json({ message: 'Database error', error: err });
+    // Check if the input is an email or username
+    const isEmail = usernamemail.includes('@');
+
+    // SQL query to find user by username or email
+    const sql = isEmail
+        ? "SELECT * FROM USER WHERE email = ?" // Check for email
+        : "SELECT * FROM USER WHERE username = ?"; // Check for username
+
+    sqldb.query(sql, [usernamemail], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        // If no user found
         if (results.length === 0) {
-            return res.status(401).json({ message: 'Invalid username or password' });
+            return res.status(401).json({ message: 'Invalid username/email or password' });
         }
 
         const user = results[0];
-        const hashedPassword = results[0].PASSWORD;
+        const hashedPassword = user.PASSWORD;
 
+        // Compare passwords
         bcrypt.compare(password, hashedPassword, (err, isMatch) => {
-            if (err) return res.status(500).json({ message: 'Error comparing passwords' });
-
-            if (!isMatch) {
-                return res.status(401).json({ message: 'Invalid username or password' });
+            if (err) {
+                return res.status(500).json({ message: 'Error comparing passwords' });
             }
 
-            const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
-                expiresIn: '1D'
-            });
+            // If passwords don't match
+            if (!isMatch) {
+                return res.status(401).json({ message: 'Invalid username/email or password' });
+            }
 
+            // Generate JWT token
+            const token = jwt.sign(
+                { id: user.id, username: user.username },
+                process.env.JWT_SECRET,
+                { expiresIn: '1D' }
+            );
+
+            // Set token in cookie
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
@@ -41,7 +61,7 @@ export const login = (req, res) => {
 
             console.log("Token created and sent:", token);
 
-            // Only one response should be sent here
+            // Send success response
             return res.status(200).json({ Status: "Success", token });
         });
     });
