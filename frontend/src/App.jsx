@@ -10,11 +10,11 @@ import Sidebar from './Component/Sidebar/Sidebar'; // User sidebar
 import Footer from './Component/Footer/Footer';
 
 // Updated import paths for AUTH_Pages
-import Login from './Pages/AUTH_PAGES/LoginRegister';
-import ForgetPassword from './Pages/AUTH_PAGES/ForgetPassword';
-import CheckMail from './Pages/AUTH_PAGES/CheckMail';
-import ForgetPasswordSuccess from './Pages/AUTH_PAGES/ForgetPasswordSuccess';
-import UpdateNewPassword from './Pages/AUTH_PAGES/UpdateNewPassword';
+import Login from './Pages/AuthPages/LoginRegister/login';
+import ForgetPassword from './Pages/AuthPages/ForgetPassword/ForgetPassword';
+import CheckMail from './Pages/AuthPages/CheckMail/CheckMail';
+import ForgetPasswordSuccess from './Pages/AuthPages/ForgetPasswordSuccess/ForgetPasswordSuccess';
+import UpdateNewPassword from './Pages/AuthPages/UpdateNewPassword/UpdateNewPassword';
 import Dashboard from './Pages/DashBoard/Dashboard';
 import AddNewPayment from './Pages/AddNewPayment/addnewpayment';
 import CreateFarmerAccount from './Pages/createFarmerAccounts/CFA';
