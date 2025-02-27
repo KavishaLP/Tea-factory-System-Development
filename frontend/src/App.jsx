@@ -19,19 +19,20 @@ import FertilizerHistory from './Pages/FertilizerHistory/FertilizerHistory';
 import ForgetPassword from './Pages/ForgetPassword/ForgetPassword';
 import CheckMail from './Pages/CheckMail/CheckMail';
 import ForgetPasswordSuccess from './Pages/ForgetPasswordSuccess/ForgetPasswordSuccess';
+import UpdateNewPassword from './Pages/UpdateNewPassword/UpdateNewPassword';
 
 function App() {
   const location = useLocation();
 
   // Sidebar visibility logic
   const shouldDisplaySidebar = () => {
-    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success'];
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success','/update-password'];
     return !hiddenPaths.includes(location.pathname);
   };
 
   // Navbar visibility logic
   const shouldDisplayNavbar = () => {
-    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success'];
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success','/update-password'];
     return !hiddenPaths.includes(location.pathname);
   };
 
@@ -54,6 +55,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgetPassword />} />
             <Route path="/check-mail" element={<CheckMail />} />
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
+            <Route path="/update-password" element={<UpdateNewPassword />} />
           </Routes>
         </main>
       </div>
