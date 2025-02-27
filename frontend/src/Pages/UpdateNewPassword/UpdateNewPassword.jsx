@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './UpdateNewPassword.css';
 
 const UpdateNewPassword = () => {
@@ -8,6 +8,8 @@ const UpdateNewPassword = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const email = location.state?.email;
 
     const handleSubmit = async (e) => {
         e.preventDefault();

@@ -98,7 +98,7 @@ const CheckMail = () => {
     
             const data = await response.json();
             if (response.ok) {
-                navigate('/reset-password'); // Navigate to the reset password page if code is valid
+                navigate('/reset-password', { state: { email } });
             } else {
                 setMessage(data.message || 'Invalid verification code. Please try again.');
             }

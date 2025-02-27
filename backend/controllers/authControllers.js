@@ -152,7 +152,7 @@ export const checkCode = (req, res) => {
 
 export const sendAgain = (req, res) => {
     const { email } = req.body;
-    console.log(body)
+    console.log(req)
 
     // Check if email is provided
     if (!email) {
