@@ -26,13 +26,13 @@ function App() {
 
   // Sidebar visibility logic
   const shouldDisplaySidebar = () => {
-    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success','/update-password'];
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success','/update-new-password'];
     return !hiddenPaths.includes(location.pathname);
   };
 
   // Navbar visibility logic
   const shouldDisplayNavbar = () => {
-    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success','/update-password'];
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success','/update-new-password'];
     return !hiddenPaths.includes(location.pathname);
   };
 
@@ -55,7 +55,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgetPassword />} />
             <Route path="/check-mail" element={<CheckMail />} />
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
-            <Route path="/update-password" element={<UpdateNewPassword />} />
+            <Route path="/update-new-password" element={<UpdateNewPassword />} />
           </Routes>
         </main>
       </div>

@@ -120,36 +120,6 @@ export const forgotPassword = (req, res) => {
 };
 
 
-export const checkCode = (req, res) => {
-    const { email, resetCode } = req.body;
-
-    if (!email || !resetCode) {
-        return res.status(400).json({ message: 'Email and reset code are required' });
-    }
-
-    // SQL query to check if the code and email match
-    const sql = "SELECT * FROM USER WHERE ADMINMAIL = ? AND RESET_CODE = ?";
-    sqldb.query(sql, [email, resetCode], (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Database error', error: err });
-        }
-
-        if (results.length === 0) {
-            return res.status(400).json({ message: 'Invalid email or reset code' });
-        }
-
-        const user = results[0];
-        const expiryTime = new Date(user.RESET_EXPIRY);
-
-        // Check if the reset code has expired
-        if (expiryTime < new Date()) {
-            return res.status(400).json({ message: 'Reset code expired' });
-        }
-
-        return res.status(200).json({ message: 'Reset code is valid' });
-    });
-};
-
 export const sendAgain = (req, res) => {
     const { email } = req.body;
     console.log(req)
@@ -205,6 +175,40 @@ export const sendAgain = (req, res) => {
         return res.status(200).json({ message: 'A new reset code has been sent to your email' });
     });
 };
+
+
+export const checkCode = (req, res) => {
+    const { email, resetCode } = req.body;
+
+    console.log('Request Body:', req.body); // Add this line to inspect the incoming data
+
+    if (!email || !resetCode) {
+        return res.status(400).json({ message: 'Email and reset code are required' });
+    }
+
+    // SQL query to check if the code and email match
+    const sql = "SELECT * FROM USER WHERE ADMINMAIL = ? AND RESET_CODE = ?";
+    sqldb.query(sql, [email, resetCode], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(400).json({ message: 'Invalid email or reset code' });
+        }
+
+        const user = results[0];
+        const expiryTime = new Date(user.RESET_EXPIRY);
+
+        // Check if the reset code has expired
+        if (expiryTime < new Date()) {
+            return res.status(400).json({ message: 'Reset code expired' });
+        }
+
+        return res.status(200).json({ message: 'Reset code is valid' });
+    });
+};
+
 
 
 export const resetPassword = async (req, res) => {

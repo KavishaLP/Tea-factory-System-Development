@@ -79,8 +79,10 @@ const CheckMail = () => {
         }
     };
 
+    
     const handleVerifyCode = async () => {
-        const code = verificationCode.join('');
+        const code = verificationCode.join('');  // Concatenating the digits of the code
+    
         if (code.length !== 6) {
             setMessage('Please enter the complete 6-digit code');
             return;
@@ -88,17 +90,18 @@ const CheckMail = () => {
     
         setMessage('');
         try {
+            // Assuming the email is stored in state or props (e.g., email state)
             const response = await fetch('http://localhost:8081/auth/check-code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code }),
+                body: JSON.stringify({ email, resetCode: code }), // Include both email and resetCode
             });
     
             const data = await response.json();
             if (response.ok) {
-                navigate('/reset-password', { state: { email } });
+                navigate('/update-new-password', { state: { email } });
             } else {
                 setMessage(data.message || 'Invalid verification code. Please try again.');
             }
@@ -106,6 +109,7 @@ const CheckMail = () => {
             setMessage('Failed to verify code. Please try again.');
         }
     };
+    
     
 
     return (
