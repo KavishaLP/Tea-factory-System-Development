@@ -11,6 +11,7 @@ const UpdateNewPassword = () => {
     const location = useLocation();
     const email = location.state?.email;
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -23,9 +24,27 @@ const UpdateNewPassword = () => {
         }
 
         try {
-            // Add your password update logic here
-            await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
-            navigate('/password-success'); // Redirect after successful update
+            // Send email, password, and confirm password to the backend
+            const response = await fetch('http://localhost:8081/auth/update-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    compassword
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Navigate to success page if password updated successfully
+                navigate('/password-success');
+            } else {
+                setError(data.message || 'Error occurred while updating the password.');
+            }
         } catch (error) {
             setError('Error occurred. Please try again.');
         } finally {

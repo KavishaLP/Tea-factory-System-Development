@@ -210,38 +210,43 @@ export const checkCode = (req, res) => {
 };
 
 
+export const updatePassword = (req, res) => {
+    const { email, password, compassword } = req.body;
 
-export const resetPassword = async (req, res) => {
-    try {
-        const { token, newPassword } = req.body;
-        if (!token || !newPassword) {
-            return res.status(400).json({ message: "Token and new password are required" });
+    // Check if all required fields are provided
+    if (!email || !password || !compassword) {
+        return res.status(400).json({ message: 'Email, password, and confirm password are required.' });
+    }
+
+    // Check if the passwords match
+    if (password !== compassword) {
+        return res.status(400).json({ message: 'Passwords do not match.' });
+    }
+
+    // Hash the new password for security
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error hashing the password', error: err });
         }
 
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const sql = "SELECT * FROM USER WHERE USERID = ?";
-
-        sqldb.query(sql, [decoded.id], async (err, results) => {
-            if (err) return res.status(500).json({ message: "Database error", error: err });
-
-            if (results.length === 0) {
-                return res.status(400).json({ message: "Invalid token" });
+        // SQL query to update the password in the database
+        const sql = "UPDATE USER SET PASSWORD = ? WHERE ADMINMAIL = ?";
+        
+        sqldb.query(sql, [hashedPassword, email], (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Database error', error: err });
             }
 
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            const updateSql = "UPDATE USER SET PASSWORD = ? WHERE USERID = ?";
+            // If no rows were affected, the email was not found
+            if (results.affectedRows === 0) {
+                return res.status(400).json({ message: 'Email not found or does not match.' });
+            }
 
-            sqldb.query(updateSql, [hashedPassword, decoded.id], (err) => {
-                if (err) return res.status(500).json({ message: "Error updating password", error: err });
-
-                res.json({ message: "Password reset successfully!" });
-            });
+            // Respond with a success message
+            return res.status(200).json({ message: 'Password updated successfully' });
         });
-    } catch (error) {
-        res.status(400).json({ error: "Invalid or expired token" });
-    }
+    });
 };
-
 
 
 export const logout = (req, res) => {

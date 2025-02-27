@@ -11,6 +11,6 @@ router.post('/check-code', checkCode);
 router.post('/send-again', sendAgain);
 
 
-router.post('/reset-password', resetPassword);
+router.post('/update-password', updatePassword);
 
 export default router;
