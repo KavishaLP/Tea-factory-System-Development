@@ -12,17 +12,31 @@ const ForgetPassword = () => {
         e.preventDefault();
         setIsLoading(true);
         setMessage('');
-
+    
         try {
-            // Add your password reset logic here
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            navigate('/check-mail');
+            const response = await fetch('http://localhost:8081/auth/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                setMessage('Reset code sent to your email.');
+                setTimeout(() => {
+                    navigate('/check-mail');
+                }, 2000);
+            } else {
+                setMessage(data.message || 'Error occurred. Please try again.');
+            }
         } catch (error) {
-            setMessage('Error occurred. Please try again.');
+            setMessage('Server error. Please try again later.');
         } finally {
             setIsLoading(false);
         }
     };
+    
 
     return (
         <>
