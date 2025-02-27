@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 
-
 const Login = () => {
   const navigate = useNavigate();
   const [values, setValues] = useState({ username: '', password: '' });
@@ -11,17 +10,17 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-  
-    try {  
+
+    try {
       const response = await axios.post('http://localhost:8081/auth/login', values, {
         withCredentials: true,
       });
-      console.log(response)
+      console.log(response);
 
       if (response.data && response.data.Status === "Success") {
         console.log("JWT Token Received:", response.data.token);
         localStorage.setItem("token", response.data.token);
-        navigate('/Mng-Dashboard');  // Redirect after successful login
+        navigate('/Mng-Dashboard'); // Redirect after successful login
       } else {
         setError(response.data.Error || 'Invalid login credentials. Please try again.');
       }
@@ -42,10 +41,14 @@ const Login = () => {
       }
     }
   };
-  
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handleForgotPassword = () => {
+    // Navigate to the forgot password page
+    navigate('/forgot-password');
   };
 
   return (
@@ -83,6 +86,9 @@ const Login = () => {
             </div>
             <button type="submit">Login</button>
           </form>
+          <div className="forgot-password">
+            <a href="#" onClick={handleForgotPassword}>Forgot Password?</a>
+          </div>
         </div>
       </div>
     </div>

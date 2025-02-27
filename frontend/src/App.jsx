@@ -15,6 +15,7 @@ import AddNewPayment from './Pages/AddNewPayment/addnewpayment';
 import CreateFarmerAccount from './Pages/createFarmerAccounts/CFA';
 import Fertilizer from './Pages/fertilizer/fertilizer';
 import ProductivityReport from './Pages/ProductivityReport/ProductivityReport';
+import FertilizerHistory from './Pages/FertilizerHistory/FertilizerHistory';
 
 function App() {
   const location = useLocation();
@@ -40,6 +41,7 @@ function App() {
             <Route path="/Mng-User-dashboard" element={<Sidebar />} />
             <Route path="/Mng-Create-Farmer-Account" element={<CreateFarmerAccount/>} />
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport/>} />
+            <Route path="/Mng-Fertilizer-History" element={<FertilizerHistory />} />
           </Routes>
         </main>
       </div>

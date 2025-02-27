@@ -1,26 +1,39 @@
 import './Sidebar.css';
 
 import assets from '../../assets/assets.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isActive = (path) => {
+        if (path === '/Mng-Fertilizer-dis') {
+            return location.pathname === path || location.pathname === '/Mng-Fertilizer-History';
+        }
+        return location.pathname === path;
+    };
 
     return (
         <div className="sidebar">
-            <div className="sidebar-item active" onClick={() => navigate('/Mng-Dashboard')}>
+            <div className={`sidebar-item ${isActive('/Mng-Dashboard') ? 'active' : ''}`} 
+                onClick={() => navigate('/Mng-Dashboard')}>
                 <img src={assets.b} alt="Logo"/> <p>Dashboard</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/Mng-Create-Farmer-Account')}>
+            <div className={`sidebar-item ${isActive('/Mng-Create-Farmer-Account') ? 'active' : ''}`}
+                onClick={() => navigate('/Mng-Create-Farmer-Account')}>
                 <img src={assets.g} alt="Logo"/> <p>Create Farmer Account</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/Mng-AddNew-Payment')}>
+            <div className={`sidebar-item ${isActive('/Mng-AddNew-Payment') ? 'active' : ''}`}
+                onClick={() => navigate('/Mng-AddNew-Payment')}>
                 <img src={assets.h} alt="Logo"/> <p>Payment Logs</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/Mng-Productivity-Report')}>
+            <div className={`sidebar-item ${isActive('/Mng-Productivity-Report') ? 'active' : ''}`}
+                onClick={() => navigate('/Mng-Productivity-Report')}>
                 <img src={assets.k} alt="Logo"/> <p>Productivity Reports</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate('/Mng-Fertilizer-dis')}>
+            <div className={`sidebar-item ${isActive('/Mng-Fertilizer-dis') ? 'active' : ''}`}
+                onClick={() => navigate('/Mng-Fertilizer-dis')}>
                 <img src={assets.i} alt="Logo"/> <p>Fertilizer Distribution</p>
             </div>
             <div className="sidebar-item" onClick={() => navigate('/')}>
