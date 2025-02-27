@@ -87,7 +87,7 @@ const Login = () => {
             <button type="submit">Login</button>
           </form>
           <div className="forgot-password">
-            <a href="#" onClick={handleForgotPassword}>Forgot Password?</a>
+            <a href="/forgot-password">Forgot Password?</a>
           </div>
         </div>
       </div>

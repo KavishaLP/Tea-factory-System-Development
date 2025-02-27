@@ -16,15 +16,24 @@ import CreateFarmerAccount from './Pages/createFarmerAccounts/CFA';
 import Fertilizer from './Pages/fertilizer/fertilizer';
 import ProductivityReport from './Pages/ProductivityReport/ProductivityReport';
 import FertilizerHistory from './Pages/FertilizerHistory/FertilizerHistory';
+import ForgetPassword from './Pages/ForgetPassword/ForgetPassword';
+import CheckMail from './Pages/CheckMail/CheckMail';
+import ForgetPasswordSuccess from './Pages/ForgetPasswordSuccess/ForgetPasswordSuccess';
 
 function App() {
   const location = useLocation();
 
   // Sidebar visibility logic
-  const shouldDisplaySidebar = () => location.pathname !== '/';
+  const shouldDisplaySidebar = () => {
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success'];
+    return !hiddenPaths.includes(location.pathname);
+  };
 
   // Navbar visibility logic
-  const shouldDisplayNavbar = () => location.pathname !== '/';
+  const shouldDisplayNavbar = () => {
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success'];
+    return !hiddenPaths.includes(location.pathname);
+  };
 
   return (
     <div className="container">
@@ -42,6 +51,9 @@ function App() {
             <Route path="/Mng-Create-Farmer-Account" element={<CreateFarmerAccount/>} />
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport/>} />
             <Route path="/Mng-Fertilizer-History" element={<FertilizerHistory />} />
+            <Route path="/forgot-password" element={<ForgetPassword />} />
+            <Route path="/check-mail" element={<CheckMail />} />
+            <Route path="/password-success" element={<ForgetPasswordSuccess />} />
           </Routes>
         </main>
       </div>
