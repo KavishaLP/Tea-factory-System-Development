@@ -231,7 +231,7 @@ export const updatePassword = (req, res) => {
 
         // SQL query to update the password in the database
         const sql = "UPDATE USER SET PASSWORD = ? WHERE ADMINMAIL = ?";
-        
+
         sqldb.query(sql, [hashedPassword, email], (err, results) => {
             if (err) {
                 return res.status(500).json({ message: 'Database error', error: err });
@@ -242,8 +242,17 @@ export const updatePassword = (req, res) => {
                 return res.status(400).json({ message: 'Email not found or does not match.' });
             }
 
-            // Respond with a success message
-            return res.status(200).json({ message: 'Password updated successfully' });
+            // SQL query to clear the RESET_CODE and RESET_EXPIRY fields
+            const clearCodeSql = "UPDATE USER SET RESET_CODE = NULL, RESET_EXPIRY = NULL WHERE ADMINMAIL = ?";
+
+            sqldb.query(clearCodeSql, [email], (err, clearResults) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error clearing reset code and expiry', error: err });
+                }
+
+                // Respond with a success message
+                return res.status(200).json({ message: 'Password updated and reset code cleared successfully' });
+            });
         });
     });
 };
