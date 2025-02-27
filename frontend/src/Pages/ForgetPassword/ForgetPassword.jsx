@@ -53,11 +53,11 @@ const ForgetPassword = () => {
                             </div>
                         )}
 
-                        <button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Sending...' : 'Send Reset Link'}
-                        </button>
-
-                        <div className="back-to-login">
+                        <div className="button-group">
+                            <button type="submit" disabled={isLoading}>
+                                {isLoading ? 'Sending...' : 'Send Reset Link'}
+                            </button>
+                            
                             <button 
                                 type="button" 
                                 className="back-button"

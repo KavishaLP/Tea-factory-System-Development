@@ -128,6 +128,62 @@
     border: 1px solid #f5c6cb;
 }
 
+.verification-code-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px 0;
+}
+
+.code-input {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #2a6b4e;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2a6b4e;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: #1e4f3a;
+    box-shadow: 0 0 5px rgba(42, 107, 78, 0.3);
+}
+
+.verify-button {
+    background-color: #2a6b4e;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.verify-button:hover {
+    background-color: #1e4f3a;
+    transform: translateY(-2px);
+}
+
+.resend-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.timer {
+    color: #666;
+    font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
     .mail-content {
         padding: 30px;
@@ -159,5 +215,15 @@
     .action-buttons button {
         padding: 12px;
         font-size: 0.95rem;
+    }
+
+    .code-input {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .verification-code-container {
+        gap: 8px;
     }
 } 
