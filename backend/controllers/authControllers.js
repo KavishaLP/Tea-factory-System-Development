@@ -120,6 +120,87 @@ export const forgotPassword = (req, res) => {
 };
 
 
+export const checkCode = (req, res) => {
+    const { email, resetCode } = req.body;
+
+    if (!email || !resetCode) {
+        return res.status(400).json({ message: 'Email and reset code are required' });
+    }
+
+    // SQL query to check if the code and email match
+    const sql = "SELECT * FROM USER WHERE ADMINMAIL = ? AND RESET_CODE = ?";
+    sqldb.query(sql, [email, resetCode], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(400).json({ message: 'Invalid email or reset code' });
+        }
+
+        const user = results[0];
+        const expiryTime = new Date(user.RESET_EXPIRY);
+
+        // Check if the reset code has expired
+        if (expiryTime < new Date()) {
+            return res.status(400).json({ message: 'Reset code expired' });
+        }
+
+        return res.status(200).json({ message: 'Reset code is valid' });
+    });
+};
+
+export const sendAgain = (req, res) => {
+    const { email } = req.body;
+
+    // Check if email is provided
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
+    }
+
+    // Generate a new reset code
+    const resetCode = generateResetCode();
+    const expiryTime = new Date(Date.now() + 15 * 60 * 1000); // Code valid for 15 minutes
+
+    // Update the user's reset code and expiry time in the database
+    const updateSql = "UPDATE USER SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+    sqldb.query(updateSql, [resetCode, expiryTime, email], (updateErr, results) => {
+        if (updateErr) return res.status(500).json({ message: 'Error updating reset code', error: updateErr });
+
+        // If no user found
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'No user found with this email' });
+        }
+
+        // Send the reset code via email using Nodemailer
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Password Reset Code',
+            text: `Your password reset code is: ${resetCode}. This code will expire in 15 minutes.`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return res.status(500).json({ message: 'Error sending email', error });
+            }
+
+            console.log('Email sent: ' + info.response);
+        });
+
+        // Send success response
+        return res.status(200).json({ message: 'A new reset code has been sent to your email' });
+    });
+};
+
 export const resetPassword = async (req, res) => {
     try {
         const { token, newPassword } = req.body;

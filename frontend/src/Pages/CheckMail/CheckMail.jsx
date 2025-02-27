@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdMarkEmailRead } from 'react-icons/md'; // Import email icon
+import { MdMarkEmailRead } from 'react-icons/md';
+import axios from 'axios';
 import './CheckMail.css';
 
 const CheckMail = () => {
@@ -26,19 +27,31 @@ const CheckMail = () => {
     const handleResendCode = async () => {
         setIsResending(true);
         setMessage('');
-
+    
         try {
-            // Add your resend code logic here
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            setMessage('Verification code has been resent to your email');
-            setTimer(30);
-            setIsTimerActive(true);
+            const response = await fetch('/api/auth/send-again', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }) // Send the email to resend the code to
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                setMessage('Verification code has been resent to your email');
+                setTimer(30); // Reset timer
+                setIsTimerActive(true);
+            } else {
+                setMessage(data.message || 'Failed to resend code. Please try again.');
+            }
         } catch (error) {
             setMessage('Failed to resend code. Please try again.');
         } finally {
             setIsResending(false);
         }
     };
+    
 
     const handleCodeChange = (index, value) => {
         if (value.length <= 1 && /^[0-9]*$/.test(value)) {
@@ -67,15 +80,28 @@ const CheckMail = () => {
             setMessage('Please enter the complete 6-digit code');
             return;
         }
-
+    
+        setMessage('');
         try {
-            // Add your verification logic here
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            navigate('/reset-password'); // Navigate to reset password page
+            const response = await fetch('/api/auth/check-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code }),
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                navigate('/reset-password'); // Navigate to the reset password page if code is valid
+            } else {
+                setMessage(data.message || 'Invalid verification code. Please try again.');
+            }
         } catch (error) {
-            setMessage('Invalid verification code. Please try again.');
+            setMessage('Failed to verify code. Please try again.');
         }
     };
+    
 
     return (
         <>
