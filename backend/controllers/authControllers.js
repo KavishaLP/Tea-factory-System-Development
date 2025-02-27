@@ -71,57 +71,51 @@ export const login = (req, res) => {
 };
 
 
-export const forgotPassword = async (req, res) => {
-    try {
-        const { email } = req.body;
-        if (!email) return res.status(400).json({ message: "Email is required" });
+export const forgotPassword = (req, res) => {
+    const { email } = req.body;
 
-        const sql = "SELECT * FROM USER WHERE ADMINMAIL = ?";
-        sqldb.query(sql, [email], async (err, results) => {
-            if (err) return res.status(500).json({ message: "Database error", error: err });
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
+    }
 
-            if (results.length === 0) {
-                return res.status(404).json({ message: "User not found" });
-            }
+    // Check if user exists
+    const sql = "SELECT * FROM USER WHERE ADMINMAIL = ?";
+    sqldb.query(sql, [email], (err, results) => {
+        if (err) return res.status(500).json({ message: 'Database error', error: err });
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Email not found' });
+        }
 
-            const user = results[0];
+        const resetCode = generateResetCode();
+        const expiryTime = new Date(Date.now() + 15 * 60 * 1000); // Code valid for 15 minutes
 
-            // Generate a 6-digit random code
-            const resetCode = Math.floor(100000 + Math.random() * 900000);
+        // Update user record with reset code and expiry time
+        const updateSql = "UPDATE USER SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+        sqldb.query(updateSql, [resetCode, expiryTime, email], (updateErr) => {
+            if (updateErr) return res.status(500).json({ message: 'Error updating reset code', error: updateErr });
 
-            // Store reset code & expiry time (15 mins) in database
-            const expireTime = new Date(Date.now() + 15 * 60 * 1000);
-            const updateSql = "UPDATE USER SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+            // Send the reset code via email
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS
+                }
+            });
 
-            sqldb.query(updateSql, [resetCode, expireTime, email], (err) => {
-                if (err) return res.status(500).json({ message: "Error updating reset code", error: err });
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: 'Password Reset Code',
+                text: `Your password reset code is: ${resetCode}. This code is valid for 15 minutes.`
+            };
 
-                // Email setup
-                const transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: process.env.EMAIL_USER,
-                        pass: process.env.EMAIL_PASS
-                    }
-                });
-
-                const mailOptions = {
-                    from: process.env.EMAIL_USER,
-                    to: email,
-                    subject: 'Password Reset Code',
-                    text: `Your password reset code is: ${resetCode}. It will expire in 15 minutes.`
-                };
-
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) return res.status(500).json({ message: "Error sending email", error });
-
-                    res.json({ message: "Reset code sent to your email." });
-                });
+            transporter.sendMail(mailOptions, (mailErr, info) => {
+                if (mailErr) return res.status(500).json({ message: 'Error sending email', error: mailErr });
+                return res.status(200).json({ message: 'Reset code sent to your email' });
             });
         });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    });
 };
 
 
