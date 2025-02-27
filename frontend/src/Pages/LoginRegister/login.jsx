@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [values, setValues] = useState({ username: '', password: '' });
+  const [values, setValues] = useState({ usernamemail: '', password: '' });
   const [error, setError] = useState('');
 
   const handleLogin = async (event) => {
@@ -63,13 +63,13 @@ const Login = () => {
           {error && <p className="error-message">{error}</p>}
           <form onSubmit={handleLogin}>
             <div>
-              <label>Username:</label>
+              <label>Username Or Mail Address:</label>
               <input
                 type="text"
-                name="username"
-                value={values.username}
+                name="usernamemail"
+                value={values.usernamemail}
                 onChange={handleChange}
-                placeholder="Enter your username"
+                placeholder="Enter your username or mail addres"
                 required
               />
             </div>
