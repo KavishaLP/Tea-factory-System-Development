@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const SECRET_KEY = process.env.JWT_SECRET;
+const generateResetCode = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 export const login = (req, res) => {
     const { usernamemail, password } = req.body;
@@ -85,27 +86,38 @@ export const forgotPassword = async (req, res) => {
 
             const user = results[0];
 
-            // Generate reset token
-            const resetToken = jwt.sign({ id: user.USERID }, SECRET_KEY, { expiresIn: '15m' });
+            // Generate a 6-digit random code
+            const resetCode = Math.floor(100000 + Math.random() * 900000);
 
-            // Email setup
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
-                }
+            // Store reset code & expiry time (15 mins) in database
+            const expireTime = new Date(Date.now() + 15 * 60 * 1000);
+            const updateSql = "UPDATE USER SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+
+            sqldb.query(updateSql, [resetCode, expireTime, email], (err) => {
+                if (err) return res.status(500).json({ message: "Error updating reset code", error: err });
+
+                // Email setup
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASS
+                    }
+                });
+
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: email,
+                    subject: 'Password Reset Code',
+                    text: `Your password reset code is: ${resetCode}. It will expire in 15 minutes.`
+                };
+
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) return res.status(500).json({ message: "Error sending email", error });
+
+                    res.json({ message: "Reset code sent to your email." });
+                });
             });
-
-            const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: email,
-                subject: 'Password Reset Request',
-                html: `<p>Click <a href="http://localhost:3000/reset-password?token=${resetToken}">here</a> to reset your password.</p>`
-            };
-
-            await transporter.sendMail(mailOptions);
-            res.json({ message: "Password reset link sent to your email." });
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
