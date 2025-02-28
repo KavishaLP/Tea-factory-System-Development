@@ -6,6 +6,10 @@ function TeaSackUpdate() {
     <div className="tea-sack-container">
       <div className="content-wrapper">
         <div className="content">
+          <div className="page-header">
+            <h1>Tea Sack Update</h1>
+          </div>
+
           <div className="search-bar">
             <label htmlFor="searchUserId">Search User Id Here</label>
             <input type="text" id="searchUserId" placeholder="Search User Id Here" />
