@@ -18,41 +18,45 @@ function AdvanceUpdate() {
   };
 
   return (
-    <div className="advance-update-container">
-      <div className="page-header">
-        <h1>Advance Requests</h1>
-      </div>
+    <div className="tea-sack-container">
+      <div className="content-wrapper">
+        <div className="content">
+          <div className="page-header">
+            <h1>Advance Requests</h1>
+          </div>
 
-      <div className="requests-table">
-        <table>
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Farmer Name</th>
-              <th>Advance Amount</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {advanceRequests.map((request) => (
-              <tr key={request.id}>
-                <td>{request.userId}</td>
-                <td>{request.farmerName}</td>
-                <td>${request.advanceAmount}</td>
-                <td>{request.date}</td>
-                <td>
-                  <button
-                    className="confirm-button"
-                    onClick={() => handleConfirm(request.id)}
-                  >
-                    Confirm
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <div className="requests-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Farmer Name</th>
+                  <th>Advance Amount</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {advanceRequests.map((request) => (
+                  <tr key={request.id}>
+                    <td>{request.userId}</td>
+                    <td>{request.farmerName}</td>
+                    <td>${request.advanceAmount}</td>
+                    <td>{request.date}</td>
+                    <td>
+                      <button
+                        className="confirm-button"
+                        onClick={() => handleConfirm(request.id)}
+                      >
+                        Confirm
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
