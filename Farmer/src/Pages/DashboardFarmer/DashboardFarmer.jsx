@@ -1,32 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaMoneyBillWave, FaSeedling, FaHistory, FaSignOutAlt, FaHome } from "react-icons/fa";
-import "./FarmerDashboard.css";
+import "./DashboardFarmer.css";
 
 const FarmerDashboard = () => {
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
-      <nav className="sidebar">
-        <h2>Farmer Panel</h2>
-        <ul>
-          <li>
-            <Link to="/farmer-home"><FaHome /> Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/payment-history"><FaMoneyBillWave /> Payment History</Link>
-          </li>
-          <li>
-            <Link to="/request-fertilizer"><FaSeedling /> Request Fertilizer</Link>
-          </li>
-          <li>
-            <Link to="/request-advance"><FaHistory /> Request Advance</Link>
-          </li>
-          <li className="logout">
-            <Link to="/logout"><FaSignOutAlt /> Logout</Link>
-          </li>
-        </ul>
-      </nav>
+    
 
       {/* Main Content */}
       <div className="main-content">

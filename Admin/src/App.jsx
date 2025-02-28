@@ -26,8 +26,8 @@ function App() {
         
         <main className={`main-content ${shouldDisplaySidebar() ? 'with-sidebar' : ''}`}>
           <Routes>
-            <Route path="/" element={<TeaSackUpdate/>} />
             <Route path="/tea-sack-update" element={<TeaSackUpdate/>} />
+            <Route path="/advance-update" element={<AdvanceUpdate/>} />
           </Routes>
         </main>
       </div>

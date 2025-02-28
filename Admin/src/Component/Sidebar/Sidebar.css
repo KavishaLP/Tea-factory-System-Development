@@ -1,143 +1,133 @@
 .sidebar {
-    width: 280px;
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
-    height: calc(100vh - 70px); /* Subtracting navbar height */
-    position: fixed;
-    left: 0;
-    top: 70px; /* Should match navbar height */
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
-    transition: all 0.3s ease;
-    overflow-y: auto;
-    padding: 1.5rem 0.75rem;
-    z-index: 900;
-  }
-  
-  /* Custom scrollbar */
-  .sidebar::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  .sidebar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .sidebar::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
-    border-radius: 10px;
-  }
-  
-  .sidebar-item {
-    display: flex;
-    align-items: center;
-    padding: 0.875rem 1.25rem;
-    margin: 0.5rem 0;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .sidebar-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0;
-    background-color: #2ecc71;
-    border-radius: 12px;
-    z-index: -1;
-    transition: all 0.3s ease;
-  }
-  
-  .sidebar-item:hover::before,
-  .sidebar-item.active::before {
-    width: 100%;
-  }
-  
-  .sidebar-item img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    transition: transform 0.3s ease;
-  }
-  
-  .sidebar-item p {
-    margin: 0 0 0 1rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #4a5568;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-  
-  /* Hover and Active States */
-  .sidebar-item:hover {
-    background-color: rgba(46, 204, 113, 0.05);
-  }
-  
-  .sidebar-item:hover img,
-  .sidebar-item.active img {
-    transform: scale(1.1);
-  }
-  
-  .sidebar-item:hover p,
-  .sidebar-item.active p {
-    color: white;
-    transform: translateX(3px);
-  }
-  
-  /* Active State */
-  .sidebar-item.active {
-    background-color: #2ecc71;
-    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
-  }
-  
-  /* Special styling for logout */
-  .sidebar-item:last-child {
-    margin-top: 2rem;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 1.5rem;
-  }
-  
-  .sidebar-item:last-child:hover::before {
-    background-color: #ff6b6b;
-  }
-  
-  .sidebar-item:last-child:hover {
-    background-color: rgba(255, 107, 107, 0.05);
-  }
-  
-  /* Responsive Design */
-  @media screen and (max-width: 1024px) {
-    .sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  height: calc(100vh - 70px);
+  position: fixed;
+  left: 0;
+  top: 70px;
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  padding: 1.5rem 0.75rem;
+  z-index: 900;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  margin: 0.5rem 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background-color: #2ecc71;
+  border-radius: 12px;
+  z-index: -1;
+  transition: all 0.3s ease;
+}
+
+.sidebar-item:hover::before,
+.sidebar-item.active::before {
+  width: 100%;
+}
+
+.sidebar-icon {
+  font-size: 24px;
+  color: #4a5568;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-item p {
+  margin-left: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #4a5568;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(46, 204, 113, 0.05);
+}
+
+.sidebar-item:hover .sidebar-icon,
+.sidebar-item.active .sidebar-icon {
+  transform: scale(1.1);
+  color: white;
+}
+
+.sidebar-item:hover p,
+.sidebar-item.active p {
+  color: white;
+  transform: translateX(3px);
+}
+
+.sidebar-item.active {
+  background-color: #2ecc71;
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+}
+
+.sidebar-item:last-child {
+  margin-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1.5rem;
+}
+
+.sidebar-item:last-child:hover::before {
+  background-color: #ff6b6b;
+}
+
+.sidebar-item:last-child:hover {
+  background-color: rgba(255, 107, 107, 0.05);
+}
+
+@media screen and (max-width: 1024px) {
+  .sidebar {
       width: 240px;
-    }
   }
-  
-  @media screen and (max-width: 768px) {
-    .sidebar {
+}
+
+@media screen and (max-width: 768px) {
+  .sidebar {
       width: 80px;
       padding: 1rem 0.5rem;
-    }
-  
-    .sidebar-item {
+  }
+
+  .sidebar-item {
       padding: 0.75rem;
       justify-content: center;
-    }
-  
-    .sidebar-item p {
+  }
+
+  .sidebar-item p {
       display: none;
-    }
-  
-    .sidebar-item:hover p {
-      transform: none;
-    }
-  
-    /* Show tooltips on hover for mobile */
-    .sidebar-item::after {
+  }
+
+  .sidebar-item::after {
       content: attr(data-tooltip);
       position: absolute;
       left: 100%;
@@ -153,41 +143,39 @@
       transition: all 0.2s ease;
       white-space: nowrap;
       z-index: 1000;
-    }
-  
-    .sidebar-item:hover::after {
+  }
+
+  .sidebar-item:hover::after {
       opacity: 1;
       left: calc(100% + 10px);
-    }
   }
-  
-  /* Animation for sidebar items on page load */
-  @keyframes slideIn {
-    from {
+}
+
+@keyframes slideIn {
+  from {
       opacity: 0;
       transform: translateX(-10px);
-    }
-    to {
+  }
+  to {
       opacity: 1;
       transform: translateX(0);
-    }
   }
-  
-  .sidebar-item {
-    animation: slideIn 0.3s ease forwards;
-    animation-delay: calc(var(--item-index) * 0.1s);
-  }
-  
-  /* Optional: Add smooth transition when collapsing/expanding */
-  @media screen and (max-width: 480px) {
-    .sidebar {
+}
+
+.sidebar-item {
+  animation: slideIn 0.3s ease forwards;
+  animation-delay: calc(var(--item-index) * 0.1s);
+}
+
+@media screen and (max-width: 480px) {
+  .sidebar {
       width: 0;
       padding: 0;
       overflow: hidden;
-    }
-  
-    .sidebar.open {
+  }
+
+  .sidebar.open {
       width: 240px;
       padding: 1.5rem 0.75rem;
-    }
   }
+}
