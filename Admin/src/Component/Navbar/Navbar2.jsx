@@ -1,5 +1,5 @@
 import './Navbar.css';
-import assets from '../../assets/assets.js';
+// import assets from '../../assets/assets.js';
 
 const Navbar = () => {
   return (

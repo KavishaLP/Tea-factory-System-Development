@@ -1,6 +1,6 @@
 import './Sidebar.css';
 
-import assets from '../../assets/assets.js';
+// import assets from '../../assets/assets.js';
 import { useNavigate } from 'react-router-dom';
 
 const Sidebar2 = () => {

@@ -3,6 +3,10 @@ import './App.css';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import AdvanceUpdate from './Pages/AdvanceUpdate/AdvanceUpdate';
+import TeaSackUpdate from './Pages/Teasackupdate/teasack';
+import Footer from './Component/Footer/Footer';
+import Navbar from './Component/Navbar/Navbar2';
+import Sidebar from './Component/sidebar/sidebar2';
 
 
 function App() {
@@ -22,8 +26,8 @@ function App() {
         
         <main className={`main-content ${shouldDisplaySidebar() ? 'with-sidebar' : ''}`}>
           <Routes>
-            <Route path="/" element={<AdvanceUpdate/>} />
-            <Route path="/Admin-Advance-Update" element={<AdvanceUpdate/>} />
+            <Route path="/" element={<TeaSackUpdate/>} />
+            <Route path="/tea-sack-update" element={<TeaSackUpdate/>} />
           </Routes>
         </main>
       </div>
