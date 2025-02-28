@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json()); // ✅ Must be placed before routes
 
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5174"],
     methods: ["POST", "GET"],
     credentials: true
 }));
