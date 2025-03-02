@@ -8,12 +8,13 @@ import "./CFA.css";
 const CreateFarmerAccount = () => {
   const [formData, setFormData] = useState({
     userId: "",
+    userName: "",
     firstName: "",
     lastName: "",
-    farmerName: "",
-    registrationNumber: "",
-    contact: "",
-    mobile: "",
+    address: "",
+    mobile1: "",
+    mobile2: "",
+    gmail: "",
     password: "",
     reenterPassword: "",
   });
@@ -23,6 +24,14 @@ const CreateFarmerAccount = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    // Automatically generate userName when userId changes
+    if (name === "userId") {
+      setFormData((prevData) => ({
+        ...prevData,
+        userName: `fer${value}`,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -48,12 +57,13 @@ const CreateFarmerAccount = () => {
       alert("Account created successfully!");
       setFormData({
         userId: "",
+        userName: "",
         firstName: "",
         lastName: "",
-        farmerName: "",
-        registrationNumber: "",
-        contact: "",
-        mobile: "",
+        address: "",
+        mobile1: "",
+        mobile2: "",
+        gmail: "",
         password: "",
         reenterPassword: "",
       });
@@ -61,123 +71,136 @@ const CreateFarmerAccount = () => {
   };
 
   return (
-      <div className="cfa-content">
-        <h2>Create Farmer Account</h2>
-        <div className="cfa-grid">
-          <form onSubmit={handleSubmit}>
-            <div className="input-group">
-              <label>User ID</label>
-              <input
-                type="text"
-                name="userId"
-                value={formData.userId}
-                onChange={handleChange}
-                required
-                placeholder="Enter user ID"
-              />
-            </div>
+    <div className="cfa-content">
+      <h2>Create Farmer Account</h2>
+      <div className="cfa-grid">
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>User ID</label>
+            <input
+              type="text"
+              name="userId"
+              value={formData.userId}
+              onChange={handleChange}
+              required
+              placeholder="Enter user ID"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                placeholder="Enter first name"
-              />
-            </div>
+          <div className="input-group">
+            <label>User Name</label>
+            <input
+              type="text"
+              name="userName"
+              value={formData.userName}
+              readOnly
+              placeholder="Auto-generated"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                placeholder="Enter last name"
-              />
-            </div>
+          <div className="input-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+              placeholder="Enter first name"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>Farmer Name</label>
-              <input
-                type="text"
-                name="farmerName"
-                value={formData.farmerName}
-                onChange={handleChange}
-                placeholder="Enter farmer name"
-              />
-            </div>
+          <div className="input-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+              placeholder="Enter last name"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>Registration Number</label>
-              <input
-                type="text"
-                name="registrationNumber"
-                value={formData.registrationNumber}
-                onChange={handleChange}
-                placeholder="Enter registration number"
-              />
-            </div>
+          <div className="input-group full-row">
+            <label>Address</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+              placeholder="Enter address"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>Contact Number</label>
-              <input
-                type="tel"
-                name="contact"
-                value={formData.contact}
-                onChange={handleChange}
-                required
-                placeholder="Enter contact number"
-              />
-            </div>
+          <div className="input-group">
+            <label>Mobile Number 1</label>
+            <input
+              type="tel"
+              name="mobile1"
+              value={formData.mobile1}
+              onChange={handleChange}
+              required
+              placeholder="Enter mobile number 1"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>Mobile Number</label>
-              <input
-                type="tel"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                placeholder="Enter mobile number"
-              />
-            </div>
+          <div className="input-group">
+            <label>Mobile Number 2 (Optional)</label>
+            <input
+              type="tel"
+              name="mobile2"
+              value={formData.mobile2}
+              onChange={handleChange}
+              placeholder="Enter mobile number 2"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                placeholder="Enter password"
-              />
-            </div>
+          <div className="input-group full-row">
+            <label>Gmail</label>
+            <input
+              type="email"
+              name="gmail"
+              value={formData.gmail}
+              onChange={handleChange}
+              required
+              placeholder="Enter Gmail"
+            />
+          </div>
 
-            <div className="input-group">
-              <label>Re-enter Password</label>
-              <input
-                type="password"
-                name="reenterPassword"
-                value={formData.reenterPassword}
-                onChange={handleChange}
-                required
-                placeholder="Re-enter password"
-              />
-            </div>
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Enter password"
+            />
+          </div>
 
-            {error && <p className="error">{error}</p>}
+          <div className="input-group">
+            <label>Re-enter Password</label>
+            <input
+              type="password"
+              name="reenterPassword"
+              value={formData.reenterPassword}
+              onChange={handleChange}
+              required
+              placeholder="Re-enter password"
+            />
+          </div>
 
-            <button type="submit" disabled={isLoading} className={isLoading ? "loading" : ""}>
-              {isLoading ? "Creating Account..." : "Create Account"}
-            </button>
-          </form>
-        </div>
+          {error && <p className="error">{error}</p>}
+
+          <button type="submit" disabled={isLoading} className={isLoading ? "loading" : ""}>
+            {isLoading ? "Creating Account..." : "Create Account"}
+          </button>
+        </form>
       </div>
+    </div>
   );
 };
 
