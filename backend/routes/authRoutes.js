@@ -2,7 +2,7 @@
 
 import express from 'express';
 import { logout } from '../controllers/managerAuthControllers.js';
-import { mngLogin, mngForgotPassword, mngCheckCode, mngSendAgain, mngUpdatePassword } from '../controllers/managerAuthControllers.js';
+import { mngLogin, mngSendAgain, mngForgotPassword, mngCheckCode,  mngUpdatePassword} from '../controllers/managerAuthControllers.js';
 import { fmrLogin, fmrForgotPassword, fmrCheckCode, fmrSendAgain, fmrUpdatePassword } from '../controllers/farmerAuthControllers.js';
 import { admnLogin, admnForgotPassword, admnCheckCode, admnSendAgain, admnUpdatePassword } from '../controllers/adminAuthControllers.js';
 
