@@ -6,6 +6,12 @@ import AdvanceUpdate from './Pages/AdvanceUpdate/AdvanceUpdate';
 import TeaSackUpdate from './Pages/Teasackupdate/teasack';
 import TeaPacketDistribution from './Pages/TeaPaketDistribution/TeaPaketDistribution';
 
+import Login from './Pages/AuthPages/LoginRegister/login';
+import ForgetPassword from './Pages/AuthPages/ForgetPassword/ForgetPassword';
+import CheckMail from './Pages/AuthPages/CheckMail/CheckMail';
+import ForgetPasswordSuccess from './Pages/AuthPages/ForgetPasswordSuccess/ForgetPasswordSuccess';
+import UpdateNewPassword from './Pages/AuthPages/UpdateNewPassword/UpdateNewPassword';
+
 import Footer from './Component/Footer/Footer';
 import Navbar from './Component/Navbar/Navbar2';
 import Sidebar from './Component/sidebar/sidebar2';
@@ -28,6 +34,12 @@ function App() {
         
         <main className={`main-content ${shouldDisplaySidebar() ? 'with-sidebar' : ''}`}>
           <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgetPassword />} />
+            <Route path="/check-mail" element={<CheckMail />} />
+            <Route path="/password-success" element={<ForgetPasswordSuccess />} />
+            <Route path="/update-new-password" element={<UpdateNewPassword />} />
+
             <Route path="/tea-sack-update" element={<TeaSackUpdate/>} />
             <Route path="/advance-update" element={<AdvanceUpdate/>} />
             <Route path="/tea-packet-distribution" element={<TeaPacketDistribution/>} />

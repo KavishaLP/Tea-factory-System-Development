@@ -15,6 +15,7 @@ import ForgetPassword from './Pages/AuthPages/ForgetPassword/ForgetPassword';
 import CheckMail from './Pages/AuthPages/CheckMail/CheckMail';
 import ForgetPasswordSuccess from './Pages/AuthPages/ForgetPasswordSuccess/ForgetPasswordSuccess';
 import UpdateNewPassword from './Pages/AuthPages/UpdateNewPassword/UpdateNewPassword';
+
 import Dashboard from './Pages/DashBoard/Dashboard';
 import AddNewPayment from './Pages/AddNewPayment/addnewpayment';
 import CreateFarmerAccount from './Pages/createFarmerAccounts/CFA';
@@ -46,6 +47,11 @@ function App() {
         <main className={`main-content ${shouldDisplaySidebar() ? 'with-sidebar' : ''}`}>
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgetPassword />} />
+            <Route path="/check-mail" element={<CheckMail />} />
+            <Route path="/password-success" element={<ForgetPasswordSuccess />} />
+            <Route path="/update-new-password" element={<UpdateNewPassword />} />
+            
             <Route path="/Mng-Dashboard" element={<Dashboard />} />
             <Route path="/Mng-AddNew-Payment" element={<AddNewPayment />} />
             <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
@@ -53,10 +59,6 @@ function App() {
             <Route path="/Mng-Create-Farmer-Account" element={<CreateFarmerAccount />} />
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport />} />
             <Route path="/Mng-Fertilizer-History" element={<FertilizerHistory />} />
-            <Route path="/forgot-password" element={<ForgetPassword />} />
-            <Route path="/check-mail" element={<CheckMail />} />
-            <Route path="/password-success" element={<ForgetPasswordSuccess />} />
-            <Route path="/update-new-password" element={<UpdateNewPassword />} />
           </Routes>
         </main>
       </div>
