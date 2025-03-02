@@ -40,6 +40,10 @@ form {
   gap: 0.5rem;
 }
 
+.input-group.full-row {
+  grid-column: 1 / -1;
+}
+
 /* Input Styles */
 .input-group label {
   font-size: 0.95rem;
@@ -66,6 +70,11 @@ form {
 
 .input-group input::placeholder {
   color: #94a3b8;
+}
+
+.input-group input[readonly] {
+  background-color: #e2e8f0;
+  cursor: not-allowed;
 }
 
 /* Error Message */
@@ -201,7 +210,7 @@ button.loading::after {
     margin: 0;
     padding: 0;
   }
-
+p
   .cfa-grid {
     box-shadow: none;
     padding: 0;
