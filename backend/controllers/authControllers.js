@@ -11,6 +11,7 @@ const generateResetCode = () => Math.floor(100000 + Math.random() * 900000).toSt
 
 export const login = (req, res) => {
     const { usernamemail, password } = req.body;
+    console.log(req.body)
 
     // Validate input
     if (!usernamemail || !password) {
@@ -29,10 +30,10 @@ export const login = (req, res) => {
         if (err) {
             return res.status(500).json({ message: 'Database error', error: err });
         }
-
+        console.log(results)
         // If no user found
         if (results.length === 0) {
-            return res.status(401).json({ message: 'Invalid username/email or password' });
+            return res.status(401).json({ message: 'Invalid Username Or Email' });
         }
 
         const user = results[0];
@@ -41,12 +42,12 @@ export const login = (req, res) => {
         // Compare passwords
         bcrypt.compare(password, hashedPassword, (err, isMatch) => {
             if (err) {
-                return res.status(500).json({ message: 'Error comparing passwords' });
+                return res.status(500).json({ message: 'Error Comparing Passwords' });
             }
 
             // If passwords don't match
             if (!isMatch) {
-                return res.status(401).json({ message: 'Invalid username/email or password' });
+                return res.status(401).json({ message: 'Invalid Password' });
             }
 
             // Generate JWT token
