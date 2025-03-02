@@ -7,6 +7,7 @@
 //npm i -D nodemon ->developer depemdancy
 
 import  authRoutes from './routes/authRoutes.js' // Import auth routes
+import managerRoutes from './routes/managerRoutes.js'
 
 import dotenv from 'dotenv';
 import express from 'express';
@@ -29,7 +30,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/manager', authRoutes);
+app.use('/api/manager', managerRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

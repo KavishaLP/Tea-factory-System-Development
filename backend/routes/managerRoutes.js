@@ -1,5 +1,5 @@
 import express from 'express';
-
+import { addFarmer } from '../controllers/managerControllers.js';
 
 const router = express.Router();
 

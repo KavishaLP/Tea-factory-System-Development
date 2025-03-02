@@ -39,6 +39,7 @@ const CreateFarmerAccount = () => {
 
   // Inside your handleSubmit function:
   const handleSubmit = (e) => {
+    console.log(formData)
     e.preventDefault();
   
     if (formData.password !== formData.reenterPassword) {
@@ -56,7 +57,7 @@ const CreateFarmerAccount = () => {
   
     // Send data to backend API
     axios
-      .post('http://localhost:5000/api/manager/add-farmer', formData)
+      .post('http://localhost:8081/api/manager/add-farmer', formData)
       .then((response) => {
         console.log('Farmer account created:', response.data);
         alert("Account created successfully!");
@@ -70,6 +71,7 @@ const CreateFarmerAccount = () => {
           mobile2: "",
           gmail: "",
           password: "",
+          reenterPassword: "",
         });
       })
       .catch((error) => {
