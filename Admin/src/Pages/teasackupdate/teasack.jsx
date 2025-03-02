@@ -1,9 +1,13 @@
 import React from 'react';
 import './teasack.css';
+import Navbar from '../../Component/Navbar/Navbar2';
+import Sidebar from '../../Component/sidebar/sidebar2';
 
 function TeaSackUpdate() {
   return (
     <div className="tea-sack-container">
+      <Navbar />
+      <Sidebar />
       <div className="content-wrapper">
         <div className="content">
           <div className="page-header">

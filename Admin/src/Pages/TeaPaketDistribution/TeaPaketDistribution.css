@@ -1,0 +1,116 @@
+/* Modern styling for Tea Packet Distribution page */
+.tea-packet-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the container takes full height */
+}
+
+.content-wrapper {
+    flex-grow: 1; /* Allow the content to grow and fill available space */
+    margin-top: 20px; /* Adjust this value based on Navbar height */
+    margin-left: 150px; /* Adjust this value to reduce space based on Sidebar width */
+    margin-right: 10px; /* Add margin to the right to avoid touching the edge */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+/* Additional styles for content */
+.content {
+    background-color: #ffffff; /* White background for content */
+    padding: 30px; /* Increased padding for a more spacious feel */
+    border-radius: 12px; /* Rounded corners for a modern look */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow for depth */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    gap: 20px; /* Increased space between form elements */
+}
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+    color: white; /* Text color */
+    padding: 1rem; /* Padding for header */
+    width: 100%; /* Full width */
+    text-align: center; /* Center text */
+    font-size: 1.8rem; /* Font size */
+    font-weight: 600; /* Bold text */
+    border-radius: 8px; /* Rounded corners */
+    margin-bottom: 1.5rem; /* Space below header */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+/* Search Section */
+.search-section {
+  width: 100%; /* Full width */
+  margin-bottom: 1rem; /* Space below search section */
+}
+
+/* Form Section */
+.form-section {
+  width: 100%; /* Full width */
+  margin-bottom: 1rem; /* Space below form section */
+}
+
+/* Input Fields */
+.input-field,
+.search-input,
+.total-input {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding for input fields */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 10px; /* Space below input fields */
+    font-size: 1rem; /* Font size for better readability */
+}
+
+/* Total Section */
+.total-section {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  justify-content: space-between; /* Space between label and input */
+  width: 100%; /* Full width */
+}
+
+/* Confirm Button */
+.add-button {
+    background: #28a745; /* Green background */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 12px; /* Increased padding */
+    border-radius: 6px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-weight: bold; /* Bold text */
+    width: 100%; /* Full width */
+    font-size: 1rem; /* Font size */
+    transition: background 0.3s; /* Smooth transition */
+}
+
+.add-button:hover {
+    background: #218838; /* Darker green on hover */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 1.5rem; /* Adjust padding for smaller screens */
+        margin: 1rem; /* Adjust margin for smaller screens */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 1rem; /* Further adjust padding */
+        margin: 0.5rem; /* Further adjust margin */
+    }
+
+    .page-header {
+        font-size: 1.5rem; /* Adjust font size */
+        padding: 0.5rem; /* Adjust padding */
+    }
+
+    .input-field,
+    .search-input,
+    .total-input {
+        padding: 8px; /* Adjust padding for smaller screens */
+        font-size: 0.9rem; /* Adjust font size */
+    }
+}
