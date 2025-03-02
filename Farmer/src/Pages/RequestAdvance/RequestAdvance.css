@@ -1,20 +1,39 @@
 .request-advance-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 8px;
-  background: #f8f9fa;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa; /* Light gray background for a modern look */
+  padding: 2rem; /* Increased padding for spacious feel */
+  border-radius: 12px; /* Rounded corners */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1250px; /* Adjusted maximum width for better alignment with sidebar */
+  margin: 2rem 0 2rem 250px; /* Adjusted margin to leave space for the sidebar */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
+  border: 1px solid #dee2e6; /* Light border for definition */
+}
+
+.page-header {
+  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+  color: white; /* Text color */
+  padding: 1rem; /* Padding for header */
+  width: 100%; /* Full width */
+  text-align: center; /* Center text */
+  font-size: 1.5rem; /* Font size */
+  font-weight: 600; /* Bold text */
+  border-radius: 8px; /* Rounded corners */
+  margin-bottom: 1.5rem; /* Space below header */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
 h2 {
   text-align: center;
-  color: #333;
+  color: #495057; /* Darker text color for better contrast */
+  margin-bottom: 1rem; /* Added margin for spacing */
 }
 
 form {
   display: flex;
   flex-direction: column;
+  width: 100%; /* Ensure form takes full width of the container */
 }
 
 label {
@@ -27,6 +46,7 @@ input {
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  width: 100%; /* Ensure input fields take full width */
 }
 
 button {
@@ -42,6 +62,7 @@ button {
 
 .message {
   text-align: center;
-  color: green;
+  color: #28a745; /* Green color for success message */
   font-weight: bold;
+  margin-top: 1rem; /* Added margin for spacing */
 }

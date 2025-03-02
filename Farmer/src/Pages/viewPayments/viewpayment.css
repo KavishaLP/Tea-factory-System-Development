@@ -1,26 +1,29 @@
 /* General container styling */
 .view-payments-container {
+  background-color: #f8f9fa; /* Light gray background for a modern look */
+  padding: 2rem; /* Increased padding for spacious feel */
+  border-radius: 12px; /* Rounded corners */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  max-width: 1250px; /* Adjusted maximum width for better alignment with sidebar */
+  margin: 2rem 0 2rem 250px; /* Adjusted margin to leave space for the sidebar */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
+  border: 1px solid #dee2e6; /* Light border for definition */
 }
 
 /* Page header */
 .page-header {
-  background-color: #2e7d32; /* Green theme */
-  color: white;
-  padding: 15px 30px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.page-header h1 {
-  margin: 0;
-  font-size: 24px;
+  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+  color: white; /* Text color */
+  padding: 1rem; /* Padding for header */
+  width: 100%; /* Full width */
+  text-align: center; /* Center text */
+  font-size: 1.5rem; /* Font size */
+  font-weight: 600; /* Bold text */
+  border-radius: 8px; /* Rounded corners */
+  margin-bottom: 1.5rem; /* Space below header */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
 /* Content box */
@@ -36,26 +39,25 @@
 
 /* Table styling */
 .payments-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  background-color: white;
+  width: 100%; /* Full width */
+  border-collapse: collapse; /* Collapse borders */
+  background-color: white; /* White background for the table */
 }
 
-.payments-table thead {
-  background-color: #4caf50;
-  color: white;
-}
-
-.payments-table th, 
+.payments-table th,
 .payments-table td {
   padding: 12px;
   text-align: center;
-  border: 1px solid #ddd;
+  border: 1px solid #ddd; /* Light border */
+}
+
+.payments-table thead {
+  background-color: #4caf50; /* Header background color */
+  color: white; /* Header text color */
 }
 
 .payments-table tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: #f0f4f8; /* Light hover effect */
 }
 
 /* Confirm button */
@@ -72,4 +74,11 @@
 
 .confirm-button:hover {
   background-color: #e68900;
+}
+
+.message {
+  text-align: center;
+  color: #28a745; /* Green color for success message */
+  font-weight: bold;
+  margin-top: 1rem; /* Added margin for spacing */
 }

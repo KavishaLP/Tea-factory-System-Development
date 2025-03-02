@@ -19,7 +19,9 @@ const RequestAdvance = () => {
 
   return (
     <div className="request-advance-container">
-      <h2>Request Advance</h2>
+      <div className="page-header">     
+        <h2>Request Advance</h2>
+      </div>
       <form onSubmit={handleSubmit}>
         <label>Farmer ID:</label>
         <input
