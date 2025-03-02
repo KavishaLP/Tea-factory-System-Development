@@ -98,31 +98,29 @@ const CreateFarmerAccount = () => {
             />
           </div>
 
-          {/* First Name and Last Name in one column */}
-          <div className="input-group name-group">
-            <div className="name-row">
-              <div className="name-field">
-                <label>First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter first name"
-                />
-              </div>
-              <div className="name-field">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter last name"
-                />
-              </div>
+          {/* First Name and Last Name in one row with equal sizes */}
+          <div className="input-group two-column">
+            <div className="input-field">
+              <label>First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                placeholder="Enter first name"
+              />
+            </div>
+            <div className="input-field">
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                placeholder="Enter last name"
+              />
             </div>
           </div>
 
