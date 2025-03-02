@@ -25,7 +25,7 @@ const UpdateNewPassword = () => {
 
         try {
             // Send email, password, and confirm password to the backend
-            const response = await fetch('http://localhost:8081/auth/update-password', {
+            const response = await fetch('http://localhost:8081/api/auth/mng-update-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

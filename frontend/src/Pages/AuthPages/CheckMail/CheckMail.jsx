@@ -34,7 +34,7 @@ const CheckMail = () => {
         setMessage('');
         console.log(email)
         try {
-            const response = await fetch('http://localhost:8081/auth/send-again', {
+            const response = await fetch('http://localhost:8081/api/auth/mng-send-again', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const CheckMail = () => {
         setMessage('');
         try {
             // Assuming the email is stored in state or props (e.g., email state)
-            const response = await fetch('http://localhost:8081/auth/check-code', {
+            const response = await fetch('http://localhost:8081/auth/mng-check-code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

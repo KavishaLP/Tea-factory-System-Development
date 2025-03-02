@@ -12,7 +12,7 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8081/auth/login', values, {
+      const response = await axios.post('http://localhost:8081/api/auth/mng-login', values, {
         withCredentials: true,
       });
       console.log(response);

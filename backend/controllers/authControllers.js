@@ -9,7 +9,7 @@ dotenv.config();
 const SECRET_KEY = process.env.JWT_SECRET;
 const generateResetCode = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-export const login = (req, res) => {
+export const mngLogin = (req, res) => {
     const { usernamemail, password } = req.body;
     console.log(req.body)
 
@@ -73,7 +73,7 @@ export const login = (req, res) => {
 };
 
 
-export const forgotPassword = (req, res) => {
+export const mngForgotPassword = (req, res) => {
     const { email } = req.body;
 
     if (!email) {
@@ -121,7 +121,7 @@ export const forgotPassword = (req, res) => {
 };
 
 
-export const sendAgain = (req, res) => {
+export const mngSendAgain = (req, res) => {
     const { email } = req.body;
     console.log(req)
 
@@ -178,7 +178,7 @@ export const sendAgain = (req, res) => {
 };
 
 
-export const checkCode = (req, res) => {
+export const mngCheckCode = (req, res) => {
     const { email, resetCode } = req.body;
 
     console.log('Request Body:', req.body); // Add this line to inspect the incoming data
@@ -211,7 +211,7 @@ export const checkCode = (req, res) => {
 };
 
 
-export const updatePassword = (req, res) => {
+export const mngUpdatePassword = (req, res) => {
     const { email, password, compassword } = req.body;
 
     // Check if all required fields are provided
