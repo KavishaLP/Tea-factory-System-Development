@@ -3,6 +3,8 @@
 /* eslint-disable no-unused-vars */
 
 import React, { useState } from "react";
+import axios from 'axios';
+
 import "./CFA.css";
 
 const CreateFarmerAccount = () => {
@@ -34,41 +36,49 @@ const CreateFarmerAccount = () => {
     }
   };
 
+
+  // Inside your handleSubmit function:
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     if (formData.password !== formData.reenterPassword) {
       setError("Passwords do not match");
       return;
     }
-
+  
     if (!formData.userId || !formData.firstName || !formData.lastName || !formData.password) {
       setError("Please fill in all required fields");
       return;
     }
-
+  
     setError("");
     setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Farmer Details Submitted:", formData);
-      setIsLoading(false);
-      alert("Account created successfully!");
-      setFormData({
-        userId: "",
-        userName: "",
-        firstName: "",
-        lastName: "",
-        address: "",
-        mobile1: "",
-        mobile2: "",
-        gmail: "",
-        password: "",
-        reenterPassword: "",
-      });
-    }, 2000);
+  
+    // Send data to backend API
+    axios
+      .post('http://localhost:5000/api/manager/add-farmer', formData)
+      .then((response) => {
+        console.log('Farmer account created:', response.data);
+        alert("Account created successfully!");
+        setFormData({
+          userId: "",
+          userName: "",
+          firstName: "",
+          lastName: "",
+          address: "",
+          mobile1: "",
+          mobile2: "",
+          gmail: "",
+          password: "",
+        });
+      })
+      .catch((error) => {
+        console.error('Error creating farmer account:', error);
+        setError(error.response?.data?.message || 'An error occurred');
+      })
+      .finally(() => setIsLoading(false));
   };
+  
 
   return (
     <div className="cfa-content">
