@@ -14,7 +14,7 @@ const ForgetPassword = () => {
         setMessage('');
     
         try {
-            const response = await fetch('http://localhost:8081/api/auth/mng-forgot-password', {
+            const response = await fetch('http://localhost:8081/api/auth/fmr-forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
