@@ -1,0 +1,183 @@
+/* Full-window layout */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Upper white bar */
+.upper-bar {
+    width: 100%;
+    height: 60px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.upper-bar h1 {
+    color: #2a6b4e; /* Dark green for contrast */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Main container with tea-themed gradient */
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100vh - 60px); /* Subtract upper bar height */
+    background: linear-gradient(135deg, #d4e8d9, #a8d5b5); /* Light green gradient */
+}
+
+/* Form container styling */
+.form-container {
+    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white background */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Login heading */
+.form-container h2 {
+    color: #2a6b4e; /* Dark green for tea theme */
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Forgot Password Link */
+.forgot-password {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.forgot-password a {
+    color: #2a6b4e; /* Dark green to match the theme */
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+    color: #1e4f3a; /* Darker green on hover */
+    text-decoration: underline;
+}
+
+/* Input fields */
+input {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+    border-color: #2a6b4e; /* Dark green for focus */
+    box-shadow: 0 0 8px rgba(42, 107, 78, 0.3);
+    outline: none;
+}
+
+/* Placeholder text color */
+input::placeholder {
+    color: #aaa;
+}
+
+/* Submit button */
+.form-container button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    background-color: #2a6b4e; /* Dark green for tea theme */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Button hover effect */
+.form-container button:hover {
+    background-color: #1e4f3a; /* Darker green on hover */
+    transform: translateY(-2px);
+}
+
+.form-container button:active {
+    transform: translateY(0);
+}
+
+/* Register navigation */
+.navigate-register {
+    margin-top: 25px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Link styling for 'Register' */
+.navigate-register a {
+    color: #2a6b4e; /* Dark green for tea theme */
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+/* Link hover effect */
+.navigate-register a:hover {
+    color: #1e4f3a; /* Darker green on hover */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 30px;
+        max-width: 90%;
+    }
+
+    .form-container h2 {
+        font-size: 1.8rem;
+    }
+
+    input, button {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 25px;
+    }
+
+    .form-container h2 {
+        font-size: 1.5rem;
+    }
+
+    input, button {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}

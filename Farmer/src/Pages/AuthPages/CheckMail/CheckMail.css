@@ -1,0 +1,229 @@
+.check-mail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100vh - 60px);
+    background: linear-gradient(135deg, #d4e8d9, #a8d5b5);
+}
+
+.mail-content {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.email-icon {
+    font-size: 80px;
+    color: #2a6b4e;
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.1);
+    }
+    80% {
+        opacity: 1;
+        transform: scale(0.89);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.mail-content h2 {
+    color: #2a6b4e;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.mail-instruction {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.resend-button {
+    background-color: #2a6b4e;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.resend-button:hover:not(:disabled) {
+    background-color: #1e4f3a;
+    transform: translateY(-2px);
+}
+
+.resend-button:disabled {
+    background-color: #88ab9b;
+    cursor: not-allowed;
+}
+
+.back-button {
+    background-color: transparent;
+    color: #2a6b4e;
+    border: 2px solid #2a6b4e;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: rgba(42, 107, 78, 0.1);
+    color: #1e4f3a;
+    border-color: #1e4f3a;
+}
+
+.message {
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.verification-code-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px 0;
+}
+
+.code-input {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #2a6b4e;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2a6b4e;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: #1e4f3a;
+    box-shadow: 0 0 5px rgba(42, 107, 78, 0.3);
+}
+
+.verify-button {
+    background-color: #2a6b4e;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.verify-button:hover {
+    background-color: #1e4f3a;
+    transform: translateY(-2px);
+}
+
+.resend-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.timer {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .mail-content {
+        padding: 30px;
+        max-width: 90%;
+    }
+
+    .mail-content h2 {
+        font-size: 1.6rem;
+    }
+
+    .mail-instruction {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .mail-content {
+        padding: 25px;
+    }
+
+    .mail-content h2 {
+        font-size: 1.4rem;
+    }
+
+    .mail-instruction {
+        font-size: 0.9rem;
+    }
+
+    .action-buttons button {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .code-input {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .verification-code-container {
+        gap: 8px;
+    }
+} 
