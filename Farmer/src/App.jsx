@@ -21,10 +21,16 @@ function App() {
   const location = useLocation();
 
   // Sidebar visibility logic
-  const shouldDisplaySidebar = () => true; // Always display sidebar
+  const shouldDisplaySidebar = () => {
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success', '/update-new-password'];
+    return !hiddenPaths.includes(location.pathname);
+  };
 
   // Navbar visibility logic
-  const shouldDisplayNavbar = () => true; // Always display navbar
+  const shouldDisplayNavbar = () => {
+    const hiddenPaths = ['/', '/forgot-password', '/check-mail', '/password-success', '/update-new-password'];
+    return !hiddenPaths.includes(location.pathname);
+  };
 
   return (
     <div className="container">
