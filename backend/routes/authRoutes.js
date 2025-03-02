@@ -1,8 +1,10 @@
 // routes/authRoutes.js
 
 import express from 'express';
-import { logout } from '../controllers/authControllers.js';
-import { mngLogin, mngForgotPassword, mngCheckCode, mngSendAgain, mngUpdatePassword } from '../controllers/authControllers.js';
+import { logout } from '../controllers/managerAuthControllers.js';
+import { mngLogin, mngForgotPassword, mngCheckCode, mngSendAgain, mngUpdatePassword } from '../controllers/managerAuthControllers.js';
+
+
 const router = express.Router();
 
 router.post('/mng-login', mngLogin);
