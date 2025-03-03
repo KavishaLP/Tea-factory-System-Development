@@ -153,17 +153,17 @@ function AddPayment() {
                 placeholder="Enter direct payments"
               />
             </div>
-
             <div className="input-group">
-              <label>Final Payment</label>
+              <label>Final Amount</label>
               <input
                 type="text"
-                name="finalPayment"
-                value={formData.finalPayment}
+                name="finalAmount"
+                value={formData.finalAmount}
                 onChange={handleChange}
-                placeholder="Enter final payment"
+                placeholder="Enter final amount"
               />
             </div>
+           
 
             <div className="input-group">
               <label>Deductions</label>
@@ -198,17 +198,18 @@ function AddPayment() {
                 />
               </div>
             </div>
-
             <div className="input-group">
-              <label>Final Amount</label>
+              <label>Final Payment</label>
               <input
                 type="text"
-                name="finalAmount"
-                value={formData.finalAmount}
+                name="finalPayment"
+                value={formData.finalPayment}
                 onChange={handleChange}
-                placeholder="Enter final amount"
+                placeholder="Enter final payment"
               />
             </div>
+
+           
 
             {error && <p className="error">{error}</p>}
 
