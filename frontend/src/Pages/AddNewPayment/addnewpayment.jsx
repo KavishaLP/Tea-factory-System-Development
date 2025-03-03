@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./addnewpayment.css";
 
 function AddPayment() {
@@ -24,11 +24,29 @@ function AddPayment() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Handle changes in form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const updatedFormData = { ...formData, [name]: value };
+    setFormData(updatedFormData);
   };
 
+  // Calculate 'Payment For Final Tea Kilos' when Enter is pressed in the input field
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      const { paymentPerKilo, finalTeaKilos } = formData;
+      if (paymentPerKilo && finalTeaKilos) {
+        const paymentForFinalTeaKilos =
+          parseFloat(paymentPerKilo) * parseFloat(finalTeaKilos);
+        setFormData((prevData) => ({
+          ...prevData,
+          paymentForFinalTeaKilos: paymentForFinalTeaKilos,
+        }));
+      }
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -128,7 +146,9 @@ function AddPayment() {
                 name="paymentForFinalTeaKilos"
                 value={formData.paymentForFinalTeaKilos}
                 onChange={handleChange}
-                placeholder="Enter payment for final tea kilos"
+                onKeyDown={handleKeyPress} // Trigger calculation on Enter press
+                placeholder="Payment for final tea kilos"
+                readOnly
               />
             </div>
 
@@ -153,6 +173,7 @@ function AddPayment() {
                 placeholder="Enter direct payments"
               />
             </div>
+
             <div className="input-group">
               <label>Final Amount</label>
               <input
@@ -163,7 +184,6 @@ function AddPayment() {
                 placeholder="Enter final amount"
               />
             </div>
-           
 
             <div className="input-group">
               <label>Deductions</label>
@@ -198,6 +218,7 @@ function AddPayment() {
                 />
               </div>
             </div>
+
             <div className="input-group">
               <label>Final Payment</label>
               <input
@@ -208,8 +229,6 @@ function AddPayment() {
                 placeholder="Enter final payment"
               />
             </div>
-
-           
 
             {error && <p className="error">{error}</p>}
 
