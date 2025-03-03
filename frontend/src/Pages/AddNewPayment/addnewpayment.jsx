@@ -29,6 +29,15 @@ function AddPayment() {
     const { name, value } = e.target;
     const updatedFormData = { ...formData, [name]: value };
     setFormData(updatedFormData);
+
+    // Automatically calculate final amount when additional or direct payments change
+    if (
+      name === "additionalPayments" ||
+      name === "directPayments" ||
+      name === "paymentForFinalTeaKilos"
+    ) {
+      calculateFinalAmount(updatedFormData);
+    }
   };
 
   // Calculate 'Payment For Final Tea Kilos' when Enter is pressed in the input field
@@ -44,6 +53,25 @@ function AddPayment() {
         }));
       }
     }
+  };
+
+  // Calculate 'Final Amount' based on input fields
+  const calculateFinalAmount = (updatedFormData) => {
+    const {
+      paymentForFinalTeaKilos,
+      additionalPayments,
+      directPayments,
+    } = updatedFormData;
+
+    const totalAmount =
+      (parseFloat(paymentForFinalTeaKilos) || 0) +
+      (parseFloat(additionalPayments) || 0) +
+      (parseFloat(directPayments) || 0);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      finalAmount: totalAmount.toFixed(2), // Fixed two decimal places
+    }));
   };
 
   // Handle form submission
@@ -181,7 +209,8 @@ function AddPayment() {
                 name="finalAmount"
                 value={formData.finalAmount}
                 onChange={handleChange}
-                placeholder="Enter final amount"
+                placeholder="Final amount"
+                readOnly
               />
             </div>
 
