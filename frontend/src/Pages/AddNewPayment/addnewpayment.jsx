@@ -28,16 +28,38 @@ function AddPayment() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedFormData = { ...formData, [name]: value };
-    setFormData(updatedFormData);
 
-    // Automatically calculate final amount when additional or direct payments change
+    // Calculate the final payment whenever a relevant field changes
     if (
-      name === "additionalPayments" ||
-      name === "directPayments" ||
-      name === "paymentForFinalTeaKilos"
+      name === "finalAmount" ||
+      name === "advances" ||
+      name === "teaPackets" ||
+      name === "fertilizer" ||
+      name === "transport"
     ) {
-      calculateFinalAmount(updatedFormData);
+      const {
+        finalAmount,
+        advances,
+        teaPackets,
+        fertilizer,
+        transport,
+      } = updatedFormData;
+
+      // Calculate total deductions
+      const totalDeductions =
+        parseFloat(advances || 0) +
+        parseFloat(teaPackets || 0) +
+        parseFloat(fertilizer || 0) +
+        parseFloat(transport || 0);
+
+      // Calculate the final payment
+      const finalPayment = parseFloat(finalAmount || 0) - totalDeductions;
+
+      // Update the form data with the calculated final payment
+      updatedFormData.finalPayment = finalPayment.toFixed(2);
     }
+
+    setFormData(updatedFormData);
   };
 
   // Calculate 'Payment For Final Tea Kilos' when Enter is pressed in the input field
@@ -53,25 +75,6 @@ function AddPayment() {
         }));
       }
     }
-  };
-
-  // Calculate 'Final Amount' based on input fields
-  const calculateFinalAmount = (updatedFormData) => {
-    const {
-      paymentForFinalTeaKilos,
-      additionalPayments,
-      directPayments,
-    } = updatedFormData;
-
-    const totalAmount =
-      (parseFloat(paymentForFinalTeaKilos) || 0) +
-      (parseFloat(additionalPayments) || 0) +
-      (parseFloat(directPayments) || 0);
-
-    setFormData((prevData) => ({
-      ...prevData,
-      finalAmount: totalAmount.toFixed(2), // Fixed two decimal places
-    }));
   };
 
   // Handle form submission
@@ -209,8 +212,7 @@ function AddPayment() {
                 name="finalAmount"
                 value={formData.finalAmount}
                 onChange={handleChange}
-                placeholder="Final amount"
-                readOnly
+                placeholder="Enter final amount"
               />
             </div>
 
@@ -255,7 +257,8 @@ function AddPayment() {
                 name="finalPayment"
                 value={formData.finalPayment}
                 onChange={handleChange}
-                placeholder="Enter final payment"
+                placeholder="Calculated final payment"
+                readOnly
               />
             </div>
 
