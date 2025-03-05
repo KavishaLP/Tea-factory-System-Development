@@ -248,6 +248,6 @@ export const addEmployeePayment = (req, res) => {
         console.log("Employee payment added successfully:", results);
 
         // Send success response
-        return res.status(200).json({ Status: "Success", message: "Employee payment added successfully!" });
+        return res.status(200).json({ status: "Success", message: "Employee payment added successfully!" });
     });
 };

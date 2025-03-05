@@ -1,5 +1,5 @@
 import express from 'express';
-import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee } from '../controllers/managerControllers.js';
+import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment } from '../controllers/managerControllers.js';
 
 const router = express.Router();
 
