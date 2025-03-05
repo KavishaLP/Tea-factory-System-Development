@@ -7,109 +7,153 @@ import "./addnewpayment.css";
 
 function AddPayment() {
   const [activeTab, setActiveTab] = useState("addPayment");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
-    userId: "",
-    finalTeaKilos: "",
+    userId:"",
     paymentPerKilo: "",
+    finalTeaKilos: "",
     paymentForFinalTeaKilos: "",
     additionalPayments: "",
+    transport: "",
     directPayments: "",
-    finalPayment: "",
+    finalAmount: "",
     advances: "",
     teaPackets: "",
     fertilizer: "",
-    transport: "",
-    finalAmount: "",
+    finalPayment: "",
   });
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
+
+{/*-------------------------------------------------------------------------------------------*/}
+  // Automatically calculate the payment when paymentPerKilo or finalTeaKilos change
+  useEffect(() => {
+    const { paymentPerKilo, finalTeaKilos } = formData;
+
+    // Only calculate if both values are not empty
+    if (paymentPerKilo && finalTeaKilos) {
+      const paymentForFinalTeaKilos =
+        parseFloat(paymentPerKilo) * parseFloat(finalTeaKilos);
+      setFormData((prevData) => ({
+        ...prevData,
+        paymentForFinalTeaKilos: paymentForFinalTeaKilos,
+      }));
+    }
+  }, [formData.paymentPerKilo, formData.finalTeaKilos]);
+
+  // Automatically calculate finalAmount when relevant fields change
+  useEffect(() => {
+    const { paymentForFinalTeaKilos, additionalPayments, transport, directPayments } = formData;
+
+    // Only calculate if paymentForFinalTeaKilos and all other fields are available
+    if (paymentForFinalTeaKilos || additionalPayments || transport || directPayments) {
+      const finalAmount =
+        (parseFloat(paymentForFinalTeaKilos) || 0) +
+        (parseFloat(additionalPayments) || 0) +
+        (parseFloat(transport) || 0) +
+        (parseFloat(directPayments) || 0);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        finalAmount: finalAmount.toFixed(2), // Round to two decimal places
+      }));
+    }
+  }, [formData.paymentForFinalTeaKilos, formData.additionalPayments, formData.transport, formData.directPayments]);
+
+  // Automatically calculate finalPayment after deductions
+  useEffect(() => {
+    const { finalAmount, advances, teaPackets, fertilizer } = formData;
+
+    // Calculate deductions
+    const totalDeductions =
+      (parseFloat(advances) || 0) +
+      (parseFloat(teaPackets) || 0) +
+      (parseFloat(fertilizer) || 0);
+
+    // Deduct from finalAmount
+    const finalPayment = (parseFloat(finalAmount) || 0) - totalDeductions;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      finalPayment: finalPayment.toFixed(2), // Round to two decimal places
+    }));
+  }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);  
+
+{/*-------------------------------------------------------------------------------------------*/}
   // Handle changes in form fields
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const updatedFormData = { ...formData, [name]: value };
+// Handle changes in form fields
+const handleChange = (e) => {
+  const { name, value } = e.target;
 
-    // Calculate the final payment whenever a relevant field changes
-    if (
-      name === "finalAmount" ||
-      name === "advances" ||
-      name === "teaPackets" ||
-      name === "fertilizer" ||
-      name === "transport"
-    ) {
-      const {
-        finalAmount,
-        advances,
-        teaPackets,
-        fertilizer,
-        transport,
-      } = updatedFormData;
+  // Validate input only if it's a numeric field
+  const positiveNumberPattern = /^\d+(\.\d+)?$/;
+  if (
+    name !== "userId" &&
+    (value !== "" && !positiveNumberPattern.test(value))
+  ) {
+    setError("Please enter a valid positive number");
+  } else {
+    setError(""); // Clear error if input is valid
+  }
 
-      // Calculate total deductions
-      const totalDeductions =
-        parseFloat(advances || 0) +
-        parseFloat(teaPackets || 0) +
-        parseFloat(fertilizer || 0) +
-        parseFloat(transport || 0);
+  setFormData((prevData) => ({
+    ...prevData,
+    [name]: value,
+  }));
+};
 
-      // Calculate the final payment
-      const finalPayment = parseFloat(finalAmount || 0) - totalDeductions;
 
-      // Update the form data with the calculated final payment
-      updatedFormData.finalPayment = finalPayment.toFixed(2);
-    }
-
-    setFormData(updatedFormData);
-  };
-
-  // Calculate 'Payment For Final Tea Kilos' when Enter is pressed in the input field
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      const { paymentPerKilo, finalTeaKilos } = formData;
-      if (paymentPerKilo && finalTeaKilos) {
-        const paymentForFinalTeaKilos =
-          parseFloat(paymentPerKilo) * parseFloat(finalTeaKilos);
-        setFormData((prevData) => ({
-          ...prevData,
-          paymentForFinalTeaKilos: paymentForFinalTeaKilos,
-        }));
-      }
-    }
-  };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
+// Handle form submission
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    if (!formData.userId || !formData.finalTeaKilos || !formData.paymentPerKilo) {
-      setError("Please fill in all required fields");
-      return;
-    }
+  // Validation for positive numbers
+  const positiveNumberPattern = /^\d+(\.\d+)?$/;
 
-    setError("");
-    setIsLoading(true);
+  // Check if all required fields are filled with positive numbers
+  if (
+    !positiveNumberPattern.test(formData.finalTeaKilos) ||
+    !positiveNumberPattern.test(formData.paymentPerKilo) ||
+    !positiveNumberPattern.test(formData.additionalPayments) ||
+    !positiveNumberPattern.test(formData.transport) ||
+    !positiveNumberPattern.test(formData.directPayments) ||
+    !positiveNumberPattern.test(formData.advances) ||
+    !positiveNumberPattern.test(formData.teaPackets) ||
+    !positiveNumberPattern.test(formData.fertilizer)
+  ) {
+    setError("Please enter valid positive numbers for all payment fields.");
+    return;
+  }
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Payment Details Submitted:", formData);
-      setIsLoading(false);
-      alert("Payment added successfully!");
-      setFormData({
-        userId: "",
-        finalTeaKilos: "",
-        paymentPerKilo: "",
-        paymentForFinalTeaKilos: "",
-        additionalPayments: "",
-        directPayments: "",
-        finalPayment: "",
-        advances: "",
-        teaPackets: "",
-        fertilizer: "",
-        transport: "",
-        finalAmount: "",
-      });
-    }, 2000);
-  };
+  // Continue if validation passes
+  setError("");
+  setIsLoading(true);
+
+  // Simulate API call
+  setTimeout(() => {
+    console.log("Payment Details Submitted:", formData);
+    setIsLoading(false);
+    alert("Payment added successfully!");
+    setFormData({
+      userId: "",
+      finalTeaKilos: "",
+      paymentPerKilo: "",
+      paymentForFinalTeaKilos: "",
+      additionalPayments: "",
+      directPayments: "",
+      finalPayment: "",
+      advances: "",
+      teaPackets: "",
+      fertilizer: "",
+      transport: "",
+      finalAmount: "",
+    });
+  }, 2000);
+};
+
 
   return (
     <div className="cfa-content">
@@ -146,6 +190,7 @@ function AddPayment() {
               />
             </div>
 
+{/*-------------------------------------------------------------------------------------------*/}
             <div className="input-group">
               <label>Final Tea Kilos</label>
               <input
@@ -177,21 +222,30 @@ function AddPayment() {
                 name="paymentForFinalTeaKilos"
                 value={formData.paymentForFinalTeaKilos}
                 onChange={handleChange}
-                onKeyDown={handleKeyPress} // Trigger calculation on Enter press
                 placeholder="Payment for final tea kilos"
                 readOnly
               />
             </div>
 
+{/*----------------------------------------------------*/}
             <div className="input-group">
               <label>Additional Payments</label>
-              <input
-                type="text"
-                name="additionalPayments"
-                value={formData.additionalPayments}
-                onChange={handleChange}
-                placeholder="Enter additional payments"
-              />
+              <div className="deduction-fields">
+                <input
+                  type="text"
+                  name="additionalPayments"
+                  value={formData.additionalPayments}
+                  onChange={handleChange}
+                  placeholder="Additional"
+                />
+                <input
+                  type="text"
+                  name="transport"
+                  value={formData.transport}
+                  onChange={handleChange}
+                  placeholder="Transport"
+                />
+              </div>
             </div>
 
             <div className="input-group">
@@ -213,8 +267,11 @@ function AddPayment() {
                 value={formData.finalAmount}
                 onChange={handleChange}
                 placeholder="Enter final amount"
+                readOnly
               />
             </div>
+
+{/*----------------------------------------------------*/}
 
             <div className="input-group">
               <label>Deductions</label>
@@ -240,13 +297,6 @@ function AddPayment() {
                   onChange={handleChange}
                   placeholder="Fertilizer"
                 />
-                <input
-                  type="text"
-                  name="transport"
-                  value={formData.transport}
-                  onChange={handleChange}
-                  placeholder="Transport"
-                />
               </div>
             </div>
 
@@ -261,6 +311,7 @@ function AddPayment() {
                 readOnly
               />
             </div>
+{/*----------------------------------------------------*/}
 
             {error && <p className="error">{error}</p>}
 

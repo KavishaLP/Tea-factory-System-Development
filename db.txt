@@ -1,0 +1,17 @@
+CREATE TABLE farmer_payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userId INT,  -- Changed to INT to match users' id
+  paymentPerKilo DECIMAL(10, 2) NOT NULL,
+  finalTeaKilos DECIMAL(10, 2) NOT NULL,
+  paymentForFinalTeaKilos DECIMAL(10, 2) NOT NULL,
+  additionalPayments DECIMAL(10, 2) DEFAULT 0,
+  transport DECIMAL(10, 2) DEFAULT 0,
+  directPayments DECIMAL(10, 2) DEFAULT 0,
+  finalAmount DECIMAL(10, 2) NOT NULL,
+  advances DECIMAL(10, 2) DEFAULT 0,
+  teaPackets DECIMAL(10, 2) DEFAULT 0,
+  fertilizer DECIMAL(10, 2) DEFAULT 0,
+  finalPayment DECIMAL(10, 2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE
+);
