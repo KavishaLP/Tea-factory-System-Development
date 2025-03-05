@@ -4,11 +4,10 @@ import "./ProductivityReport.css";
 function ProductivityReport() {
   const [activeTab, setActiveTab] = useState("addReport");
   const [formData, setFormData] = useState({
-
-    hoursWorked: "",
-    unitsProduced: "",
-    performanceRating: "",
-    reportDate: "",
+    recievedTeaKilos: "",
+    teaPacketsManufactured: "",
+    salaryForEmployees: "",
+    FarmerPayments: "",
     finalReport: "",
   });
   const [error, setError] = useState("");
@@ -19,19 +18,20 @@ function ProductivityReport() {
     const { name, value } = e.target;
 
     // Allow empty input or valid numeric values (including decimals)
-    if (name !== "userId" && value !== "" && !/^\d*\.?\d*$/.test(value)) {
+    if (value !== "" && !/^\d*\.?\d*$/.test(value)) {
       return;
     }
 
     setFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
 
-      // Calculate final report when hours worked, units produced, or performance rating change
-      const hours = parseFloat(updatedData.hoursWorked) || 0;
-      const units = parseFloat(updatedData.unitsProduced) || 0;
-      const rating = parseFloat(updatedData.performanceRating) || 0;
+      // Calculate final report when fields change
+      const recievedTeaKilos = parseFloat(updatedData.recievedTeaKilos) || 0;
+      const teaPacketsManufactured = parseFloat(updatedData.teaPacketsManufactured) || 0;
+      const salaryForEmployees = parseFloat(updatedData.salaryForEmployees) || 0;
+      const FarmerPayments = parseFloat(updatedData.FarmerPayments) || 0;
 
-      updatedData.finalReport = `Hours Worked: ${hours}, Units Produced: ${units}, Rating: ${rating}`;
+      updatedData.finalReport = `Received Tea Kilos: ${recievedTeaKilos}, Tea Packets Manufactured: ${teaPacketsManufactured}, Salary for Employees: ${salaryForEmployees}, Farmer Payments: ${FarmerPayments}`;
       return updatedData;
     });
   };
@@ -43,8 +43,8 @@ function ProductivityReport() {
     setError("");
 
     // Perform validation
-    if (!formData.userId || !formData.hoursWorked || !formData.unitsProduced) {
-      setError("User ID, Hours Worked, and Units Produced are required");
+    if (!formData.recievedTeaKilos || !formData.teaPacketsManufactured || !formData.salaryForEmployees) {
+      setError("All fields except Farmer Payments are required");
       setIsLoading(false);
       return;
     }
@@ -54,11 +54,10 @@ function ProductivityReport() {
       alert("Productivity report submitted successfully!");
       setIsLoading(false);
       setFormData({
-        userId: "",
-        hoursWorked: "",
-        unitsProduced: "",
-        performanceRating: "",
-        reportDate: "",
+        recievedTeaKilos: "",
+        teaPacketsManufactured: "",
+        salaryForEmployees: "",
+        FarmerPayments: "",
         finalReport: "",
       });
     }, 1000);
@@ -88,49 +87,49 @@ function ProductivityReport() {
         {activeTab === "addReport" && (
           <form onSubmit={handleSubmit}>
             <div className="input-group">
-              <label>User ID</label>
+              <label>Received Tea Kilos</label>
               <input
                 type="text"
-                name="userId"
-                value={formData.userId}
+                name="recievedTeaKilos"
+                value={formData.recievedTeaKilos}
                 onChange={handleChange}
                 required
-                placeholder="Enter user ID"
+                placeholder="Enter received tea kilos"
               />
             </div>
 
             <div className="input-group">
-              <label>Hours Worked</label>
+              <label>Tea Packets Manufactured</label>
               <input
                 type="text"
-                name="hoursWorked"
-                value={formData.hoursWorked}
+                name="teaPacketsManufactured"
+                value={formData.teaPacketsManufactured}
                 onChange={handleChange}
                 required
-                placeholder="Enter hours worked"
+                placeholder="Enter tea packets manufactured"
               />
             </div>
 
             <div className="input-group">
-              <label>Units Produced</label>
+              <label>Salary for Employees</label>
               <input
                 type="text"
-                name="unitsProduced"
-                value={formData.unitsProduced}
+                name="salaryForEmployees"
+                value={formData.salaryForEmployees}
                 onChange={handleChange}
                 required
-                placeholder="Enter units produced"
+                placeholder="Enter salary for employees"
               />
             </div>
 
             <div className="input-group">
-              <label>Performance Rating (Optional)</label>
+              <label>Farmer Payments (Optional)</label>
               <input
                 type="text"
-                name="performanceRating"
-                value={formData.performanceRating}
+                name="FarmerPayments"
+                value={formData.FarmerPayments}
                 onChange={handleChange}
-                placeholder="Enter performance rating"
+                placeholder="Enter farmer payments"
               />
             </div>
 
@@ -163,15 +162,17 @@ function ProductivityReport() {
                   <th>User ID</th>
                   <th>User Name</th>
                   <th>Report Date</th>
-                  <th>Hours Worked</th>
-                  <th>Units Produced</th>
-                  <th>Rating</th>
+                  <th>Received Tea Kilos</th>
+                  <th>Tea Packets Manufactured</th>
+                  <th>Salary for Employees</th>
+                  <th>Farmer Payments</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {Array.from({ length: 5 }).map((_, index) => (
                   <tr key={index}>
+                    <td>Test</td>
                     <td>Test</td>
                     <td>Test</td>
                     <td>Test</td>
