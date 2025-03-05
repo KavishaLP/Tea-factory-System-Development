@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-vars */
 
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import "./addnewpayment.css";
 
 function AddPayment() {
@@ -103,11 +104,9 @@ const handleChange = (e) => {
   }));
 };
 
-
-
-  // Handle form submission
+{/*-------------------------------------------------------------------------------------------*/}
 // Handle form submission
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   // Validation for positive numbers
@@ -132,27 +131,56 @@ const handleSubmit = (e) => {
   setError("");
   setIsLoading(true);
 
-  // Simulate API call
-  setTimeout(() => {
-    console.log("Payment Details Submitted:", formData);
-    setIsLoading(false);
-    alert("Payment added successfully!");
-    setFormData({
-      userId: "",
-      finalTeaKilos: "",
-      paymentPerKilo: "",
-      paymentForFinalTeaKilos: "",
-      additionalPayments: "",
-      directPayments: "",
-      finalPayment: "",
-      advances: "",
-      teaPackets: "",
-      fertilizer: "",
-      transport: "",
-      finalAmount: "",
-    });
-  }, 2000);
+  try {
+    // Sending data to the backend (similar to the login request)
+    const response = await axios.post(
+      'http://localhost:8081/api/payments/addPayment', // Your backend API endpoint
+      formData,
+      { withCredentials: true }
+    );
+
+    if (response.data && response.data.Status === "Success") {
+      console.log("Payment Details Submitted Successfully:", response.data);
+      alert("Payment added successfully!");
+
+      // Optionally reset form after submission
+      setFormData({
+        userId: "",
+        finalTeaKilos: "",
+        paymentPerKilo: "",
+        paymentForFinalTeaKilos: "",
+        additionalPayments: "",
+        directPayments: "",
+        finalPayment: "",
+        advances: "",
+        teaPackets: "",
+        fertilizer: "",
+        transport: "",
+        finalAmount: "",
+      });
+    } else {
+      setError(response.data.Error || 'Failed to add payment. Please try again.');
+    }
+  } catch (error) {
+    if (error.response) {
+      console.error('Server Error:', error.response.data);
+      setError(error.response.data.message || 'Server error. Please try again.');
+    } else if (error.inner) {
+      // Handling validation errors
+      const validationErrors = {};
+      error.inner.forEach(err => {
+        validationErrors[err.path] = err.message;
+      });
+      setError(Object.values(validationErrors).join(', ')); // Show validation errors
+    } else {
+      console.error('Payment submission error:', error);
+      setError('An error occurred. Please try again.');
+    }
+  } finally {
+    setIsLoading(false); // Ensure loading state is cleared
+  }
 };
+
 
 
   return (
