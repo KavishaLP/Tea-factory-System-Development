@@ -40,6 +40,7 @@ const Sidebar = () => {
                 onClick={() => navigate('/Mng-Fertilizer-dis')}>
                 <img src={assets.i} alt="Logo"/> <p>Fertilizer Distribution</p>
             </div>
+           
             <div className="sidebar-item" onClick={() => navigate('/')}>
                 <img src={assets.j} alt="Logo"/> <p>Logout</p>
             </div>

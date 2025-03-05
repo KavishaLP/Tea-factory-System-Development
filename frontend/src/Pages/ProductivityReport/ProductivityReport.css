@@ -1,0 +1,180 @@
+/* Reuse the same styles as CFA.css */
+.cfa-content {
+    flex: 1;
+    padding: 2rem;
+    margin-left: 280px;
+    margin-top: 70px;
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    min-height: calc(100vh - 70px);
+  }
+  
+  .cfa-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cfa-content h2 {
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+  
+  /* Tabs Container */
+  .tabs-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tab-button {
+    background: #e0f7e0;
+    color: #2c3e50;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px 8px 0 0;
+    margin: 0 0.25rem;
+  }
+  
+  .tab-button.active {
+    background: white;
+    color: #00a000;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tab-button:hover {
+    background: #d0f0d0;
+  }
+  
+  /* Input Styles */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .input-group label {
+    font-size: 0.95rem;
+    color: #2c3e50;
+    font-weight: 500;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+  }
+  
+  .input-group input:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+    outline: none;
+    background-color: white;
+  }
+  
+  .input-group input::placeholder {
+    color: #94a3b8;
+  }
+  
+  /* Error Message */
+  .error {
+    color: #ef4444;
+    text-align: center;
+    margin: 1rem 0;
+    grid-column: 1 / -1;
+    font-size: 0.9rem;
+    background-color: #fee2e2;
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+  
+  /* Submit Button */
+  button {
+    grid-column: 1 / -1;
+    padding: 1rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  button:hover:not(:disabled) {
+    background-color: #45a049;
+  }
+  
+  button:disabled {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+  }
+  
+  button.loading::after {
+    content: "Submitting...";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  /* Reports History */
+  .reports-history {
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 12px;
+  }
+  
+  .reports-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .reports-table th, .reports-table td {
+    padding: 0.75rem;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .reports-table th {
+    background-color: #f4f7fa;
+    font-weight: bold;
+  }
+  
+  .reports-table td {
+    font-size: 0.9rem;
+    color: #2c3e50;
+  }
+  
+  .confirm-button {
+    background-color: #ff8c00;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .confirm-button:hover {
+    background-color: #e07b00;
+  }
+  
