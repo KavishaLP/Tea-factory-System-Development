@@ -94,7 +94,7 @@ function AddPayment() {
           // Start loading
           setHistoryLoading(true);
           
-          const response = await axios.post('http://localhost:8081/api/manager/get-Payment-History', {}, { withCredentials: true });
+          const response = await axios.post('http://localhost:8081/api/manager/get-Farmer-Payment-History', {}, { withCredentials: true });
           console.log(response.data)
           if (response.data.Status === 'Success') {
             setPaymentHistory(response.data.paymentHistory);

@@ -52,7 +52,7 @@ function Employeepayment() {
   
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/manager/add-Payment", // Adjust API endpoint as needed
+        "http://localhost:8081/api/manager/add-Employee-Payment", // Adjust API endpoint as needed
         formData,
         { withCredentials: true }
       );

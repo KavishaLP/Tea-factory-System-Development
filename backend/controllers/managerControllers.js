@@ -48,7 +48,7 @@ export const addFarmer = async (req, res) => {
 };
 
 // Add payment function
-export const addPayment = (req, res) => {
+export const addFarmerPayment = (req, res) => {
     const {
         userId,
         paymentPerKilo,
@@ -127,7 +127,7 @@ export const addPayment = (req, res) => {
 };
 
 // Get payment history function
-export const getPaymentHistory = (req, res) => {
+export const getFarmerPaymentHistory = (req, res) => {
     // SQL Query to fetch payment history from the farmer_payments table
     const sql = `
         SELECT 
@@ -199,5 +199,55 @@ export const addEmployee = async (req, res) => {
             }
             return res.status(200).json({ message: 'Employee added successfully', employeeId: result.insertId });
         });
+    });
+};
+
+export const addEmployeePayment = (req, res) => {
+    const {
+        userId,
+        salaryAmount,
+        additionalPayments,
+        deductions,
+        finalPayment
+    } = req.body;
+
+    console.log("Received formData:", req.body);
+
+    // Validate required fields
+    if (!userId || !salaryAmount || !finalPayment) {
+        return res.status(400).json({ message: 'User ID, Salary Amount, and Final Payment are required.' });
+    }
+
+    // SQL Query to insert payment data into the employee_payments table
+    const sql = `
+        INSERT INTO employee_payments (
+            userId, 
+            salaryAmount, 
+            additionalPayments, 
+            deductions, 
+            finalPayment
+        ) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+        userId,
+        salaryAmount,
+        additionalPayments || 0, // Default to 0 if not provided
+        deductions || 0,         // Default to 0 if not provided
+        finalPayment
+    ];
+
+    // Execute the query
+    sqldb.query(sql, values, (err, results) => {
+        if (err) {
+            console.error('Database Error:', err);
+            return res.status(500).json({ message: 'Error while saving payment data', error: err });
+        }
+
+        console.log("Employee payment added successfully:", results);
+
+        // Send success response
+        return res.status(200).json({ Status: "Success", message: "Employee payment added successfully!" });
     });
 };
