@@ -167,42 +167,43 @@
     }
   }
   
-  /* Payments History Table */
-  .payments-history {
-    width: 100%;
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .payments-history h2 {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    margin-bottom: 1.5rem;
-  }
-  
-  .payments-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .payments-table th,
-  .payments-table td {
-    padding: 1rem;
-    border: 1px solid #e2e8f0;
-    text-align: center;
-  }
-  
-  .payments-table th {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    color: #4a5568;
-  }
-  
-  .payments-table tr:hover {
-    background-color: #f0f4f8;
-  }
+/* Payments History Table */
+.payment-history {
+  width: 100%;
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #ccc; /* Solid border for the table container */
+}
+
+.payment-history h3 {
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center; /* Center the heading */
+}
+
+.payment-history table {
+  width: 100%;
+  border-collapse: collapse; /* Ensure borders are solid and consistent */
+}
+
+.payment-history th,
+.payment-history td {
+  padding: 0.75rem;
+  border: 1px solid #ddd; /* Solid borders for table cells */
+  text-align: center;
+  font-size: 0.9rem; /* Slightly smaller font size for a classic look */
+}
+
+.payment-history th {
+  background-color: #f1f1f1; /* Light gray background for headers */
+  font-weight: 600;
+  color: #333;
+}
+
+.payment-history tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alternate row coloring */
+}
   
   /* Responsive Design */
   @media screen and (max-width: 768px) {
