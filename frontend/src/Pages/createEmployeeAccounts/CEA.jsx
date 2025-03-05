@@ -10,15 +10,10 @@ import "./CEA.css";
 const CreateEmployeeAccount = () => {
   const [formData, setFormData] = useState({
     userId: "",
-    userName: "",
     firstName: "",
     lastName: "",
-    address: "",
     mobile1: "",
     mobile2: "",
-    gmail: "",
-    password: "",
-    reenterPassword: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -26,16 +21,8 @@ const CreateEmployeeAccount = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-
     // Automatically generate userName when userId changes
-    if (name === "userId") {
-      setFormData((prevData) => ({
-        ...prevData,
-        userName: `farmer_${value}`,
-      }));
-    }
   };
-
 
   // Inside your handleSubmit function:
   const handleSubmit = (e) => {
@@ -57,7 +44,7 @@ const CreateEmployeeAccount = () => {
   
     // Send data to backend API
     axios
-      .post('http://localhost:8081/api/manager/add-farmer', formData)
+      .post('http://localhost:8081/api/manager/add-Employee', formData)
       .then((response) => {
         console.log('Farmer account created:', response.data);
         alert("Account created successfully!");
@@ -66,10 +53,8 @@ const CreateEmployeeAccount = () => {
           userName: "",
           firstName: "",
           lastName: "",
-          address: "",
           mobile1: "",
           mobile2: "",
-          gmail: "",
           password: "",
           reenterPassword: "",
         });
@@ -99,17 +84,6 @@ const CreateEmployeeAccount = () => {
             />
           </div>
 
-          <div className="input-group">
-            <label>User Name</label>
-            <input
-              type="text"
-              name="userName"
-              value={formData.userName}
-              readOnly
-              placeholder="Auto-generated"
-            />
-          </div>
-
           {/* First Name and Last Name in one row with equal sizes */}
           <div className="input-group two-column">
             <div className="input-field">
@@ -135,76 +109,29 @@ const CreateEmployeeAccount = () => {
               />
             </div>
           </div>
-
-          <div className="input-group full-row">
-            <label>Address</label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-              placeholder="Enter address"
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Mobile Number 1</label>
-            <input
-              type="tel"
-              name="mobile1"
-              value={formData.mobile1}
-              onChange={handleChange}
-              required
-              placeholder="Enter mobile number 1"
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Mobile Number 2 (Optional)</label>
-            <input
-              type="tel"
-              name="mobile2"
-              value={formData.mobile2}
-              onChange={handleChange}
-              placeholder="Enter mobile number 2"
-            />
-          </div>
-
-          <div className="input-group full-row">
-            <label>Gmail</label>
-            <input
-              type="email"
-              name="gmail"
-              value={formData.gmail}
-              onChange={handleChange}
-              required
-              placeholder="Enter Gmail"
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Enter password"
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Re-enter Password</label>
-            <input
-              type="password"
-              name="reenterPassword"
-              value={formData.reenterPassword}
-              onChange={handleChange}
-              required
-              placeholder="Re-enter password"
-            />
+          <div className="input-group two-column">
+            <div className="input-field">
+              <label>Mobile Number 1</label>
+              <input
+                type="tel"
+                name="mobile1"
+                value={formData.mobile1}
+                onChange={handleChange}
+                required
+                placeholder="Enter mobile number 1"
+              />
+            </div>
+            <div className="input-field">
+              <label>Mobile Number 2 (Optional)</label>
+              <input
+                type="tel"
+                name="mobile2"
+                value={formData.mobile2}
+                onChange={handleChange}
+                required
+                placeholder="Enter mobile number 2"
+              />
+            </div>
           </div>
 
           {error && <p className="error">{error}</p>}
