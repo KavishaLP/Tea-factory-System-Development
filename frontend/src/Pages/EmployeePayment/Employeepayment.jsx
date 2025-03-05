@@ -8,17 +8,34 @@ function Employeepayment() {
     salaryAmount: "",
     additionalPayments: "",
     deductions: "",
-  
-   
+    advances: "",
+    finalAmount: "",
     finalPayment: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handle changes in form fields
+  // Handle change for input fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    // Allow empty input or valid numeric values (including decimals)
+    if (name !== "userId" && value !== "" && !/^\d*\.?\d*$/.test(value)) {
+      return;
+    }
+
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+
+      // Calculate final payment when salary, additional payments, or deductions change
+      const salary = parseFloat(updatedData.salaryAmount) || 0;
+      const additional = parseFloat(updatedData.additionalPayments) || 0;
+      const deductions = parseFloat(updatedData.deductions) || 0;
+
+      updatedData.finalPayment = (salary + additional - deductions).toFixed(2);
+
+      return updatedData;
+    });
   };
 
   // Handle form submission
@@ -28,13 +45,13 @@ function Employeepayment() {
     setError("");
 
     // Perform validation
-    if (!formData.userId || !formData.finalAmount) {
-      setError("User ID and Final Amount are required");
+    if (!formData.userId || !formData.salaryAmount) {
+      setError("User ID and Salary Amount are required");
       setIsLoading(false);
       return;
     }
 
-    // Simulating API call
+    // Simulate API call
     setTimeout(() => {
       alert("Payment submitted successfully!");
       setIsLoading(false);
@@ -86,6 +103,18 @@ function Employeepayment() {
             </div>
 
             <div className="input-group">
+              <label>Salary Amount</label>
+              <input
+                type="text"
+                name="salaryAmount"
+                value={formData.salaryAmount}
+                onChange={handleChange}
+                required
+                placeholder="Enter salary amount"
+              />
+            </div>
+
+            <div className="input-group">
               <label>Additional Payments</label>
               <input
                 type="text"
@@ -108,36 +137,13 @@ function Employeepayment() {
             </div>
 
             <div className="input-group">
-              <label>Advances</label>
-              <input
-                type="text"
-                name="advances"
-                value={formData.advances}
-                onChange={handleChange}
-                placeholder="Enter advances"
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Final Amount</label>
-              <input
-                type="text"
-                name="finalAmount"
-                value={formData.finalAmount}
-                onChange={handleChange}
-                placeholder="Enter final amount"
-              />
-            </div>
-
-            <div className="input-group">
               <label>Final Payment</label>
               <input
                 type="text"
                 name="finalPayment"
                 value={formData.finalPayment}
-                onChange={handleChange}
-                placeholder="Calculated final payment"
                 readOnly
+                placeholder="Calculated final payment"
               />
             </div>
 
