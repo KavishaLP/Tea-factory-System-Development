@@ -46,3 +46,82 @@ export const addFarmer = async (req, res) => {
             });
     });
 };
+
+// Add payment function
+export const addPayment = (req, res) => {
+    const {
+        userId,
+        paymentPerKilo,
+        finalTeaKilos,
+        paymentForFinalTeaKilos,
+        additionalPayments,
+        transport,
+        directPayments,
+        finalAmount,
+        advances,
+        teaPackets,
+        fertilizer,
+        finalPayment
+    } = req.body;
+
+    console.log("Received formData:", req.body);
+
+    // Validate input
+    if (
+        !userId ||
+        !paymentPerKilo ||
+        !finalTeaKilos ||
+        !paymentForFinalTeaKilos ||
+        !finalAmount ||
+        !finalPayment
+    ) {
+        return res.status(400).json({ message: 'All required fields must be filled.' });
+    }
+
+    // SQL Query to insert payment data into the farmer_payments table
+    const sql = `
+        INSERT INTO farmer_payments (
+            userId, 
+            paymentPerKilo, 
+            finalTeaKilos, 
+            paymentForFinalTeaKilos, 
+            additionalPayments, 
+            transport, 
+            directPayments, 
+            finalAmount, 
+            advances, 
+            teaPackets, 
+            fertilizer, 
+            finalPayment
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+        userId,
+        paymentPerKilo,
+        finalTeaKilos,
+        paymentForFinalTeaKilos,
+        additionalPayments || 0,
+        transport || 0,
+        directPayments || 0,
+        finalAmount,
+        advances || 0,
+        teaPackets || 0,
+        fertilizer || 0,
+        finalPayment
+    ];
+
+    // Execute the query to insert the payment details
+    sqldb.query(sql, values, (err, results) => {
+        if (err) {
+            console.error('Database Error:', err);
+            return res.status(500).json({ message: 'Error while saving payment data', error: err });
+        }
+
+        console.log("Payment added successfully:", results);
+
+        // Send success response
+        return res.status(200).json({ Status: "Success", message: "Payment added successfully!" });
+    });
+};

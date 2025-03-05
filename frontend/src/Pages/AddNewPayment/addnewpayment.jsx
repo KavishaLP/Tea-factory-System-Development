@@ -134,7 +134,7 @@ const handleSubmit = async (e) => {
   try {
     // Sending data to the backend (similar to the login request)
     const response = await axios.post(
-      'http://localhost:8081/api/payments/addPayment', // Your backend API endpoint
+      'http://localhost:8081/api/manager/add-Payment', // Your backend API endpoint
       formData,
       { withCredentials: true }
     );
