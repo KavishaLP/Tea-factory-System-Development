@@ -18,6 +18,7 @@ import UpdateNewPassword from './Pages/AuthPages/UpdateNewPassword/UpdateNewPass
 
 import Dashboard from './Pages/DashBoard/Dashboard';
 import AddNewPayment from './Pages/AddNewPayment/addnewpayment';
+import Employeepayment from './Pages/EmployeePayment/Employeepayment';
 import CreateFarmerAccount from './Pages/createFarmerAccounts/CFA';
 import Fertilizer from './Pages/fertilizer/fertilizer';
 import ProductivityReport from './Pages/ProductivityReport/ProductivityReport';
@@ -54,6 +55,8 @@ function App() {
             
             <Route path="/Mng-Dashboard" element={<Dashboard />} />
             <Route path="/Mng-AddNew-Payment" element={<AddNewPayment />} />
+            <Route path="/Mng-Employee-Payment" element={<Employeepayment />} />
+
             <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
             <Route path="/Mng-User-dashboard" element={<Sidebar />} />
             <Route path="/Mng-Create-Farmer-Account" element={<CreateFarmerAccount />} />

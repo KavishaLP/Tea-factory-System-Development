@@ -26,7 +26,11 @@ const Sidebar = () => {
             </div>
             <div className={`sidebar-item ${isActive('/Mng-AddNew-Payment') ? 'active' : ''}`}
                 onClick={() => navigate('/Mng-AddNew-Payment')}>
-                <img src={assets.h} alt="Logo"/> <p>Payment Logs</p>
+                <img src={assets.h} alt="Logo"/> <p>Farmer Payment Logs</p>
+            </div>
+            <div className={`sidebar-item ${isActive('/Mng-AddEmployee-Payment') ? 'active' : ''}`}
+                onClick={() => navigate('/Mng-Employee-Payment')}>
+                <img src={assets.h} alt="Logo"/> <p>Employee Payment Logs</p>
             </div>
             <div className={`sidebar-item ${isActive('/Mng-Productivity-Report') ? 'active' : ''}`}
                 onClick={() => navigate('/Mng-Productivity-Report')}>
