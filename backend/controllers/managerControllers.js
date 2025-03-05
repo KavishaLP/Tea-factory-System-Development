@@ -178,9 +178,9 @@ export const addEmployee = async (req, res) => {
         return res.status(400).json({ message: 'All required fields must be provided.' });
     }
 
-    // Check if the farmer already exists by userId or Gmail
+    // Check if the employee already exists by userId
     const sqlCheck = "SELECT * FROM employeeaccounts WHERE userId = ?";
-    sqldb.query(sqlCheck, [userId, gmail], (err, results) => {
+    sqldb.query(sqlCheck, [userId], (err, results) => {
         if (err) {
             console.error("Database Check Error:", err);
             return res.status(500).json({ message: 'Database error', error: err });
@@ -189,6 +189,15 @@ export const addEmployee = async (req, res) => {
         if (results.length > 0) {
             return res.status(400).json({ message: 'Employee with this user ID already exists.' });
         }
+
+        // Insert new employee into the database
+        const sqlInsert = "INSERT INTO employeeaccounts (userId, firstName, lastName, mobile1, mobile2) VALUES (?, ?, ?, ?, ?)";
+        sqldb.query(sqlInsert, [userId, firstName, lastName, mobile1, mobile2], (err, result) => {
+            if (err) {
+                console.error("Database Insert Error:", err);
+                return res.status(500).json({ message: 'Error inserting employee data into database', error: err });
+            }
+            return res.status(200).json({ message: 'Employee added successfully', employeeId: result.insertId });
+        });
     });
 };
-

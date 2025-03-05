@@ -8,8 +8,6 @@ function Employeepayment() {
     salaryAmount: "",
     additionalPayments: "",
     deductions: "",
-    advances: "",
-    finalAmount: "",
     finalPayment: "",
   });
   const [error, setError] = useState("");
@@ -21,6 +19,7 @@ function Employeepayment() {
 
     // Allow empty input or valid numeric values (including decimals)
     if (name !== "userId" && value !== "" && !/^\d*\.?\d*$/.test(value)) {
+      setError("Please enter a valid positive number");
       return;
     }
 
@@ -39,33 +38,45 @@ function Employeepayment() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    // Perform validation
+  
+    // Validate required fields
     if (!formData.userId || !formData.salaryAmount) {
       setError("User ID and Salary Amount are required");
-      setIsLoading(false);
       return;
     }
-
-    // Simulate API call
-    setTimeout(() => {
-      alert("Payment submitted successfully!");
+  
+    setIsLoading(true);
+    setError("");
+  
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/manager/add-Payment", // Adjust API endpoint as needed
+        formData,
+        { withCredentials: true }
+      );
+  
+      if (response.data && response.data.status === "Success") {
+        alert("Payment added successfully!");
+        setFormData({
+          userId: "",
+          salaryAmount: "",
+          additionalPayments: "",
+          deductions: "",
+          finalPayment: "",
+        });
+      } else {
+        setError(response.data.error || "Failed to add payment.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setError(error.response?.data?.message || "An error occurred.");
+    } finally {
       setIsLoading(false);
-      setFormData({
-        userId: "",
-        salaryAmount: "",
-        additionalPayments: "",
-        deductions: "",
-        advances: "",
-        finalAmount: "",
-        finalPayment: "",
-      });
-    }, 1000);
+    }
   };
+  
 
   return (
     <div className="cfa-content">

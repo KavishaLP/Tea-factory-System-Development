@@ -34,7 +34,7 @@ const CreateEmployeeAccount = () => {
       return;
     }
   
-    if (!formData.userId || !formData.firstName || !formData.lastName || !formData.password) {
+    if (!formData.userId || !formData.firstName || !formData.lastName || !formData.mobile1) {
       setError("Please fill in all required fields");
       return;
     }
@@ -125,7 +125,6 @@ const CreateEmployeeAccount = () => {
                 name="mobile2"
                 value={formData.mobile2}
                 onChange={handleChange}
-                required
                 placeholder="Enter mobile number 2"
               />
             </div>

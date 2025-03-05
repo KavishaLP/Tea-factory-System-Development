@@ -121,22 +121,31 @@ function AddPayment() {
 const handleChange = (e) => {
   const { name, value } = e.target;
 
-  // Validate input only if it's a numeric field
-  const positiveNumberPattern = /^\d+(\.\d+)?$/;
-  if (
-    name !== "userId" &&
-    (value !== "" && !positiveNumberPattern.test(value))
-  ) {
+  // Regular expression to allow only positive numbers (including decimals)
+  const positiveNumberPattern = /^\d*\.?\d*$/;
+
+  if (name !== "userId" && value !== "" && !positiveNumberPattern.test(value)) {
     setError("Please enter a valid positive number");
+    return;
   } else {
     setError(""); // Clear error if input is valid
   }
 
-  setFormData((prevData) => ({
-    ...prevData,
-    [name]: value,
-  }));
+  setFormData((prevData) => {
+    const updatedData = { ...prevData, [name]: value };
+
+    // Convert salary, additionalPayments, and deductions to numbers
+    const salary = parseFloat(updatedData.salaryAmount) || 0;
+    const additional = parseFloat(updatedData.additionalPayments) || 0;
+    const deductions = parseFloat(updatedData.deductions) || 0;
+
+    // Calculate final payment
+    updatedData.finalPayment = (salary + additional - deductions).toFixed(2);
+
+    return updatedData;
+  });
 };
+
 
 {/*-------------------------------------------------------------------------------------------*/}
 // Handle form submission
@@ -168,7 +177,7 @@ const handleSubmit = async (e) => {
   try {
     // Sending data to the backend (similar to the login request)
     const response = await axios.post(
-      'http://localhost:8081/api/manager/add-Payment', // Your backend API endpoint
+      'http://localhost:8081/api/manager/add-Farmer-Payment', // Your backend API endpoint
       formData,
       { withCredentials: true }
     );
