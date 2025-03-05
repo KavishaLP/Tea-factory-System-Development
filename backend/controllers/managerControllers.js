@@ -16,16 +16,16 @@ export const addFarmer = async (req, res) => {
         return res.status(400).json({ message: 'Passwords do not match.' });
     }
 
-    // Check if the farmer already exists by userId or Gmail
-    const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ? OR gmail = ?";
-    sqldb.query(sqlCheck, [userId, gmail], (err, results) => {
+    // Check if the farmer already exists by userId, gmail, or userName
+    const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ? OR gmail = ? OR userName = ?";
+    sqldb.query(sqlCheck, [userId, gmail, userName], (err, results) => {
         if (err) {
             console.error("Database Check Error:", err);
             return res.status(500).json({ message: 'Database error', error: err });
         }
 
         if (results.length > 0) {
-            return res.status(400).json({ message: 'Farmer with this user ID or email already exists.' });
+            return res.status(400).json({ message: 'Farmer with this user ID, email, or username already exists.' });
         }
 
         // Hash the password securely
@@ -165,6 +165,30 @@ export const getPaymentHistory = (req, res) => {
 
         // Send the fetched data as a response
         return res.status(200).json({ Status: "Success", paymentHistory: results });
+    });
+};
+
+export const addEmployee = async (req, res) => {
+    console.log("Received Data:", req.body);
+
+    const { userId, firstName, lastName, mobile1, mobile2 } = req.body;
+
+    // Check for missing required fields
+    if (!userId || !firstName || !lastName || !mobile1) {
+        return res.status(400).json({ message: 'All required fields must be provided.' });
+    }
+
+    // Check if the farmer already exists by userId or Gmail
+    const sqlCheck = "SELECT * FROM employeeaccounts WHERE userId = ?";
+    sqldb.query(sqlCheck, [userId, gmail], (err, results) => {
+        if (err) {
+            console.error("Database Check Error:", err);
+            return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        if (results.length > 0) {
+            return res.status(400).json({ message: 'Employee with this user ID already exists.' });
+        }
     });
 };
 

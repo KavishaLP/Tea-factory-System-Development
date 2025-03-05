@@ -46,21 +46,18 @@ const CreateEmployeeAccount = () => {
     axios
       .post('http://localhost:8081/api/manager/add-Employee', formData)
       .then((response) => {
-        console.log('Farmer account created:', response.data);
+        console.log('Employee account created:', response.data);
         alert("Account created successfully!");
         setFormData({
           userId: "",
-          userName: "",
           firstName: "",
           lastName: "",
           mobile1: "",
           mobile2: "",
-          password: "",
-          reenterPassword: "",
         });
       })
       .catch((error) => {
-        console.error('Error creating farmer account:', error);
+        console.error('Error creating Employee account:', error);
         setError(error.response?.data?.message || 'An error occurred');
       })
       .finally(() => setIsLoading(false));
@@ -69,7 +66,7 @@ const CreateEmployeeAccount = () => {
 
   return (
     <div className="cfa-content">
-      <h2>Create Farmer Account</h2>
+      <h2>Create Employee Account</h2>
       <div className="cfa-grid">
         <form onSubmit={handleSubmit}>
           <div className="input-group">
