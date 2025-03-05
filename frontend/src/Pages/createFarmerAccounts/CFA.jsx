@@ -31,7 +31,7 @@ const CreateFarmerAccount = () => {
     if (name === "userId") {
       setFormData((prevData) => ({
         ...prevData,
-        userName: `fer${value}`,
+        userName: `farmer_${value}`,
       }));
     }
   };
