@@ -1,4 +1,4 @@
-/* Reuse the same styles as CFA.css */
+/* Container Styles */
 .cfa-content {
   flex: 1;
   padding: 2rem;
@@ -26,43 +26,39 @@
   font-weight: 600;
 }
 
-/* Tabs Container */
-.tabs-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.5rem;
+/* Form Layout */
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
 }
 
-.tab-button {
-  background: #e0f7e0;
-  color: #2c3e50;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 8px 8px 0 0;
-  margin: 0 0.25rem;
-}
-
-.tab-button.active {
-  background: white;
-  color: #00a000;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.tab-button:hover {
-  background: #d0f0d0;
-}
-
-/* Input Styles */
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+.input-group.full-row {
+  grid-column: 1 / -1;
+}
+
+/* Two-column layout for fields like First Name and Last Name */
+.input-group.two-column {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.input-group.two-column .input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Input Styles */
 .input-group label {
   font-size: 0.95rem;
   color: #2c3e50;
@@ -83,18 +79,16 @@
   border-color: #4caf50;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
   outline: none;
-  background-color: white;
+  background-color: #fff;
 }
 
 .input-group input::placeholder {
   color: #94a3b8;
 }
 
-/* Deduction Fields */
-.deduction-fields {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+.input-group input[readonly] {
+  background-color: #e2e8f0;
+  cursor: not-allowed;
 }
 
 /* Error Message */
@@ -167,91 +161,9 @@ button.loading::after {
   }
 }
 
-/* Payments History Table */
-.payments-history {
-  width: 100%;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.payments-history h2 {
-  font-size: 1.5rem;
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-}
-
-/* Payments History Table */
-.payment-history {
-  width: 100%;
-  background-color: white;
-  padding: 1rem;
-  border: 1px solid #ccc; /* Solid border for the table container */
-}
-
-.payment-history h3 {
-  font-size: 1.25rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  text-align: center; /* Center the heading */
-}
-
-.payment-history table {
-  width: 100%;
-  border-collapse: collapse; /* Ensure borders are solid and consistent */
-}
-
-.payment-history th,
-.payment-history td {
-  padding: 0.75rem;
-  border: 1px solid #ddd; /* Solid borders for table cells */
-  text-align: center;
-  font-size: 0.9rem; /* Slightly smaller font size for a classic look */
-}
-
-.payment-history th {
-  background-color: #f1f1f1; /* Light gray background for headers */
-  font-weight: 600;
-  color: #333;
-}
-
-.payment-history tr:nth-child(even) {
-  background-color: #f9f9f9; /* Alternate row coloring */
-}
-
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-  .cfa-content {
-    margin-left: 80px;
-    padding: 1rem;
-  }
-
-  .cfa-grid {
-    padding: 1.25rem;
-  }
-
-  .deduction-fields {
+  .input-group.two-column {
     grid-template-columns: 1fr;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .cfa-content {
-    margin-left: 0;
-    padding: 0.75rem;
-  }
-
-  .cfa-grid {
-    padding: 1rem;
-    border-radius: 8px;
-  }
-
-  .input-group input {
-    padding: 0.625rem;
-  }
-
-  button {
-    padding: 0.875rem;
   }
 }
