@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import "./Employeepayment.css";
 
@@ -208,10 +208,9 @@ function Employeepayment() {
                 <thead>
                   <tr>
                     <th>User ID</th>
-                    <th>Final Tea Kilos</th>
-                    <th>Payment Per Kilo</th>
-                    <th>Final Amount</th>
-                    <th>Advances</th>
+                    <th>Salary Amount</th>
+                    <th>Additional Payments</th>
+                    <th>Deductions</th>
                     <th>Final Payment</th>
                     <th>Date</th>
                   </tr>
@@ -220,12 +219,11 @@ function Employeepayment() {
                   {paymentsHistory.map((payment, index) => (
                     <tr key={index}>
                       <td>{payment.userId}</td>
-                      <td>{payment.finalTeaKilos}</td>
-                      <td>{payment.paymentPerKilo}</td>
-                      <td>{payment.finalAmount}</td>
-                      <td>{payment.advances}</td>
+                      <td>{payment.salaryAmount}</td>
+                      <td>{payment.additionalPayments}</td>
+                      <td>{payment.deductions}</td>
                       <td>{payment.finalPayment}</td>
-                      <td>{new Date(payment.created_at).toLocaleDateString()}</td>
+                      <td>{new Date(payment.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>

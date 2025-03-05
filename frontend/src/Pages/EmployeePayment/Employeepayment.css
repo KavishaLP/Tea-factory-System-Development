@@ -1,202 +1,198 @@
-/* Reuse the same styles as CFA.css */
+/* Main Content Styles */
 .cfa-content {
-    flex: 1;
-    padding: 2rem;
-    margin-left: 280px;
-    margin-top: 70px;
-    overflow-y: auto;
-    background-color: #f5f5f5;
-    min-height: calc(100vh - 70px);
+  flex: 1;
+  padding: 2rem;
+  margin-left: 280px;
+  margin-top: 70px;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 70px);
+}
+
+.cfa-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cfa-content h2 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Tabs Container */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  background: #e0f7e0;
+  color: #2c3e50;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px 8px 0 0;
+  margin: 0 0.25rem;
+}
+
+.tab-button.active {
+  background: white;
+  color: #00a000;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button:hover {
+  background: #d0f0d0;
+}
+
+/* Input Styles */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-size: 0.95rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f8fafc;
+}
+
+.input-group input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+  outline: none;
+  background-color: white;
+}
+
+.input-group input::placeholder {
+  color: #94a3b8;
+}
+
+/* Error Message */
+.error {
+  color: #ef4444;
+  text-align: center;
+  margin: 1rem 0;
+  grid-column: 1 / -1;
+  font-size: 0.9rem;
+  background-color: #fee2e2;
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+/* Submit Button */
+button {
+  grid-column: 1 / -1;
+  padding: 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover:not(:disabled) {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+button.loading {
+  padding-left: 2.5rem;
+}
+
+button.loading::after {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  left: 1rem;
+  top: 50%;
+  margin-top: -0.625rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .cfa-grid {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .cfa-content h2 {
-    margin-bottom: 2rem;
-    color: #2c3e50;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 600;
-  }
-  
-  /* Tabs Container */
-  .tabs-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .tab-button {
-    background: #e0f7e0;
-    color: #2c3e50;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-radius: 8px 8px 0 0;
-    margin: 0 0.25rem;
-  }
-  
-  .tab-button.active {
-    background: white;
-    color: #00a000;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .tab-button:hover {
-    background: #d0f0d0;
-  }
-  
-  /* Input Styles */
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .input-group label {
-    font-size: 0.95rem;
-    color: #2c3e50;
-    font-weight: 500;
-  }
-  
-  .input-group input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background-color: #f8fafc;
-  }
-  
-  .input-group input:focus {
-    border-color: #4caf50;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-    outline: none;
-    background-color: white;
-  }
-  
-  .input-group input::placeholder {
-    color: #94a3b8;
-  }
-  
-  /* Deduction Fields */
-  .deduction-fields {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-  
-  /* Error Message */
-  .error {
-    color: #ef4444;
-    text-align: center;
-    margin: 1rem 0;
-    grid-column: 1 / -1;
-    font-size: 0.9rem;
-    background-color: #fee2e2;
-    padding: 0.75rem;
-    border-radius: 6px;
-  }
-  
-  /* Submit Button */
-  button {
-    grid-column: 1 / -1;
-    padding: 1rem;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin-top: 1rem;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  button:hover:not(:disabled) {
-    background-color: #45a049;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  button:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: none;
-  }
-  
-  button:disabled {
-    background-color: #a5d6a7;
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-  
-  button.loading {
-    padding-left: 2.5rem;
-  }
-  
-  button.loading::after {
-    content: "";
-    position: absolute;
-    width: 1.25rem;
-    height: 1.25rem;
-    left: 1rem;
-    top: 50%;
-    margin-top: -0.625rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
+}
+
 /* Payments History Table */
 .payment-history {
   width: 100%;
   background-color: white;
   padding: 1rem;
-  border: 1px solid #ccc; /* Solid border for the table container */
+  border: 1px solid #ccc;
+  overflow-x: auto; /* Add horizontal scroll for small screens */
 }
 
 .payment-history h3 {
   font-size: 1.25rem;
   color: #2c3e50;
   margin-bottom: 1rem;
-  text-align: center; /* Center the heading */
+  text-align: center;
 }
 
 .payment-history table {
   width: 100%;
-  border-collapse: collapse; /* Ensure borders are solid and consistent */
+  border-collapse: collapse;
+  table-layout: fixed; /* Fix table layout for consistent column widths */
 }
 
 .payment-history th,
 .payment-history td {
   padding: 0.75rem;
-  border: 1px solid #ddd; /* Solid borders for table cells */
+  border: 1px solid #ddd;
   text-align: center;
-  font-size: 0.9rem; /* Slightly smaller font size for a classic look */
+  font-size: 0.9rem;
+  word-wrap: break-word; /* Allow text to wrap within cells */
 }
 
 .payment-history th {
-  background-color: #f1f1f1; /* Light gray background for headers */
+  background-color: #f1f1f1;
   font-weight: 600;
   color: #333;
 }
@@ -204,39 +200,48 @@
 .payment-history tr:nth-child(even) {
   background-color: #f9f9f9; /* Alternate row coloring */
 }
-  
-  /* Responsive Design */
-  @media screen and (max-width: 768px) {
-    .cfa-content {
-      margin-left: 80px;
-      padding: 1rem;
-    }
-  
-    .cfa-grid {
-      padding: 1.25rem;
-    }
-  
-    .deduction-fields {
-      grid-template-columns: 1fr;
-    }
+
+/* Responsive Table */
+@media screen and (max-width: 768px) {
+  .payment-history {
+    padding: 0.5rem;
   }
-  
-  @media screen and (max-width: 480px) {
-    .cfa-content {
-      margin-left: 0;
-      padding: 0.75rem;
-    }
-  
-    .cfa-grid {
-      padding: 1rem;
-      border-radius: 8px;
-    }
-  
-    .input-group input {
-      padding: 0.625rem;
-    }
-  
-    button {
-      padding: 0.875rem;
-    }
+
+  .payment-history th,
+  .payment-history td {
+    padding: 0.5rem;
+    font-size: 0.8rem; /* Smaller font size for mobile */
   }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .cfa-content {
+    margin-left: 80px;
+    padding: 1rem;
+  }
+
+  .cfa-grid {
+    padding: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .cfa-content {
+    margin-left: 0;
+    padding: 0.75rem;
+  }
+
+  .cfa-grid {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .input-group input {
+    padding: 0.625rem;
+  }
+
+  button {
+    padding: 0.875rem;
+  }
+}

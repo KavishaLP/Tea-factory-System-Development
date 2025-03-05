@@ -252,14 +252,6 @@ export const addEmployeePayment = (req, res) => {
     });
 };
 
-//id
-userId
-salaryAmount
-additionalPayments
-deductions
-finalPayment
-createdAt
-
 export const getEmployeePaymentHistory = (req, res) => {
     // SQL Query to fetch payment history from the employee_payments table
     const sql = `
@@ -271,7 +263,7 @@ export const getEmployeePaymentHistory = (req, res) => {
             finalPayment,
             createdAt
         FROM employee_payments 
-        ORDER BY created_at DESC
+        ORDER BY createdAt DESC
     `;
 
     // Execute the query to fetch the payment history
