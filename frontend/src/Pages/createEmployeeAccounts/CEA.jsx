@@ -5,9 +5,9 @@
 import React, { useState } from "react";
 import axios from 'axios';
 
-import "./CFA.css";
+import "./CEA.css";
 
-const CreateFarmerAccount = () => {
+const CreateEmployeeAccount = () => {
   const [formData, setFormData] = useState({
     userId: "",
     userName: "",
@@ -218,4 +218,4 @@ const CreateFarmerAccount = () => {
   );
 };
 
-export default CreateFarmerAccount;
+export default CreateEmployeeAccount;
