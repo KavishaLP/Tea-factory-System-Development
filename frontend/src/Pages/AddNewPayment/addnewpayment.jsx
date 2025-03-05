@@ -10,6 +10,10 @@ function AddPayment() {
   const [activeTab, setActiveTab] = useState("addPayment");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [paymentsHistory, setPaymentHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(true);  
+
   
   const [formData, setFormData] = useState({
     userId:"",
@@ -81,8 +85,38 @@ function AddPayment() {
     }));
   }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);  
 
+  // Function to fetch payment history
+  useEffect(() => {
+    // Check if activeTab is "viewHistory"
+    if (activeTab === "viewHistory") {
+      const fetchPaymentHistory = async () => {
+        try {
+          // Start loading
+          setHistoryLoading(true);
+          
+          const response = await axios.post('http://localhost:8081/api/manager/get-Payment-History', {}, { withCredentials: true });
+          console.log(response.data)
+          if (response.data.Status === 'Success') {
+            setPaymentHistory(response.data.paymentHistory);
+          } else {
+            console.error('Failed to fetch payment history');
+          }
+        } catch (error) {
+          console.error('Error fetching payment history:', error);
+        } finally {
+          // Stop loading
+          setHistoryLoading(false);
+        }
+      };
+  
+      fetchPaymentHistory();
+    }
+  }, [activeTab]); // Depend on activeTab state change
+  
+
+
 {/*-------------------------------------------------------------------------------------------*/}
-  // Handle changes in form fields
+
 // Handle changes in form fields
 const handleChange = (e) => {
   const { name, value } = e.target;
@@ -349,36 +383,47 @@ const handleSubmit = async (e) => {
           </form>
         )}
 
-        {/* View Payments History Table */}
+        {/* View Payment History Tab */}
         {activeTab === "viewHistory" && (
-          <div className="payments-history">
-            <h2>Payments History</h2>
-            <table className="payments-table">
-              <thead>
-                <tr>
-                  <th>User ID</th>
-                  <th>User Name</th>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>To Confirm</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <tr key={index}>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>
-                      <button className="confirm-button">To Confirm</button>
-                    </td>
+          <div className="payment-history">
+            <h3>Payment History</h3>
+            {historyLoading ? (
+              <p>Loading...</p>
+            ) : paymentsHistory.length > 0 ? (
+              <table>
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Final Tea Kilos</th>
+                    <th>Payment Per Kilo</th>
+                    <th>Final Amount</th>
+                    <th>Advances</th>
+                    <th>Final Payment</th>
+                    <th>Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paymentsHistory.map((payment, index) => (
+                    <tr key={index}>
+                      <td>{payment.userId}</td>
+                      <td>{payment.finalTeaKilos}</td>
+                      <td>{payment.paymentPerKilo}</td>
+                      <td>{payment.finalAmount}</td>
+                      <td>{payment.advances}</td>
+                      <td>{payment.finalPayment}</td>
+                      <td>{new Date(payment.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No payment history found.</p>
+            )}
+
           </div>
         )}
+
+
       </div>
     </div>
   );

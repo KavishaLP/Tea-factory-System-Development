@@ -125,3 +125,46 @@ export const addPayment = (req, res) => {
         return res.status(200).json({ Status: "Success", message: "Payment added successfully!" });
     });
 };
+
+// Get payment history function
+export const getPaymentHistory = (req, res) => {
+    // SQL Query to fetch payment history from the farmer_payments table
+    const sql = `
+        SELECT 
+            userId, 
+            paymentPerKilo, 
+            finalTeaKilos, 
+            paymentForFinalTeaKilos, 
+            additionalPayments, 
+            transport, 
+            directPayments, 
+            finalAmount, 
+            advances, 
+            teaPackets, 
+            fertilizer, 
+            finalPayment, 
+            created_at 
+        FROM farmer_payments 
+        ORDER BY created_at DESC
+    `;
+
+    // Execute the query to fetch the payment history
+    sqldb.query(sql, (err, results) => {
+        console.log(results)
+        if (err) {
+            console.error('Database Error:', err);
+            return res.status(500).json({ message: 'Error while fetching payment history', error: err });
+        }
+
+        // Check if there are any records found
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'No payment history found.' });
+        }
+
+        console.log("Payment history fetched successfully:", results);
+
+        // Send the fetched data as a response
+        return res.status(200).json({ Status: "Success", paymentHistory: results });
+    });
+};
+
