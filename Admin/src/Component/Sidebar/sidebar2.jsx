@@ -13,10 +13,10 @@ const Sidebar2 = () => {
 
     return (
         <div className="sidebar">
-            <div className="sidebar-item active" onClick={() => navigate("/dashboard")}>
+            <div className="sidebar-item active" onClick={() => navigate("/dashboard-admin")}>
                 <FaHome className="sidebar-icon" /> <p>Dashboard</p>
             </div>
-            <div className="sidebar-item" onClick={() => navigate("/teasack")}>
+            <div className="sidebar-item" onClick={() => navigate("/tea-sack-update")}>
                 <FaLeaf className="sidebar-icon" /> <p>Tea Sack Update</p>
             </div>
             <div className="sidebar-item" onClick={() => navigate("/advance-update")}>

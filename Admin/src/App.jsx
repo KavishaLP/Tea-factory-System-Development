@@ -1,7 +1,7 @@
 import './App.css';
 
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-
+import DashboardAdmin from './Pages/DashboardAdmin/DashboardAdmin';
 import AdvanceUpdate from './Pages/AdvanceUpdate/AdvanceUpdate';
 import TeaSackUpdate from './Pages/Teasackupdate/teasack';
 import TeaPacketDistribution from './Pages/TeaPaketDistribution/TeaPaketDistribution';
@@ -45,7 +45,7 @@ function App() {
             <Route path="/check-mail" element={<CheckMail />} />
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
-
+            <Route path="/dashboard-admin" element={<DashboardAdmin />} /> 
             <Route path="/tea-sack-update" element={<TeaSackUpdate/>} />
             <Route path="/advance-update" element={<AdvanceUpdate/>} />
             <Route path="/tea-packet-distribution" element={<TeaPacketDistribution/>} />
