@@ -1,10 +1,10 @@
 .tea-sack-container {
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  min-height: 100vh; /* Ensure the container takes full height */
-  padding: 0; /* Remove padding to utilize full space */
+  height: 100vh; /* Full viewport height */
+  margin: 0;
+  padding: 0;
+  margin-bottom: 90px;
 }
 
 .content-wrapper {
@@ -22,7 +22,6 @@
   border-radius: 12px; /* Rounded corners for a modern look */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow for depth */
   height: auto; /* Allow height to adjust based on content */
-  max-height: calc(100% - 20px); /* Ensure content does not exceed the wrapper */
   display: flex;
   flex-direction: column; /* Stack children vertically */
   gap: 20px; /* Increased space between form elements */

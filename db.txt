@@ -45,3 +45,17 @@ CREATE TABLE advance_payment (
     action ENUM('Pending', 'Approved', 'Rejected') NOT NULL DEFAULT 'Pending',
     FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE
 );
+
+CREATE TABLE tea_sack_updates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    userId VARCHAR(100) NOT NULL,
+    date DATE NOT NULL,
+    tea_sack_weight DECIMAL(10,2) NOT NULL,
+    deduction_water DECIMAL(10,2) DEFAULT 0.00,
+    deduction_damage_tea DECIMAL(10,2) DEFAULT 0.00,
+    deduction_sack_weight DECIMAL(10,2) DEFAULT 0.00,
+    deduction_sharped_tea DECIMAL(10,2) DEFAULT 0.00,
+    deduction_other DECIMAL(10,2) DEFAULT 0.00,
+    total_fertilizer_amount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE
+);
