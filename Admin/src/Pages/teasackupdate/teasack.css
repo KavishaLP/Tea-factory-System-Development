@@ -1,20 +1,8 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
-  background-color: #f4f7fa; /* Light background for better contrast */
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
-  overflow-x: hidden; /* Prevent horizontal scroll */
-}
-
 .tea-sack-container {
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
+  width: 100%;
   min-height: 100vh; /* Ensure the container takes full height */
   padding: 0; /* Remove padding to utilize full space */
 }
