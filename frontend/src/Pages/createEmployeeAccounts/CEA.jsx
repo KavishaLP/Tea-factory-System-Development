@@ -21,6 +21,7 @@ const CreateEmployeeAccount = () => {
     if (activeTab === "viewAccounts") {
       const fetchEmployeeAccounts = async () => {
         setHistoryLoading(true);
+        setError(""); // Clear any previous errors
         try {
           const response = await axios.get(
             "http://localhost:8081/api/manager/get-employee-accounts",
@@ -29,11 +30,11 @@ const CreateEmployeeAccount = () => {
           if (response.data.status === "Success") {
             setEmployeeAccounts(response.data.employeeAccounts);
           } else {
-            setError("Failed to fetch employee accounts.");
+            setError("Failed to fetch employee accounts. Please try again later.");
           }
         } catch (error) {
           console.error("Error fetching employee accounts:", error);
-          setError("An error occurred while fetching employee accounts.");
+          setError("An error occurred while fetching employee accounts. Please check your connection and try again.");
         } finally {
           setHistoryLoading(false);
         }
@@ -78,7 +79,7 @@ const CreateEmployeeAccount = () => {
       })
       .catch((error) => {
         console.error('Error creating Employee account:', error);
-        setError(error.response?.data?.message || 'An error occurred');
+        setError(error.response?.data?.message || 'An error occurred while creating the account. Please try again.');
       })
       .finally(() => setIsLoading(false));
   };
@@ -183,6 +184,8 @@ const CreateEmployeeAccount = () => {
             <h3>Employee Accounts</h3>
             {historyLoading ? (
               <p>Loading...</p>
+            ) : error ? (
+              <p className="error">{error}</p>
             ) : employeeAccounts.length > 0 ? (
               <table>
                 <thead>
