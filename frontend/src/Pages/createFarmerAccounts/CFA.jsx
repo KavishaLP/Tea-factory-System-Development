@@ -26,6 +26,7 @@ const CreateFarmerAccount = () => {
     if (activeTab === "viewAccounts") {
       const fetchFarmerAccounts = async () => {
         setHistoryLoading(true);
+        setError(""); // Clear any previous errors
         try {
           const response = await axios.get(
             "http://localhost:8081/api/manager/get-farmer-accounts",
@@ -34,11 +35,11 @@ const CreateFarmerAccount = () => {
           if (response.data.status === "Success") {
             setFarmerAccounts(response.data.farmerAccounts);
           } else {
-            setError("Failed to fetch farmer accounts.");
+            setError("Failed to fetch farmer accounts. Please try again later.");
           }
         } catch (error) {
           console.error("Error fetching farmer accounts:", error);
-          setError("An error occurred while fetching farmer accounts.");
+          setError("An error occurred while fetching farmer accounts. Please check your connection and try again.");
         } finally {
           setHistoryLoading(false);
         }
@@ -101,7 +102,7 @@ const CreateFarmerAccount = () => {
       })
       .catch((error) => {
         console.error('Error creating farmer account:', error);
-        setError(error.response?.data?.message || 'An error occurred');
+        setError(error.response?.data?.message || 'An error occurred while creating the account. Please try again.');
       })
       .finally(() => setIsLoading(false));
   };
@@ -263,6 +264,8 @@ const CreateFarmerAccount = () => {
             <h3>Farmer Accounts</h3>
             {historyLoading ? (
               <p>Loading...</p>
+            ) : error ? (
+              <p className="error">{error}</p>
             ) : farmerAccounts.length > 0 ? (
               <table>
                 <thead>
