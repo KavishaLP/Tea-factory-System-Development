@@ -1,13 +1,9 @@
-/* eslint-disable react/no-unknown-property */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
-
 import "./CEA.css";
 
 const CreateEmployeeAccount = () => {
+  const [activeTab, setActiveTab] = useState("createAccount"); // State for active tab
   const [formData, setFormData] = useState({
     userId: "",
     firstName: "",
@@ -17,31 +13,55 @@ const CreateEmployeeAccount = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [employeeAccounts, setEmployeeAccounts] = useState([]); // State for employee accounts
+  const [historyLoading, setHistoryLoading] = useState(false); // Loading state for employee accounts
 
+  // Fetch employee accounts when the "View Employee Accounts" tab is active
+  useEffect(() => {
+    if (activeTab === "viewAccounts") {
+      const fetchEmployeeAccounts = async () => {
+        setHistoryLoading(true);
+        try {
+          const response = await axios.get(
+            "http://localhost:8081/api/manager/get-employee-accounts",
+            { withCredentials: true }
+          );
+          if (response.data.status === "Success") {
+            setEmployeeAccounts(response.data.employeeAccounts);
+          } else {
+            setError("Failed to fetch employee accounts.");
+          }
+        } catch (error) {
+          console.error("Error fetching employee accounts:", error);
+          setError("An error occurred while fetching employee accounts.");
+        } finally {
+          setHistoryLoading(false);
+        }
+      };
+
+      fetchEmployeeAccounts();
+    }
+  }, [activeTab]);
+
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Automatically generate userName when userId changes
   };
 
-  // Inside your handleSubmit function:
+  // Handle form submission
   const handleSubmit = (e) => {
-    console.log(formData)
     e.preventDefault();
-  
-    if (formData.password !== formData.reenterPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-  
+
+    // Validate required fields
     if (!formData.userId || !formData.firstName || !formData.lastName || !formData.mobile1) {
       setError("Please fill in all required fields");
       return;
     }
-  
+
     setError("");
     setIsLoading(true);
-  
+
     // Send data to backend API
     axios
       .post('http://localhost:8081/api/manager/add-Employee', formData)
@@ -62,80 +82,135 @@ const CreateEmployeeAccount = () => {
       })
       .finally(() => setIsLoading(false));
   };
-  
 
   return (
     <div className="cfa-content">
-      <h2>Create Employee Account</h2>
+      <h2>Employee Account Management</h2>
       <div className="cfa-grid">
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>User ID</label>
-            <input
-              type="text"
-              name="userId"
-              value={formData.userId}
-              onChange={handleChange}
-              required
-              placeholder="Enter user ID"
-            />
-          </div>
-
-          {/* First Name and Last Name in one row with equal sizes */}
-          <div className="input-group two-column">
-            <div className="input-field">
-              <label>First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                placeholder="Enter first name"
-              />
-            </div>
-            <div className="input-field">
-              <label>Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                placeholder="Enter last name"
-              />
-            </div>
-          </div>
-          <div className="input-group two-column">
-            <div className="input-field">
-              <label>Mobile Number 1</label>
-              <input
-                type="tel"
-                name="mobile1"
-                value={formData.mobile1}
-                onChange={handleChange}
-                required
-                placeholder="Enter mobile number 1"
-              />
-            </div>
-            <div className="input-field">
-              <label>Mobile Number 2 (Optional)</label>
-              <input
-                type="tel"
-                name="mobile2"
-                value={formData.mobile2}
-                onChange={handleChange}
-                placeholder="Enter mobile number 2"
-              />
-            </div>
-          </div>
-
-          {error && <p className="error">{error}</p>}
-
-          <button type="submit" disabled={isLoading} className={isLoading ? "loading" : ""}>
-            {isLoading ? "Creating Account..." : "Create Account"}
+        {/* Tabs */}
+        <div className="tabs-container">
+          <button
+            className={`tab-button ${activeTab === "createAccount" ? "active" : ""}`}
+            onClick={() => setActiveTab("createAccount")}
+          >
+            Create Employee Account
           </button>
-        </form>
+          <button
+            className={`tab-button ${activeTab === "viewAccounts" ? "active" : ""}`}
+            onClick={() => setActiveTab("viewAccounts")}
+          >
+            View Employee Accounts
+          </button>
+        </div>
+
+        {/* Create Employee Account Form */}
+        {activeTab === "createAccount" && (
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label>User ID</label>
+              <input
+                type="text"
+                name="userId"
+                value={formData.userId}
+                onChange={handleChange}
+                required
+                placeholder="Enter user ID"
+              />
+            </div>
+
+            {/* First Name and Last Name in one row with equal sizes */}
+            <div className="input-group two-column">
+              <div className="input-field">
+                <label>First Name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter first name"
+                />
+              </div>
+              <div className="input-field">
+                <label>Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter last name"
+                />
+              </div>
+            </div>
+
+            {/* Mobile Numbers */}
+            <div className="input-group two-column">
+              <div className="input-field">
+                <label>Mobile Number 1</label>
+                <input
+                  type="tel"
+                  name="mobile1"
+                  value={formData.mobile1}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter mobile number 1"
+                />
+              </div>
+              <div className="input-field">
+                <label>Mobile Number 2 (Optional)</label>
+                <input
+                  type="tel"
+                  name="mobile2"
+                  value={formData.mobile2}
+                  onChange={handleChange}
+                  placeholder="Enter mobile number 2"
+                />
+              </div>
+            </div>
+
+            {error && <p className="error">{error}</p>}
+
+            <button type="submit" disabled={isLoading} className={isLoading ? "loading" : ""}>
+              {isLoading ? "Creating Account..." : "Create Account"}
+            </button>
+          </form>
+        )}
+
+        {/* View Employee Accounts Table */}
+        {activeTab === "viewAccounts" && (
+          <div className="employee-accounts-table">
+            <h3>Employee Accounts</h3>
+            {historyLoading ? (
+              <p>Loading...</p>
+            ) : employeeAccounts.length > 0 ? (
+              <table>
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Mobile 1</th>
+                    <th>Mobile 2</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {employeeAccounts.map((employee, index) => (
+                    <tr key={index}>
+                      <td>{employee.userId}</td>
+                      <td>{employee.firstName}</td>
+                      <td>{employee.lastName}</td>
+                      <td>{employee.mobile1}</td>
+                      <td>{employee.mobile2 || "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No employee accounts found.</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
