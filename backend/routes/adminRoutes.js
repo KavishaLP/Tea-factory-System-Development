@@ -1,7 +1,7 @@
 //routes/adminRoutes
 
 import express from 'express';
-import { getAdvanceRequests, confirmAdvance, deleteAdvance} from '../controllers/adminControllers.js'
+import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack} from '../controllers/adminControllers.js'
 
 const router = express.Router();
 
