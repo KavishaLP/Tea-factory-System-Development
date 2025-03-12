@@ -85,20 +85,21 @@ function AdvanceUpdate() {
   const handleDelete = async (id) => {
     setIsLoading(true);
     setError("");
-
+  
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/delete-advance",
         { advanceId: id },
         { withCredentials: true }
       );
-
+  
       if (response.data.status === "Success") {
-        // Update state to move the request from newRequests to deletedRequests
-        const request = newRequests.find((req) => req.id === id);
+        // Find the request being deleted
+        const request = newRequests.find((req) => req.advn_id === id);
         if (request) {
+          // Move to deletedRequests and remove from newRequests
           setDeletedRequests([...deletedRequests, { ...request, action: "Rejected" }]);
-          setNewRequests(newRequests.filter((req) => req.id !== id));
+          setNewRequests(newRequests.filter((req) => req.advn_id !== id));
         }
         alert("Advance request deleted successfully!");
       } else {
@@ -111,6 +112,7 @@ function AdvanceUpdate() {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="advance-update-container">
