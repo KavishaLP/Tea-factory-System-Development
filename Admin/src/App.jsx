@@ -45,6 +45,7 @@ function App() {
             <Route path="/check-mail" element={<CheckMail />} />
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
+            
             <Route path="/dashboard-admin" element={<DashboardAdmin />} /> 
             <Route path="/tea-sack-update" element={<TeaSackUpdate/>} />
             <Route path="/advance-update" element={<AdvanceUpdate/>} />

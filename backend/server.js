@@ -6,8 +6,10 @@
 
 //npm i -D nodemon ->developer depemdancy
 
-import  authRoutes from './routes/authRoutes.js' // Import auth routes
-import managerRoutes from './routes/managerRoutes.js'
+import  authRoutes from './routes/authRoutes.js';
+import managerRoutes from './routes/managerRoutes.js';
+import farmerRoutes from './routes/farmerRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 import dotenv from 'dotenv';
 import express from 'express';
@@ -21,7 +23,7 @@ const app = express();
 app.use(express.json()); // ✅ Must be placed before routes
 
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173","http://localhost:5175"],
     methods: ["POST", "GET"],
     credentials: true
 }));
@@ -31,6 +33,8 @@ app.use(cookieParser());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/manager', managerRoutes);
+app.use('/api/farmer', farmerRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

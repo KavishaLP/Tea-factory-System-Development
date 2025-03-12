@@ -1,123 +1,177 @@
 /* Modern styling for AdvanceUpdate page */
 .advance-update-container {
-    background-color: #d4edda; /* Light green background */
-    padding: 2rem; /* Increased padding for spacious feel */
-    border-radius: 12px; /* Rounded corners */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 1200px; /* Maximum width for the container */
-    margin: 2rem auto; /* Center the container */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  background-color: #d4edda; /* Light green background */
+  padding: 2rem; /* Increased padding for spacious feel */
+  border-radius: 12px; /* Rounded corners */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px; /* Maximum width for the container */
+  margin: 2rem auto; /* Center the container */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+/* Page Header */
+.page-header {
+  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+  color: white; /* Text color */
+  padding: 1rem; /* Padding for header */
+  width: 100%; /* Full width */
+  text-align: center; /* Center text */
+  font-size: 1.5rem; /* Font size */
+  font-weight: 600; /* Bold text */
+  border-radius: 8px; /* Rounded corners */
+  margin-bottom: 1.5rem; /* Space below header */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+/* Tabs Container */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  background: #e0f7e0; /* Light green background */
+  color: #2c3e50; /* Dark text color */
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px 8px 0 0;
+  margin: 0 0.25rem;
+}
+
+.tab-button.active {
+  background: white; /* White background for active tab */
+  color: #00a000; /* Green text color */
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+.tab-button:hover {
+  background: #d0f0d0; /* Lighter green on hover */
+}
+
+/* Requests Table */
+.requests-table {
+  width: 100%; /* Full width */
+  background-color: white; /* White background for the table */
+  padding: 2rem; /* Padding for table */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+.requests-table table {
+  width: 100%; /* Full width */
+  border-collapse: collapse; /* Collapse borders */
+}
+
+.requests-table th,
+.requests-table td {
+  padding: 1rem; /* Padding for cells */
+  border: 1px solid #e2e8f0; /* Light border */
+  text-align: center; /* Center text */
+}
+
+.requests-table th {
+  background-color: #f8f9fa; /* Light gray for header */
+  font-weight: 600; /* Bold text */
+  color: #4a5568; /* Darker text color */
+}
+
+.requests-table tr:hover {
+  background-color: #f0f4f8; /* Light hover effect */
+}
+
+/* Confirm Button */
+.confirm-button {
+  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+  color: white; /* Text color */
+  border: none; /* No border */
+  padding: 0.5rem 1rem; /* Padding for button */
+  border-radius: 8px; /* Rounded corners */
+  font-size: 0.9rem; /* Font size */
+  font-weight: 600; /* Bold text */
+  cursor: pointer; /* Pointer cursor */
+  transition: all 0.3s ease; /* Smooth transition */
+  margin-right: 0.5rem; /* Space between buttons */
+}
+
+.confirm-button:hover {
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 5px 15px rgba(0, 160, 0, 0.3); /* Shadow on hover */
+}
+
+.confirm-button:active {
+  transform: translateY(0); /* Reset lift effect */
+}
+
+/* Delete Button */
+.delete-button {
+  background: linear-gradient(135deg, #ff4d4d, #cc0000); /* Gradient red */
+  color: white; /* Text color */
+  border: none; /* No border */
+  padding: 0.5rem 1rem; /* Padding for button */
+  border-radius: 8px; /* Rounded corners */
+  font-size: 0.9rem; /* Font size */
+  font-weight: 600; /* Bold text */
+  cursor: pointer; /* Pointer cursor */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+.delete-button:hover {
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3); /* Shadow on hover */
+}
+
+.delete-button:active {
+  transform: translateY(0); /* Reset lift effect */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .advance-update-container {
+    padding: 1.5rem; /* Adjust padding for smaller screens */
+    margin: 1rem; /* Adjust margin for smaller screens */
   }
-  
-  /* Page Header */
-  .page-header {
-    background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
-    color: white; /* Text color */
-    padding: 1rem; /* Padding for header */
-    width: 100%; /* Full width */
-    text-align: center; /* Center text */
-    font-size: 1.5rem; /* Font size */
-    font-weight: 600; /* Bold text */
-    border-radius: 8px; /* Rounded corners */
-    margin-bottom: 1.5rem; /* Space below header */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  }
-  
-  /* Requests Table */
+
   .requests-table {
-    width: 100%; /* Full width */
-    background-color: white; /* White background for the table */
-    padding: 2rem; /* Padding for table */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    padding: 1.5rem; /* Adjust padding for table */
   }
-  
-  .requests-table table {
-    width: 100%; /* Full width */
-    border-collapse: collapse; /* Collapse borders */
-  }
-  
+
   .requests-table th,
   .requests-table td {
-    padding: 1rem; /* Padding for cells */
-    border: 1px solid #e2e8f0; /* Light border */
-    text-align: center; /* Center text */
+    padding: 0.75rem; /* Adjust padding for cells */
   }
-  
-  .requests-table th {
-    background-color: #f8f9fa; /* Light gray for header */
-    font-weight: 600; /* Bold text */
-    color: #4a5568; /* Darker text color */
+}
+
+@media screen and (max-width: 480px) {
+  .advance-update-container {
+    padding: 1rem; /* Further adjust padding */
+    margin: 0.5rem; /* Further adjust margin */
   }
-  
-  .requests-table tr:hover {
-    background-color: #f0f4f8; /* Light hover effect */
+
+  .page-header {
+    font-size: 1.2rem; /* Adjust font size */
+    padding: 0.5rem; /* Adjust padding */
   }
-  
-  /* Confirm Button */
-  .confirm-button {
-    background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
-    color: white; /* Text color */
-    border: none; /* No border */
-    padding: 0.5rem 1rem; /* Padding for button */
-    border-radius: 8px; /* Rounded corners */
-    font-size: 0.9rem; /* Font size */
-    font-weight: 600; /* Bold text */
-    cursor: pointer; /* Pointer cursor */
-    transition: all 0.3s ease; /* Smooth transition */
+
+  .requests-table {
+    padding: 1rem; /* Adjust padding for table */
   }
-  
-  .confirm-button:hover {
-    transform: translateY(-2px); /* Lift effect on hover */
-    box-shadow: 0 5px 15px rgba(0, 160, 0, 0.3); /* Shadow on hover */
+
+  .requests-table th,
+  .requests-table td {
+    padding: 0.5rem; /* Adjust padding for cells */
+    font-size: 0.8rem; /* Adjust font size */
   }
-  
-  .confirm-button:active {
-    transform: translateY(0); /* Reset lift effect */
+
+  .confirm-button,
+  .delete-button {
+    padding: 0.5rem; /* Adjust padding for button */
+    font-size: 0.8rem; /* Adjust font size */
   }
-  
-  /* Responsive Design */
-  @media screen and (max-width: 768px) {
-    .advance-update-container {
-      padding: 1.5rem; /* Adjust padding for smaller screens */
-      margin: 1rem; /* Adjust margin for smaller screens */
-    }
-  
-    .requests-table {
-      padding: 1.5rem; /* Adjust padding for table */
-    }
-  
-    .requests-table th,
-    .requests-table td {
-      padding: 0.75rem; /* Adjust padding for cells */
-    }
-  }
-  
-  @media screen and (max-width: 480px) {
-    .advance-update-container {
-      padding: 1rem; /* Further adjust padding */
-      margin: 0.5rem; /* Further adjust margin */
-    }
-  
-    .page-header {
-      font-size: 1.2rem; /* Adjust font size */
-      padding: 0.5rem; /* Adjust padding */
-    }
-  
-    .requests-table {
-      padding: 1rem; /* Adjust padding for table */
-    }
-  
-    .requests-table th,
-    .requests-table td {
-      padding: 0.5rem; /* Adjust padding for cells */
-      font-size: 0.8rem; /* Adjust font size */
-    }
-  
-    .confirm-button {
-      padding: 0.5rem; /* Adjust padding for button */
-      font-size: 0.8rem; /* Adjust font size */
-    }
-  }
+}

@@ -55,7 +55,7 @@ function App() {
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
             
             <Route path="/Mng-Dashboard" element={<Dashboard />} />
-            <Route path="/Mng-AddNew-Payment" element={<AddNewPayment />} />
+            <Route path="/advance-update" element={<AddNewPayment />} />
             <Route path="/Mng-Employee-Payment" element={<Employeepayment />} />
 
             <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
