@@ -25,7 +25,7 @@ function AdvanceUpdate() {
           "http://localhost:8081/api/admin/get-advance-requests",
           { withCredentials: true }
         );
-
+        console.log(response)
         if (response.data.status === "Success") {
           const requests = response.data.advanceRequests;
           setNewRequests(requests.filter((req) => req.action === "Pending"));
@@ -49,17 +49,26 @@ function AdvanceUpdate() {
   const handleConfirm = async (id) => {
     setIsLoading(true);
     setError("");
-
+  
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/confirm-advance",
         { advanceId: id },
         { withCredentials: true }
       );
-
+  
       if (response.data.status === "Success") {
-        // Update state to move the request from newRequests to confirmedRequests
-        fetchAdvanceRequests();        
+        // Find the confirmed request in newRequests
+        const confirmedRequest = newRequests.find((req) => req.advn_id === id);
+  
+        if (confirmedRequest) {
+          // Remove the confirmed request from newRequests
+          setNewRequests(newRequests.filter((req) => req.advn_id !== id));
+  
+          // Add the confirmed request to confirmedRequests
+          setConfirmedRequests([...confirmedRequests, { ...confirmedRequest, action: "Approved" }]);
+        }
+  
         alert("Advance request confirmed successfully!");
       } else {
         setError(response.data.message || "Failed to confirm advance request.");
@@ -152,7 +161,7 @@ function AdvanceUpdate() {
                 </thead>
                 <tbody>
                   {newRequests.map((request) => (
-                    <tr key={request.id}>
+                    <tr key={request.advn_id}>
                       <td>{request.userId}</td>
                       <td>{request.firstName +' '+ request.lastName}</td>
                       <td>${request.amount}</td>
@@ -160,13 +169,13 @@ function AdvanceUpdate() {
                       <td>
                         <button
                           className="confirm-button"
-                          onClick={() => handleConfirm(request.userId)}
+                          onClick={() => handleConfirm(request.advn_id)}
                         >
                           Confirm
                         </button>
                         <button
                           className="delete-button"
-                          onClick={() => handleDelete(request.userId)}
+                          onClick={() => handleDelete(request.advn_id)}
                         >
                           Delete
                         </button>

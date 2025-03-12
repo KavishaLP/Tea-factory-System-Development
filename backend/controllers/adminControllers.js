@@ -22,7 +22,7 @@ export const getAdvanceRequests = async (req, res) => {
                 ap.userId = fa.userId
         `;
         sqldb.query(sqlQuery, (err, results) => {
-            console.log(results)
+            // console.log(results)
             if (err) {
                 console.error("Database Query Error:", err);
                 return res.status(500).json({ message: 'Database error', error: err });
@@ -44,7 +44,7 @@ export const confirmAdvance = async (req, res) => {
     console.log("Confirming advance request:", req.body);
 
     const { advanceId } = req.body;
-
+    console.log(advanceId)
     // Validate required fields
     if (!advanceId) {
         return res.status(400).json({ message: 'Advance ID is required.' });
