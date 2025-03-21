@@ -1,27 +1,27 @@
 /* Modern styling for AdvanceUpdate page */
 .advance-update-container {
-  background-color: #d4edda; /* Light green background */
+  background-color: #f4f4f9; /* Light background for the entire page */
   padding: 2rem; /* Increased padding for spacious feel */
   border-radius: 12px; /* Rounded corners */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   max-width: 1200px; /* Maximum width for the container */
   margin: 2rem auto; /* Center the container */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  min-height: calc(100vh - 4rem); /* Minimum height to fill the viewport */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Page Header */
 .page-header {
   background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
   color: white; /* Text color */
-  padding: 1rem; /* Padding for header */
+  padding: 1.5rem; /* Padding for header */
   width: 100%; /* Full width */
   text-align: center; /* Center text */
-  font-size: 1.5rem; /* Font size */
+  font-size: 1.75rem; /* Font size */
   font-weight: 600; /* Bold text */
   border-radius: 8px; /* Rounded corners */
-  margin-bottom: 1.5rem; /* Space below header */
+  margin-bottom: 2rem; /* Space below header */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
@@ -29,39 +29,45 @@
 .tabs-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  gap: 1rem; /* Space between tabs */
 }
 
 .tab-button {
   background: #e0f7e0; /* Light green background */
   color: #2c3e50; /* Dark text color */
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 2rem; /* Padding for tabs */
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 8px 8px 0 0;
-  margin: 0 0.25rem;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
 .tab-button.active {
   background: white; /* White background for active tab */
   color: #00a000; /* Green text color */
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Enhanced shadow for active tab */
 }
 
 .tab-button:hover {
   background: #d0f0d0; /* Lighter green on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
 }
 
-/* Requests Table */
+/* Requests Table Container */
 .requests-table {
   width: 100%; /* Full width */
   background-color: white; /* White background for the table */
   padding: 2rem; /* Padding for table */
   border-radius: 8px; /* Rounded corners */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  overflow-x: auto; /* Enable horizontal scrolling for small screens */
+  flex-grow: 1; /* Allow the table to grow and fill remaining space */
+  max-height: 60vh; /* Set a fixed height for the table container */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .requests-table table {
@@ -86,18 +92,24 @@
   background-color: #f0f4f8; /* Light hover effect */
 }
 
+/* Buttons Container */
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* Space between buttons */
+}
+
 /* Confirm Button */
 .confirm-button {
   background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
   color: white; /* Text color */
   border: none; /* No border */
-  padding: 0.5rem 1rem; /* Padding for button */
+  padding: 0.75rem 1.5rem; /* Padding for button */
   border-radius: 8px; /* Rounded corners */
-  font-size: 0.9rem; /* Font size */
+  font-size: 1rem; /* Font size */
   font-weight: 600; /* Bold text */
   cursor: pointer; /* Pointer cursor */
   transition: all 0.3s ease; /* Smooth transition */
-  margin-right: 0.5rem; /* Space between buttons */
 }
 
 .confirm-button:hover {
@@ -114,9 +126,9 @@
   background: linear-gradient(135deg, #ff4d4d, #cc0000); /* Gradient red */
   color: white; /* Text color */
   border: none; /* No border */
-  padding: 0.5rem 1rem; /* Padding for button */
+  padding: 0.75rem 1.5rem; /* Padding for button */
   border-radius: 8px; /* Rounded corners */
-  font-size: 0.9rem; /* Font size */
+  font-size: 1rem; /* Font size */
   font-weight: 600; /* Bold text */
   cursor: pointer; /* Pointer cursor */
   transition: all 0.3s ease; /* Smooth transition */
@@ -131,6 +143,25 @@
   transform: translateY(0); /* Reset lift effect */
 }
 
+/* Loading and Error Messages */
+.loading,
+.error {
+  text-align: center;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.loading {
+  color: #00a000; /* Green text for loading */
+}
+
+.error {
+  color: #ff4d4d; /* Red text for error */
+  background-color: #ffe6e6; /* Light red background */
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .advance-update-container {
@@ -138,13 +169,35 @@
     margin: 1rem; /* Adjust margin for smaller screens */
   }
 
+  .page-header {
+    font-size: 1.5rem; /* Adjust font size */
+    padding: 1rem; /* Adjust padding */
+  }
+
+  .tabs-container {
+    flex-direction: column; /* Stack tabs vertically */
+    gap: 0.5rem; /* Reduce gap between tabs */
+  }
+
+  .tab-button {
+    width: 100%; /* Full width for tabs */
+    padding: 0.75rem; /* Adjust padding */
+  }
+
   .requests-table {
-    padding: 1.5rem; /* Adjust padding for table */
+    padding: 1rem; /* Adjust padding for table */
+    max-height: 50vh; /* Adjust height for smaller screens */
   }
 
   .requests-table th,
   .requests-table td {
     padding: 0.75rem; /* Adjust padding for cells */
+  }
+
+  .confirm-button,
+  .delete-button {
+    padding: 0.5rem 1rem; /* Adjust padding for button */
+    font-size: 0.9rem; /* Adjust font size */
   }
 }
 
@@ -156,11 +209,12 @@
 
   .page-header {
     font-size: 1.2rem; /* Adjust font size */
-    padding: 0.5rem; /* Adjust padding */
+    padding: 0.75rem; /* Adjust padding */
   }
 
   .requests-table {
-    padding: 1rem; /* Adjust padding for table */
+    padding: 0.5rem; /* Adjust padding for table */
+    max-height: 40vh; /* Adjust height for very small screens */
   }
 
   .requests-table th,

@@ -1,8 +1,3 @@
-/* Add margin-top to the body to prevent content from being hidden behind the Navbar */
-body {
-  margin-top: 70px; /* Match the Navbar height */
-}
-
 /* Container for the entire TeaSackUpdate component */
 .tea-sack-update-container {
   display: flex;
