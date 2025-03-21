@@ -1,69 +1,128 @@
 /* Admin Dashboard Styles */
 .admin-dashboard {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
+  overflow: hidden; /* Prevent scrolling on the entire dashboard */
+}
+
+.sidebar {
+  background-color: #2f3b52;
+  color: white;
+  width: 250px;
+  padding: 20px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+  z-index: 1; /* Ensure sidebar is above other content */
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  margin: 20px 0;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Add space between icon and text */
+  transition: color 0.3s ease; /* Smooth transition for hover */
+}
+
+.sidebar ul li a:hover {
+  color: #ff7f50;
+}
+
+.main-content {
+  flex: 1;
+  background-color: #f4f4f9;
+  padding: 30px;
+  overflow-y: auto; /* Allow scrolling for main content */
+}
+
+.main-content h1 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
+}
+
+.card {
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 200px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add hover effects */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Lift card on hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+}
+
+.card h2 {
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 1.5rem;
+  color: #1abc9c; /* Highlight color for numbers */
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-dashboard {
+      flex-direction: column; /* Stack sidebar and main content vertically */
   }
-  
+
   .sidebar {
-    background-color: #2f3b52;
-    color: white;
-    width: 250px;
-    padding: 20px;
+      width: 100%; /* Full width for sidebar on small screens */
+      height: auto; /* Auto height for sidebar */
+      padding: 10px;
   }
-  
+
   .sidebar ul {
-    list-style-type: none;
-    padding: 0;
+      display: flex;
+      justify-content: space-around; /* Distribute items evenly */
+      flex-wrap: wrap; /* Allow items to wrap */
   }
-  
+
   .sidebar ul li {
-    margin: 20px 0;
+      margin: 10px 0; /* Reduce margin for smaller screens */
   }
-  
-  .sidebar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-  }
-  
-  .sidebar ul li a:hover {
-    color: #ff7f50;
-  }
-  
+
   .main-content {
-    flex: 1;
-    background-color: #f4f4f9;
-    padding: 30px;
+      padding: 20px;
   }
-  
-  .main-content h1 {
-    color: #333;
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  
+
   .cards {
-    display: flex;
-    gap: 20px;
+      gap: 10px; /* Reduce gap between cards */
+      justify-content: center; /* Center cards on small screens */
   }
-  
+
   .card {
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    width: 200px;
+      width: 45%; /* Make cards take up less space */
   }
-  
-  .card h2 {
-    color: #333;
-    font-size: 1.2rem;
+}
+
+@media (max-width: 480px) {
+  .card {
+      width: 100%; /* Full width for cards on very small screens */
   }
-  
-  .card p {
-    font-size: 1.5rem;
-    color: #333;
-    font-weight: bold;
-  }
-  
+}

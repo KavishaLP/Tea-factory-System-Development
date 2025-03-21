@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios for API calls
-import './teasack.css';
+import './teasack.css'; // Updated CSS file
 import Navbar from '../../Component/Navbar/Navbar2';
 import Sidebar from '../../Component/sidebar/sidebar2';
 
@@ -15,7 +15,7 @@ function TeaSackUpdate() {
     sharpedTea: '',
     other: ''
   });
-  const [totalFertilizerAmount, setTotalFertilizerAmount] = useState('');
+  const [totalTeaSackAmount, setTotalTeaSackAmount] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,18 +26,18 @@ function TeaSackUpdate() {
       ...prevDeductions,
       [name]: value
     }));
-    calculateTotalFertilizerAmount(teaSackWeight, { ...deductions, [name]: value });
+    calculateTotalTeaSackAmount(teaSackWeight, { ...deductions, [name]: value });
   };
 
   // Handle Tea Sack Weight change
   const handleTeaSackWeightChange = (e) => {
     const value = e.target.value;
     setTeaSackWeight(value);
-    calculateTotalFertilizerAmount(value, deductions);
+    calculateTotalTeaSackAmount(value, deductions);
   };
 
   // Function to calculate total fertilizer amount
-  const calculateTotalFertilizerAmount = (weight, deductions) => {
+  const calculateTotalTeaSackAmount = (weight, deductions) => {
     const numericWeight = parseFloat(weight) || 0;
     const totalDeductions = 
       (parseFloat(deductions.water) || 0) +
@@ -47,7 +47,7 @@ function TeaSackUpdate() {
       (parseFloat(deductions.other) || 0);
 
     const finalAmount = numericWeight - totalDeductions;
-    setTotalFertilizerAmount(finalAmount > 0 ? finalAmount.toFixed(2) : '0');
+    setTotalTeaSackAmount(finalAmount > 0 ? finalAmount.toFixed(2) : '0');
   };
 
   // Handle form submission
@@ -70,7 +70,7 @@ function TeaSackUpdate() {
         date,
         teaSackWeight,
         deductions,
-        totalFertilizerAmount
+        totalTeaSackAmount
       };
   
       // Log the form data for debugging
@@ -96,7 +96,7 @@ function TeaSackUpdate() {
           sharpedTea: '',
           other: ''
         });
-        setTotalFertilizerAmount("");
+        setTotalTeaSackAmount("");
       } else {
         setError(response.data.message || "Failed to submit tea sack data.");
       }
@@ -109,16 +109,16 @@ function TeaSackUpdate() {
   };
 
   return (
-    <div className="tea-sack-container">
+    <div className="tea-sack-update-container">
       <Navbar />
       <Sidebar />
-      <div className="content-wrapper">
-        <div className="content">
-          <div className="page-header">
+      <div className="tea-sack-update-content-wrapper">
+        <div className="tea-sack-update-content">
+          <div className="tea-sack-update-page-header">
             <h1>Tea Sack Update</h1>
           </div>
 
-          <div className="search-bar">
+          <div className="tea-sack-update-search-bar">
             <label htmlFor="searchUserId">Search User Id Here</label>
             <input 
               type="text" 
@@ -129,7 +129,7 @@ function TeaSackUpdate() {
             />
           </div>
 
-          <form className="tea-sack-form" onSubmit={handleSubmit}>
+          <form className="tea-sack-update-form" onSubmit={handleSubmit}>
             <label>User Id</label>
             <input 
               type="text" 
@@ -156,9 +156,9 @@ function TeaSackUpdate() {
               required
             />
 
-            <div className="deduction-section">
+            <div className="tea-sack-update-deduction-section">
               <label>Deduction</label>
-              <div className="deduction-fields">
+              <div className="tea-sack-update-deduction-fields">
                 <div>
                   <span>For water :</span>
                   <input type="text" name="water" value={deductions.water} onChange={handleDeductionChange} />
@@ -182,14 +182,14 @@ function TeaSackUpdate() {
               </div>
             </div>
 
-            <div className="fertilizer-amount">
-              <label>Total Fertilizer Amount:</label>
-              <input type="text" value={totalFertilizerAmount} readOnly />
+            <div className="tea-sack-update-teasack-amount">
+              <label>Total Tea Amount:</label>
+              <input type="text" value={totalTeaSackAmount} readOnly />
             </div>
 
-            {error && <p className="error">{error}</p>}
+            {error && <p className="tea-sack-update-error">{error}</p>}
 
-            <button type="submit" className="submit-button" disabled={isLoading}>
+            <button type="submit" className="tea-sack-update-submit-button" disabled={isLoading}>
               {isLoading ? "Submitting..." : "Submit"}
             </button>
           </form>
