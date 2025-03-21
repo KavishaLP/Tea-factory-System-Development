@@ -184,3 +184,34 @@ export const addTeaSack = async (req, res) => {
         return res.status(500).json({ message: 'An unexpected error occurred.', error: error });
     }
 };
+
+// Function to fetch the count of pending advances
+export const fetchRequestAdvance = (req, res) => {
+    // Query the database to count pending advances
+    const query = "SELECT COUNT(*) AS count FROM advance_payment WHERE action = 'pending'";
+  
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching pending advances:', err);
+        return res.status(500).json({ error: 'Failed to fetch pending advances' });
+      }
+  
+      // Send the count as a response
+      res.status(200).json({ count: results[0].count });
+    });
+  };
+
+  export const fetchTotalUsers = (req, res) => {
+    // Query the database to count total users
+    const query = "SELECT COUNT(DISTINCT id) AS totalUsers FROM farmeraccounts";
+  
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching total users:', err);
+        return res.status(500).json({ error: 'Failed to fetch total users' });
+      }
+  
+      // Send the total number of users as a response
+      res.status(200).json({ totalUsers: results[0].totalUsers });
+    });
+  };

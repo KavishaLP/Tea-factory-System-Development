@@ -6,12 +6,14 @@ import axios from "axios"; // Import axios for API calls
 
 const DashboardAdmin = () => {
   const [pendingRequests, setPendingRequests] = useState(0); // State to store pending requests count
+  const [totalUsers, setTotalUsers] = useState(0); // State to store total users count
+  const [totalPayments, setTotalPayments] = useState(0); // State to store total payments
 
   // Fetch pending requests from the backend
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/api/admin/pending-requests", {
+        const response = await axios.get("http://localhost:8081/api/admin/fetch-pending-requests", {
           withCredentials: true, // Include credentials if needed
         });
         setPendingRequests(response.data.count); // Update state with the count of pending requests
@@ -23,6 +25,38 @@ const DashboardAdmin = () => {
     fetchPendingRequests();
   }, []); // Empty dependency array ensures this runs only once on component mount
 
+  // Fetch total number of users from the backend
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8081/api/admin/fetch-total-users", {
+          withCredentials: true, // Include credentials if needed
+        });
+        setTotalUsers(response.data.totalUsers); // Update state with the total number of users
+      } catch (error) {
+        console.error("Error fetching total users:", error);
+      }
+    };
+
+    fetchTotalUsers();
+  }, []);
+
+  // Fetch total payments from the backend
+  useEffect(() => {
+    const fetchTotalPayments = async () => {
+      try {
+        const response = await axios.get("http://localhost:8081/api/admin/fetch-total-payments", {
+          withCredentials: true, // Include credentials if needed
+        });
+        setTotalPayments(response.data.totalPayments); // Update state with the total payments
+      } catch (error) {
+        console.error("Error fetching total payments:", error);
+      }
+    };
+
+    fetchTotalPayments();
+  }, []);
+
   return (
     <div className="admin-dashboard">
        <Navbar />
@@ -33,11 +67,11 @@ const DashboardAdmin = () => {
         <div className="cards">
           <div className="card">
             <h2>Total Users</h2>
-            <p>150</p>
+            <p>{totalUsers}</p> {/* Display the fetched total users count */}
           </div>
           <div className="card">
             <h2>Total Payments</h2>
-            <p>$5,000</p>
+            <p>${totalPayments}</p> {/* Display the fetched total payments */}
           </div>
           <div className="card">
             <h2>Pending Requests</h2>

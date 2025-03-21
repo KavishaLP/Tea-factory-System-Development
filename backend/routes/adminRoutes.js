@@ -1,13 +1,12 @@
-//routes/adminRoutes
-
 import express from 'express';
-import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack} from '../controllers/adminControllers.js'
+import { fetchRequestAdvance, fetchTotalUsers } from '../controllers/adminControllers.js';
 
 const router = express.Router();
 
-router.get('/get-advance-requests', getAdvanceRequests);
-router.post('/confirm-advance', confirmAdvance);
-router.post('/delete-advance', deleteAdvance);
-router.post('/add-tea-sack', addTeaSack);
+router.get('/fetch-pending-requests', fetchRequestAdvance);
 
+// Route to fetch total number of users
+router.get('/fetch-total-users', fetchTotalUsers);
+
+// Export the router
 export default router;
