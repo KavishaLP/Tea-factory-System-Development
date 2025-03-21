@@ -166,7 +166,7 @@ function AdvanceUpdate() {
                     <tr key={request.advn_id}>
                       <td>{request.userId}</td>
                       <td>{request.firstName +' '+ request.lastName}</td>
-                      <td>${request.amount}</td>
+                      <td>LKR {request.amount}</td>
                       <td>{request.date}</td>
                       <td>
                         <button
@@ -206,7 +206,7 @@ function AdvanceUpdate() {
                     <tr key={request.id}>
                       <td>{request.userId}</td>
                       <td>{request.firstName +' '+ request.lastName}</td>
-                      <td>${request.amount}</td>
+                      <td>LKR {request.amount}</td>
                       <td>{request.date}</td>
                     </tr>
                   ))}
@@ -232,7 +232,7 @@ function AdvanceUpdate() {
                     <tr key={request.id}>
                       <td>{request.userId}</td>
                       <td>{request.firstName +' '+ request.lastName}</td>
-                      <td>${request.amount}</td>
+                      <td>LKR {request.amount}</td>
                       <td>{request.date}</td>
                     </tr>
                   ))}
