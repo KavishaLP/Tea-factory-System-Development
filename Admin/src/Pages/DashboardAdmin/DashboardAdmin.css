@@ -43,18 +43,25 @@
   background-color: #f4f4f9;
   padding: 30px;
   overflow-y: auto; /* Allow scrolling for main content */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
 }
 
 .main-content h1 {
   color: #333;
   font-size: 2rem;
   margin-bottom: 20px;
+  text-align: center; /* Center the heading */
 }
 
 .cards {
   display: flex;
   gap: 20px;
   flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
+  justify-content: center; /* Center cards horizontally */
+  max-width: 800px; /* Limit the width of the cards container */
+  width: 100%; /* Ensure it takes full width */
 }
 
 .card {
@@ -88,41 +95,40 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .admin-dashboard {
-      flex-direction: column; /* Stack sidebar and main content vertically */
+    flex-direction: column; /* Stack sidebar and main content vertically */
   }
 
   .sidebar {
-      width: 100%; /* Full width for sidebar on small screens */
-      height: auto; /* Auto height for sidebar */
-      padding: 10px;
+    width: 100%; /* Full width for sidebar on small screens */
+    height: auto; /* Auto height for sidebar */
+    padding: 10px;
   }
 
   .sidebar ul {
-      display: flex;
-      justify-content: space-around; /* Distribute items evenly */
-      flex-wrap: wrap; /* Allow items to wrap */
+    display: flex;
+    justify-content: space-around; /* Distribute items evenly */
+    flex-wrap: wrap; /* Allow items to wrap */
   }
 
   .sidebar ul li {
-      margin: 10px 0; /* Reduce margin for smaller screens */
+    margin: 10px 0; /* Reduce margin for smaller screens */
   }
 
   .main-content {
-      padding: 20px;
+    padding: 20px;
   }
 
   .cards {
-      gap: 10px; /* Reduce gap between cards */
-      justify-content: center; /* Center cards on small screens */
+    gap: 10px; /* Reduce gap between cards */
   }
 
   .card {
-      width: 45%; /* Make cards take up less space */
+    width: 45%; /* Make cards take up less space */
   }
 }
 
 @media (max-width: 480px) {
   .card {
-      width: 100%; /* Full width for cards on very small screens */
+    width: 100%; /* Full width for cards on very small screens */
   }
 }
