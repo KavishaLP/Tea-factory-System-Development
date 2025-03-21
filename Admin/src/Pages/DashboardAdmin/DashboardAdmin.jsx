@@ -74,7 +74,7 @@ const DashboardAdmin = () => {
             <p>${totalPayments}</p> {/* Display the fetched total payments */}
           </div>
           <div className="card">
-            <h2>Pending Requests</h2>
+            <h2>Advance Pending Requests</h2>
             <p>{pendingRequests}</p> {/* Display the fetched pending requests count */}
           </div>
         </div>
