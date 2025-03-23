@@ -55,14 +55,16 @@ function App() {
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
             
             <Route path="/Mng-Dashboard" element={<Dashboard />} />
-            <Route path="/advance-update" element={<AddNewPayment />} />
+            <Route path="/Mng-Create-Farmer-Account" element={<CreateFarmerAccount />} />
+
+            <Route path="/Mng-Create-Employee-Account" element={<CreateEmployeeAccount />} />
             <Route path="/Mng-Employee-Payment" element={<Employeepayment />} />
 
-            <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
-            <Route path="/Mng-User-dashboard" element={<Sidebar />} />
-            <Route path="/Mng-Create-Farmer-Account" element={<CreateFarmerAccount />} />
-            <Route path="/Mng-Create-Employee-Account" element={<CreateEmployeeAccount />} />
+
+            <Route path="/Mng-Payment-Logs" element={<AddNewPayment />} />
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport />} />
+
+            <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
             <Route path="/Mng-Fertilizer-History" element={<FertilizerHistory />} />
           </Routes>
         </main>

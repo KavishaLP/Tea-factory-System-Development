@@ -233,6 +233,12 @@ const handleSubmit = async (e) => {
         {/* Tabs */}
         <div className="tabs-container">
           <button
+            className={`tab-button ${activeTab === "toPayment" ? "active" : ""}`}
+            onClick={() => setActiveTab("toPayment")}
+          >
+            To Payments
+          </button>
+          <button
             className={`tab-button ${activeTab === "addPayment" ? "active" : ""}`}
             onClick={() => setActiveTab("addPayment")}
           >
@@ -245,6 +251,45 @@ const handleSubmit = async (e) => {
             View Payments History
           </button>
         </div>
+
+        {activeTab === "toPayment" && (
+          <div className="payment-history">
+            <h3>Payment History</h3>
+            {historyLoading ? (
+              <p>Loading...</p>
+            ) : paymentsHistory.length > 0 ? (
+              <table>
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Final Tea Kilos</th>
+                    <th>Payment Per Kilo</th>
+                    <th>Final Amount</th>
+                    <th>Advances</th>
+                    <th>Final Payment</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentsHistory.map((payment, index) => (
+                    <tr key={index}>
+                      <td>{payment.userId}</td>
+                      <td>{payment.finalTeaKilos}</td>
+                      <td>{payment.paymentPerKilo}</td>
+                      <td>{payment.finalAmount}</td>
+                      <td>{payment.advances}</td>
+                      <td>{payment.finalPayment}</td>
+                      <td>{new Date(payment.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No payment history found.</p>
+            )}
+
+          </div>
+        )}
 
         {/* Add New Payment Form */}
         {activeTab === "addPayment" && (
