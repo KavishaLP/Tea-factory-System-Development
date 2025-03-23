@@ -17,6 +17,7 @@ const Fertilizer = () => {
       setError(""); // Clear any previous errors
       try {
         const data = await fetchFertilizerRequests();
+        console.log("Fetched Data:", data); // Log the fetched data
         setRequests(data);
       } catch (error) {
         setError("Failed to fetch data. Please try again later.");
@@ -51,10 +52,10 @@ const Fertilizer = () => {
   const handleConfirm = async (requestId) => {
     setError(""); // Clear any previous errors
     try {
-      const updatedRequest = await confirmRequest(requestId);
+      await confirmRequest(requestId);
       setRequests((prevRequests) =>
         prevRequests.map((request) =>
-          request.request_id === requestId ? updatedRequest : request
+          request.request_id === requestId ? { ...request, status: "Approved" } : request
         )
       );
       alert("Request confirmed successfully!");
@@ -85,10 +86,10 @@ const Fertilizer = () => {
   const handleDelete = async (requestId) => {
     setError(""); // Clear any previous errors
     try {
-      const updatedRequest = await deleteRequest(requestId);
+      await deleteRequest(requestId);
       setRequests((prevRequests) =>
         prevRequests.map((request) =>
-          request.request_id === requestId ? updatedRequest : request
+          request.request_id === requestId ? { ...request, status: "Rejected" } : request
         )
       );
       alert("Request deleted successfully!");
@@ -116,19 +117,31 @@ const Fertilizer = () => {
   };
 
   // Filter data based on search term, date, and status
-  const filteredData = requests.filter((request) => {
-    const matchesSearchTerm =
-      request.userId.includes(searchTerm) ||
-      request.userName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDate = filterDate ? request.requestDate === filterDate : true;
-    const matchesStatus =
-      activeTab === "newRequests"
-        ? request.status === "Pending" // Show pending requests for "New Requests" tab
-        : activeTab === "confirmedRequests"
-        ? request.status === "Approved" // Show approved requests for "Confirmed Requests" tab
-        : request.status === "Rejected"; // Show rejected requests for "Deleted Requests" tab
-    return matchesSearchTerm && matchesDate && matchesStatus;
-  });
+  const filteredData = requests
+    .filter((request) => {
+      // Skip undefined or invalid objects
+      if (!request || !request.userId || !request.userName) {
+        return false;
+      }
+
+      // Filter by search term
+      const matchesSearchTerm =
+        request.userId.includes(searchTerm) ||
+        request.userName.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // Filter by date
+      const matchesDate = filterDate ? request.requestDate === filterDate : true;
+
+      // Filter by status based on the active tab
+      const matchesStatus =
+        activeTab === "newRequests"
+          ? request.status === "Pending" // Show pending requests for "New Requests" tab
+          : activeTab === "confirmedRequests"
+          ? request.status === "Approved" // Show approved requests for "Confirmed Requests" tab
+          : request.status === "Rejected"; // Show rejected requests for "Deleted Requests" tab
+
+      return matchesSearchTerm && matchesDate && matchesStatus;
+    });
 
   return (
     <div className="cfa-content">
@@ -188,6 +201,8 @@ const Fertilizer = () => {
           <div className="table-container">
             {isLoading ? (
               <p>Loading...</p>
+            ) : filteredData.length === 0 ? (
+              <p>No requests found.</p>
             ) : (
               <table className="history-table">
                 <thead>

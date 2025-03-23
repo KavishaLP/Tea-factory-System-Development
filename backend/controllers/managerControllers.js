@@ -1,3 +1,5 @@
+//controllers/managerControllers.js
+
 import bcrypt from 'bcryptjs';
 import sqldb from '../config/sqldb.js';
 
