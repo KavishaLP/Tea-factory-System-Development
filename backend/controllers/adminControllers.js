@@ -249,6 +249,7 @@ export const getTeaPacketsRequests = (req, res) => {
       }
   
       if (results.length === 0) {
+        console.log(results.length)
         return res.status(404).json({
           status: "Success",
           message: "No tea packet requests found.",

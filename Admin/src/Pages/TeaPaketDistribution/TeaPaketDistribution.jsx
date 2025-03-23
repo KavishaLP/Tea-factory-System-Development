@@ -38,8 +38,8 @@ const TeaPacketDistribution = () => {
         "http://localhost:8081/api/admin/get-tea-packet-requests",
         { withCredentials: true }
       );
+      console.log("fucck");
   
-      console.log("Backend Response:", response);
   
       if (response.data.status === "Success") {
         return response.data.teaPacketRequests || [];
