@@ -288,30 +288,36 @@ export const getEmployeePaymentHistory = (req, res) => {
 };
 
 // Get fertilizer requests
-export const getFertilizerRequests = async (req, res) => {
-    try {
-      // Query to fetch all fertilizer requests
-      const query = `
-        SELECT 
-          fr.request_id,
-          fr.userId,
-          fr.fertilizerType,
-          fr.packetType,
-          fr.amount,
-          fr.requestDate,
-          fr.status,
-          fr.paymentOption,
-          fa.userName
-        FROM fertilizer_requests fr
-        JOIN farmeraccounts fa ON fr.userId = fa.userId
-        ORDER BY fr.requestDate DESC;
-      `;
+export const getFertilizerRequests = (req, res) => {
+    // Query to fetch all fertilizer requests
+    const query = `
+      SELECT 
+        fr.request_id,
+        fr.userId,
+        fr.fertilizerType,
+        fr.packetType,
+        fr.amount,
+        fr.requestDate,
+        fr.status,
+        fr.paymentOption,
+        fa.userName
+      FROM fertilizer_requests fr
+      JOIN farmeraccounts fa ON fr.userId = fa.userId
+      ORDER BY fr.requestDate DESC;
+    `;
   
-      // Execute the query
-      const [requests] = await sqldb.query(query);
+    // Execute the query
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        console.error("Error fetching fertilizer requests:", err);
+        return res.status(500).json({
+          status: "Error",
+          message: "An error occurred while fetching fertilizer requests.",
+        });
+      }
   
       // Check if requests exist
-      if (requests.length === 0) {
+      if (results.length === 0) {
         return res.status(404).json({
           status: "Success",
           message: "No fertilizer requests found.",
@@ -323,13 +329,7 @@ export const getFertilizerRequests = async (req, res) => {
       res.status(200).json({
         status: "Success",
         message: "Fertilizer requests fetched successfully.",
-        fertilizerRequests: requests,
+        fertilizerRequests: results,
       });
-    } catch (error) {
-      console.error("Error fetching fertilizer requests:", error);
-      res.status(500).json({
-        status: "Error",
-        message: "An error occurred while fetching fertilizer requests.",
-      });
-    }
-  };
+    });
+};
