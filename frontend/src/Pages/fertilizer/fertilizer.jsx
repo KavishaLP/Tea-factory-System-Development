@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Fertilizer.css";
 
 const Fertilizer = () => {
-  const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests or confirmedRequests
+  const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests, confirmedRequests, or deletedRequests
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
@@ -15,7 +15,7 @@ const Fertilizer = () => {
     packetType: ["5", "10", "50"][index % 3],
     amount: (index + 1) * 5,
     requestDate: `2024-03-${String(index + 1).padStart(2, "0")}`,
-    status: index % 2 === 0 ? "Pending" : "Completed",
+    status: index % 3 === 0 ? "Pending" : index % 3 === 1 ? "Completed" : "Deleted",
     paymentOption: ["Cash", "Credit"][index % 2],
   }));
 
@@ -28,7 +28,9 @@ const Fertilizer = () => {
     const matchesStatus =
       activeTab === "newRequests"
         ? request.status === "Pending"
-        : request.status === "Completed";
+        : activeTab === "confirmedRequests"
+        ? request.status === "Completed"
+        : request.status === "Deleted";
     return matchesSearchTerm && matchesDate && matchesStatus;
   });
 
@@ -41,7 +43,7 @@ const Fertilizer = () => {
   // Handle Delete action
   const handleDelete = (requestId) => {
     alert(`Deleted request with ID: ${requestId}`);
-    // Add backend logic to delete the request
+    // Add backend logic to update status to "Deleted"
   };
 
   return (
@@ -62,6 +64,12 @@ const Fertilizer = () => {
               onClick={() => setActiveTab("confirmedRequests")}
             >
               Confirmed Requests
+            </button>
+            <button
+              className={`tab-button ${activeTab === "deletedRequests" ? "active" : ""}`}
+              onClick={() => setActiveTab("deletedRequests")}
+            >
+              Deleted Requests
             </button>
           </div>
 
