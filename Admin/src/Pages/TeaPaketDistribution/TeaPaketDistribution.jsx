@@ -1,7 +1,9 @@
-//TeaPacketDistribution
+//TeaPacketDistribution.jsx
+
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Fertilizer.css";
+import "./TeaPaketDistribution.css";
 
 const TeaPacketDistribution = () => {
   const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests, confirmedRequests, or deletedRequests
@@ -35,7 +37,7 @@ const TeaPacketDistribution = () => {
   const fetchFertilizerRequests = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8081/api/manager/get-fertilizer-requests",
+        "http://localhost:8081/api/admin/get-tea-packets-requests",
         { withCredentials: true }
       );
       if (response.data.status === "Success") {
@@ -70,7 +72,7 @@ const TeaPacketDistribution = () => {
   const confirmRequest = async (requestId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/manager/confirm-fertilizer",
+        "http://localhost:8081/api/admin/confirm-tea-packets",
         { requestId: requestId },
         { withCredentials: true }
       );
@@ -104,7 +106,7 @@ const TeaPacketDistribution = () => {
   const deleteRequest = async (requestId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/manager/delete-fertilizer",
+        "http://localhost:8081/api/admin/delete-tea-packets",
         { requestId: requestId },
         { withCredentials: true }
       );
@@ -145,9 +147,9 @@ const TeaPacketDistribution = () => {
     });
 
   return (
-    <div className="cfa-content">
+    <div className="tpd-content">
+      <div className="tpd-grid">
       <h2>Fertilizer Request History</h2>
-      <div className="cfa-grid">
         <div className="history-section">
           {/* Tabs */}
           <div className="tabs-container">

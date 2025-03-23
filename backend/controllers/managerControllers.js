@@ -289,6 +289,8 @@ export const getEmployeePaymentHistory = (req, res) => {
     });
 };
 
+
+
 // Get fertilizer requests
 export const getFertilizerRequests = (req, res) => {
     // Query to fetch all fertilizer requests
@@ -369,6 +371,7 @@ export const confirmFertilizer = async (req, res) => {
     }
 };
 
+// Delete fertilizer request
 export const deleteFertilizer = async (req, res) => {
     console.log("Deleting fertilizer request:", req.body);
 
