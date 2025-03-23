@@ -1,88 +1,126 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Fertilizer.css";
+import "./FertilizerUpdate.css";
 
-const Fertilizer = () => {
-  const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests, confirmedRequests, or deletedRequests
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterDate, setFilterDate] = useState("");
-  const [requests, setRequests] = useState([]); // State to store fetched requests
-  const [isLoading, setIsLoading] = useState(false); // Loading state
-  const [error, setError] = useState(""); // Error state
+function FertilizerUpdate() {
+  // State for active tab
+  const [activeTab, setActiveTab] = useState("newRequests");
 
-  // Fetch data on component mount or when the active tab changes
+  // State for fertilizer requests
+  const [newRequests, setNewRequests] = useState([]);
+  const [confirmedRequests, setConfirmedRequests] = useState([]);
+  const [deletedRequests, setDeletedRequests] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // Fetch fertilizer requests on component mount and tab change
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFertilizerRequests = async () => {
       setIsLoading(true);
-      setError(""); // Clear any previous errors
+      setError("");
+
       try {
-        const data = await fetchFertilizerRequests();
-        setRequests(data);
+        const response = await axios.get(
+          "http://localhost:8081/api/admin/get-fertilizer-requests",
+          { withCredentials: true }
+        );
+        console.log(response);
+        if (response.data.status === "Success") {
+          const requests = response.data.fertilizerRequests;
+          setNewRequests(requests.filter((req) => req.status === "Pending"));
+          setConfirmedRequests(requests.filter((req) => req.status === "Completed"));
+          setDeletedRequests(requests.filter((req) => req.status === "Deleted"));
+        } else {
+          setError(response.data.message || "Failed to fetch fertilizer requests.");
+        }
       } catch (error) {
-        setError("Failed to fetch data. Please try again later.");
-        console.error("Error fetching data:", error);
+        console.error("Error fetching fertilizer requests:", error);
+        setError("An error occurred while fetching fertilizer requests.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
+    fetchFertilizerRequests();
   }, [activeTab]);
 
-  // Filter data based on search term, date, and status
-  const filteredData = requests.filter((request) => {
-    const matchesSearchTerm =
-      request.userId.includes(searchTerm) ||
-      request.userName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDate = filterDate ? request.requestDate === filterDate : true;
-    const matchesStatus =
-      activeTab === "newRequests"
-        ? request.status === "Pending"
-        : activeTab === "confirmedRequests"
-        ? request.status === "Completed"
-        : request.status === "Deleted";
-    return matchesSearchTerm && matchesDate && matchesStatus;
-  });
+  // Function to confirm a fertilizer request
+  const handleConfirm = async (id) => {
+    setIsLoading(true);
+    setError("");
 
-  // Handle Confirm action
-  const handleConfirm = async (requestId) => {
-    setError(""); // Clear any previous errors
     try {
-      const updatedRequest = await confirmRequest(requestId);
-      setRequests((prevRequests) =>
-        prevRequests.map((request) =>
-          request.request_id === requestId ? updatedRequest : request
-        )
+      const response = await axios.post(
+        "http://localhost:8081/api/admin/confirm-fertilizer",
+        { requestId: id },
+        { withCredentials: true }
       );
-      alert("Request confirmed successfully!");
+
+      if (response.data.status === "Success") {
+        // Find the confirmed request in newRequests
+        const confirmedRequest = newRequests.find((req) => req.request_id === id);
+
+        if (confirmedRequest) {
+          // Remove the confirmed request from newRequests
+          setNewRequests(newRequests.filter((req) => req.request_id !== id));
+
+          // Add the confirmed request to confirmedRequests
+          setConfirmedRequests([...confirmedRequests, { ...confirmedRequest, status: "Completed" }]);
+        }
+
+        alert("Fertilizer request confirmed successfully!");
+      } else {
+        setError(response.data.message || "Failed to confirm fertilizer request.");
+      }
     } catch (error) {
-      setError("Failed to confirm request. Please try again.");
-      console.error("Error confirming request:", error);
+      console.error("Error confirming fertilizer request:", error);
+      setError("An error occurred while confirming the fertilizer request.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Handle Delete action
-  const handleDelete = async (requestId) => {
-    setError(""); // Clear any previous errors
+  // Function to delete a fertilizer request
+  const handleDelete = async (id) => {
+    setIsLoading(true);
+    setError("");
+
     try {
-      const updatedRequest = await deleteRequest(requestId);
-      setRequests((prevRequests) =>
-        prevRequests.map((request) =>
-          request.request_id === requestId ? updatedRequest : request
-        )
+      const response = await axios.post(
+        "http://localhost:8081/api/admin/delete-fertilizer",
+        { requestId: id },
+        { withCredentials: true }
       );
-      alert("Request deleted successfully!");
+
+      if (response.data.status === "Success") {
+        // Find the request being deleted
+        const request = newRequests.find((req) => req.request_id === id);
+        if (request) {
+          // Move to deletedRequests and remove from newRequests
+          setDeletedRequests([...deletedRequests, { ...request, status: "Deleted" }]);
+          setNewRequests(newRequests.filter((req) => req.request_id !== id));
+        }
+        alert("Fertilizer request deleted successfully!");
+      } else {
+        setError(response.data.message || "Failed to delete fertilizer request.");
+      }
     } catch (error) {
-      setError("Failed to delete request. Please try again.");
-      console.error("Error deleting request:", error);
+      console.error("Error deleting fertilizer request:", error);
+      setError("An error occurred while deleting the fertilizer request.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="cfa-content">
-      <h2>Fertilizer Request History</h2>
-      <div className="cfa-grid">
-        <div className="history-section">
+    <div className="fertilizer-update-container">
+      <div className="content-wrapper">
+        <div className="content">
+          <div className="page-header">
+            <h1>Fertilizer Requests</h1>
+          </div>
+
           {/* Tabs */}
           <div className="tabs-container">
             <button
@@ -105,102 +143,118 @@ const Fertilizer = () => {
             </button>
           </div>
 
-          {/* Search and Filter Controls */}
-          <div className="controls-container">
-            <div className="search-box">
-              <input
-                type="text"
-                placeholder="Search by User ID or Name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <i className="search-icon">🔍</i>
-            </div>
-            <div className="date-filter">
-              <input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              />
-            </div>
-          </div>
+          {/* Loading and Error Messages */}
+          {isLoading && <p className="loading">Loading...</p>}
+          {error && <p className="error">{error}</p>}
 
-          {/* Error Message */}
-          {error && (
-            <div className="error-message">
-              <p>{error}</p>
-            </div>
-          )}
-
-          {/* History Table */}
-          <div className="table-container">
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <table className="history-table">
+          {/* New Requests Table */}
+          {activeTab === "newRequests" && (
+            <div className="requests-table">
+              <table>
                 <thead>
                   <tr>
-                    <th>Date</th>
                     <th>User ID</th>
-                    <th>User Name</th>
+                    <th>Farmer Name</th>
                     <th>Fertilizer Type</th>
                     <th>Packet Type</th>
                     <th>Amount (Kilos)</th>
-                    <th>Payment Option</th>
-                    <th>Status</th>
-                    {activeTab === "newRequests" && <th>Action</th>}
+                    <th>Date</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((request) => (
+                  {newRequests.map((request) => (
                     <tr key={request.request_id}>
-                      <td>{request.requestDate}</td>
                       <td>{request.userId}</td>
-                      <td>{request.userName}</td>
+                      <td>{request.firstName + " " + request.lastName}</td>
                       <td>{request.fertilizerType}</td>
                       <td>{request.packetType}</td>
                       <td>{request.amount}</td>
-                      <td>{request.paymentOption}</td>
+                      <td>{request.requestDate}</td>
                       <td>
-                        <span className={`status ${request.status.toLowerCase()}`}>
-                          {request.status}
-                        </span>
+                        <button
+                          className="confirm-button"
+                          onClick={() => handleConfirm(request.request_id)}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          className="delete-button"
+                          onClick={() => handleDelete(request.request_id)}
+                        >
+                          Delete
+                        </button>
                       </td>
-                      {activeTab === "newRequests" && (
-                        <td>
-                          <button
-                            className="confirm-button"
-                            onClick={() => handleConfirm(request.request_id)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            className="delete-button"
-                            onClick={() => handleDelete(request.request_id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      )}
                     </tr>
                   ))}
                 </tbody>
               </table>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Pagination */}
-          <div className="pagination">
-            <button>&laquo;</button>
-            <button className="active">1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>&raquo;</button>
-          </div>
+          {/* Confirmed Requests Table */}
+          {activeTab === "confirmedRequests" && (
+            <div className="requests-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Farmer Name</th>
+                    <th>Fertilizer Type</th>
+                    <th>Packet Type</th>
+                    <th>Amount (Kilos)</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {confirmedRequests.map((request) => (
+                    <tr key={request.request_id}>
+                      <td>{request.userId}</td>
+                      <td>{request.firstName + " " + request.lastName}</td>
+                      <td>{request.fertilizerType}</td>
+                      <td>{request.packetType}</td>
+                      <td>{request.amount}</td>
+                      <td>{request.requestDate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Deleted Requests Table */}
+          {activeTab === "deletedRequests" && (
+            <div className="requests-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Farmer Name</th>
+                    <th>Fertilizer Type</th>
+                    <th>Packet Type</th>
+                    <th>Amount (Kilos)</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deletedRequests.map((request) => (
+                    <tr key={request.request_id}>
+                      <td>{request.userId}</td>
+                      <td>{request.firstName + " " + request.lastName}</td>
+                      <td>{request.fertilizerType}</td>
+                      <td>{request.packetType}</td>
+                      <td>{request.amount}</td>
+                      <td>{request.requestDate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default Fertilizer;
+export default FertilizerUpdate;
