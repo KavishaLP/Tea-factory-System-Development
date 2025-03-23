@@ -221,30 +221,30 @@ export const fetchRequestAdvance = (req, res) => {
 
 // Get fertilizer requests
 export const getTeaPacketsRequests = (req, res) => {
-    // Query to fetch all fertilizer requests
+    // Query to fetch all tea packet requests
     const query = `
       SELECT 
-        fr.request_id,
-        fr.userId,
-        fr.fertilizerType,
-        fr.packetType,
-        fr.amount,
-        fr.requestDate,
-        fr.status,
-        fr.paymentOption,
+        tpr.request_id,
+        tpr.userId,
+        tpr.teaPacketType,
+        tpr.teaPacketSize,
+        tpr.amount,
+        tpr.requestDate,
+        tpr.status,
+        tpr.paymentOption,
         fa.userName
-      FROM fertilizer_requests fr
-      JOIN farmeraccounts fa ON fr.userId = fa.userId
-      ORDER BY fr.requestDate DESC;
+      FROM tea_packet_requests tpr
+      JOIN farmeraccounts fa ON tpr.userId = fa.userId
+      ORDER BY tpr.requestDate DESC;
     `;
   
     // Execute the query
     sqldb.query(query, (err, results) => {
       if (err) {
-        console.error("Error fetching fertilizer requests:", err);
+        console.error("Error fetching tea packet requests:", err);
         return res.status(500).json({
           status: "Error",
-          message: "An error occurred while fetching fertilizer requests.",
+          message: "An error occurred while fetching tea packet requests.",
         });
       }
   
@@ -252,82 +252,82 @@ export const getTeaPacketsRequests = (req, res) => {
       if (results.length === 0) {
         return res.status(404).json({
           status: "Success",
-          message: "No fertilizer requests found.",
-          fertilizerRequests: [],
+          message: "No tea packet requests found.",
+          teaPacketRequests: [],
         });
       }
   
       // Return the fetched requests
       res.status(200).json({
         status: "Success",
-        message: "Fertilizer requests fetched successfully.",
-        fertilizerRequests: results,
+        message: "Tea packet requests fetched successfully.",
+        teaPacketRequests: results,
       });
     });
 };
 
 // Confirm fertilizer request
 export const confirmTeaPackets = async (req, res) => {
-    console.log("Confirming fertilizer request:", req.body);
-
+    console.log("Confirming tea packet request:", req.body);
+  
     const { requestId } = req.body;
-
+  
     if (!requestId) {
-        return res.status(400).json({ message: "Request ID is required." });
+      return res.status(400).json({ message: "Request ID is required." });
     }
-
+  
     try {
-        const sqlQuery = "UPDATE fertilizer_requests SET status = 'Approved' WHERE request_id = ?";
-        sqldb.query(sqlQuery, [requestId], (err, result) => {
-            if (err) {
-                console.error("Database Query Error:", err);
-                return res.status(500).json({ message: "Database error", error: err });
-            }
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ message: "Fertilizer request not found." });
-            }
-
-            return res.status(200).json({
-                status: "Success",
-                message: "Fertilizer request confirmed successfully.",
-            });
+      const sqlQuery = "UPDATE tea_packet_requests SET status = 'Approved' WHERE request_id = ?";
+      sqldb.query(sqlQuery, [requestId], (err, result) => {
+        if (err) {
+          console.error("Database Query Error:", err);
+          return res.status(500).json({ message: "Database error", error: err });
+        }
+  
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ message: "Tea packet request not found." });
+        }
+  
+        return res.status(200).json({
+          status: "Success",
+          message: "Tea packet request confirmed successfully.",
         });
+      });
     } catch (error) {
-        console.error("Unexpected Error:", error);
-        return res.status(500).json({ message: "An unexpected error occurred.", error: error });
+      console.error("Unexpected Error:", error);
+      return res.status(500).json({ message: "An unexpected error occurred.", error: error });
     }
 };
 
 // Delete fertilizer request
 export const deleteTeaPackets = async (req, res) => {
-    console.log("Deleting fertilizer request:", req.body);
-
+    console.log("Deleting tea packet request:", req.body);
+  
     const { requestId } = req.body;
-
+  
     if (!requestId) {
-        return res.status(400).json({ message: "Request ID is required." });
+      return res.status(400).json({ message: "Request ID is required." });
     }
-
+  
     try {
-        const sqlQuery = "UPDATE fertilizer_requests SET status = 'Rejected' WHERE request_id = ?";
-        sqldb.query(sqlQuery, [requestId], (err, result) => {
-            if (err) {
-                console.error("Database Query Error:", err);
-                return res.status(500).json({ message: "Database error", error: err });
-            }
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ message: "Fertilizer request not found." });
-            }
-
-            return res.status(200).json({
-                status: "Success",
-                message: "Fertilizer request deleted successfully.",
-            });
+      const sqlQuery = "UPDATE tea_packet_requests SET status = 'Rejected' WHERE request_id = ?";
+      sqldb.query(sqlQuery, [requestId], (err, result) => {
+        if (err) {
+          console.error("Database Query Error:", err);
+          return res.status(500).json({ message: "Database error", error: err });
+        }
+  
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ message: "Tea packet request not found." });
+        }
+  
+        return res.status(200).json({
+          status: "Success",
+          message: "Tea packet request deleted successfully.",
         });
+      });
     } catch (error) {
-        console.error("Unexpected Error:", error);
-        return res.status(500).json({ message: "An unexpected error occurred.", error: error });
+      console.error("Unexpected Error:", error);
+      return res.status(500).json({ message: "An unexpected error occurred.", error: error });
     }
 };

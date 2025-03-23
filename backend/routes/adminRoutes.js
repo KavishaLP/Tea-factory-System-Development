@@ -12,7 +12,7 @@ router.post('/add-tea-sack', addTeaSack);
 router.get('/fetch-pending-requests', fetchRequestAdvance);
 router.get('/fetch-total-users', fetchTotalUsers);
 
-router.get('/get-tea-packets-requests', getTeaPacketsRequests);
+router.get('/get-tea-packet-requests', getTeaPacketsRequests);
 router.post('/confirm-tea-packets', confirmTeaPackets);
 router.post('/delete-tea-packets', deleteTeaPackets);
 
