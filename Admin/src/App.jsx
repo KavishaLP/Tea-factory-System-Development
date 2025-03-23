@@ -42,7 +42,7 @@ function App() {
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
             
-            <Route path="/dashboard-admin" element={<DashboardAdmin />} /> 
+            <Route path="/admin-dashboard-admin" element={<DashboardAdmin />} /> 
             <Route path="/tea-sack-update" element={<TeaSackUpdate />} />
             <Route path="/advance-update" element={<AdvanceUpdate />} />
             <Route path="/tea-packet-distribution" element={<TeaPacketDistribution />} />

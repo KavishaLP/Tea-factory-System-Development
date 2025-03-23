@@ -23,8 +23,8 @@ export const admnLogin = (req, res) => {
 
     // SQL query to find user by username or email
     const sql = isEmail
-        ? "SELECT * FROM USER WHERE ADMINMAIL = ?" // Check for email
-        : "SELECT * FROM USER WHERE username = ?"; // Check for username
+        ? "SELECT * FROM adminaccounts WHERE ADMINMAIL = ?" // Check for email
+        : "SELECT * FROM adminaccounts WHERE username = ?"; // Check for username
 
     sqldb.query(sql, [usernamemail], (err, results) => {
         if (err) {
@@ -72,7 +72,6 @@ export const admnLogin = (req, res) => {
     });
 };
 
-
 export const admnForgotPassword = (req, res) => {
     const { email } = req.body;
 
@@ -81,7 +80,7 @@ export const admnForgotPassword = (req, res) => {
     }
 
     // Check if user exists
-    const sql = "SELECT * FROM USER WHERE ADMINMAIL = ?";
+    const sql = "SELECT * FROM adminaccounts WHERE ADMINMAIL = ?";
     sqldb.query(sql, [email], (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error', error: err });
         if (results.length === 0) {
@@ -92,7 +91,7 @@ export const admnForgotPassword = (req, res) => {
         const expiryTime = new Date(Date.now() + 15 * 60 * 1000); // Code valid for 15 minutes
 
         // Update user record with reset code and expiry time
-        const updateSql = "UPDATE USER SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+        const updateSql = "UPDATE adminaccounts SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
         sqldb.query(updateSql, [resetCode, expiryTime, email], (updateErr) => {
             if (updateErr) return res.status(500).json({ message: 'Error updating reset code', error: updateErr });
 
@@ -135,7 +134,7 @@ export const admnSendAgain = (req, res) => {
     const expiryTime = new Date(Date.now() + 15 * 60 * 1000); // Code valid for 15 minutes
 
     // Update the user's reset code and expiry time in the database
-    const updateSql = "UPDATE USER SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+    const updateSql = "UPDATE adminaccounts SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
     sqldb.query(updateSql, [resetCode, expiryTime, email], (updateErr, results) => {
         console.log('Update query result:', results); // Log query result
         console.log('Update query error:', updateErr); // Log query error, if any
@@ -188,7 +187,7 @@ export const admnCheckCode = (req, res) => {
     }
 
     // SQL query to check if the code and email match
-    const sql = "SELECT * FROM USER WHERE ADMINMAIL = ? AND RESET_CODE = ?";
+    const sql = "SELECT * FROM adminaccounts WHERE ADMINMAIL = ? AND RESET_CODE = ?";
     sqldb.query(sql, [email, resetCode], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Database error', error: err });
@@ -231,7 +230,7 @@ export const admnUpdatePassword = (req, res) => {
         }
 
         // SQL query to update the password in the database
-        const sql = "UPDATE USER SET PASSWORD = ? WHERE ADMINMAIL = ?";
+        const sql = "UPDATE adminaccounts SET PASSWORD = ? WHERE ADMINMAIL = ?";
 
         sqldb.query(sql, [hashedPassword, email], (err, results) => {
             if (err) {
@@ -244,7 +243,7 @@ export const admnUpdatePassword = (req, res) => {
             }
 
             // SQL query to clear the RESET_CODE and RESET_EXPIRY fields
-            const clearCodeSql = "UPDATE USER SET RESET_CODE = NULL, RESET_EXPIRY = NULL WHERE ADMINMAIL = ?";
+            const clearCodeSql = "UPDATE adminaccounts SET RESET_CODE = NULL, RESET_EXPIRY = NULL WHERE ADMINMAIL = ?";
 
             sqldb.query(clearCodeSql, [email], (err, clearResults) => {
                 if (err) {

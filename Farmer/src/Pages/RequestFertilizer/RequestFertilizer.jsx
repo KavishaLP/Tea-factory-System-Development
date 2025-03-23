@@ -1,23 +1,59 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./requestfertilizer.css";
-import { FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
 
 const RequestFertilizer = () => {
   const [userId, setUserId] = useState("");
   const [fertilizerType, setFertilizerType] = useState("");
+  const [fertilizerPacketType, setFertilizerPacketType] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!amount || amount <= 0) {
-      setMessage("Please enter a valid amount.");
+    // Validation
+    if (!userId || !fertilizerType || !fertilizerPacketType || !amount || amount <= 0) {
+      setMessage("Please fill all fields and enter a valid amount.");
       return;
     }
 
-    setMessage("Fertilizer request submitted successfully!");
+    setIsLoading(true);
+    setMessage("");
+
+    // Prepare data to send to the backend
+    const requestData = {
+      userId,
+      fertilizerType,
+      fertilizerPacketType,
+      amount,
+    };
+
+    try {
+      // Send data to the backend
+      const response = await axios.post(
+        "http://localhost:8081/api/farmer/fertilizer-request",
+        requestData,
+        { withCredentials: true } // Remove this if not using cookies/tokens
+      );
+
+      // Handle success
+      setMessage("Fertilizer request submitted successfully!");
+      console.log("Response from backend:", response.data);
+
+      // Clear form fields
+      setUserId("");
+      setFertilizerType("");
+      setFertilizerPacketType("");
+      setAmount("");
+    } catch (error) {
+      // Handle error
+      console.error("Error submitting fertilizer request:", error);
+      setMessage(error.response?.data?.message || "An error occurred while submitting the request.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,7 +84,19 @@ const RequestFertilizer = () => {
           <option value="DAP">DAP</option>
         </select>
 
-        <label>Fertilizer Amount (Kilos):</label>
+        <label>Fertilizer Packet Type:</label>
+        <select
+          value={fertilizerPacketType}
+          onChange={(e) => setFertilizerPacketType(e.target.value)}
+          required
+        >
+          <option value="">Select Type</option>
+          <option value="5">5 Kg</option>
+          <option value="10">10 Kg</option>
+          <option value="50">50 Kg</option>
+        </select>
+
+        <label>Total Packets:</label>
         <input
           type="number"
           value={amount}
@@ -59,7 +107,9 @@ const RequestFertilizer = () => {
 
         {message && <p className="message">{message}</p>}
 
-        <button type="submit">Submit Request</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Submitting..." : "Submit Request"}
+        </button>
       </form>
     </div>
   );

@@ -44,6 +44,7 @@ function App() {
             <Route path="/check-mail" element={<CheckMail />} />
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
+            
             <Route path="/request-advance" element={<RequestAdvance />} />
             <Route path="/request-fertilizer" element={<RequestFertilizer />} />
             <Route path="/view-payment" element={<Viewpayment />} />

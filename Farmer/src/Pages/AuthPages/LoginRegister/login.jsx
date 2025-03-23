@@ -20,7 +20,7 @@ const Login = () => {
       if (response.data && response.data.Status === "Success") {
         console.log("JWT Token Received:", response.data.token);
         localStorage.setItem("token", response.data.token);
-        navigate('/Mng-Dashboard'); // Redirect after successful login
+        navigate('/dashboard-farmer'); // Redirect after successful login
       } else {
         setError(response.data.Error || 'Invalid login credentials. Please try again.');
       }

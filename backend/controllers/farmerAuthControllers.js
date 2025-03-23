@@ -23,21 +23,21 @@ export const fmrLogin = (req, res) => {
 
     // SQL query to find user by username or email
     const sql = isEmail
-        ? "SELECT * FROM FARMERS WHERE ADMINMAIL = ?" // Check for email
-        : "SELECT * FROM FARMERS WHERE username = ?"; // Check for username
+        ? "SELECT * FROM farmeraccounts WHERE gmail = ?" // Check for email
+        : "SELECT * FROM farmeraccounts WHERE userName = ?"; // Check for username
 
     sqldb.query(sql, [usernamemail], (err, results) => {
+        console.log(results)
         if (err) {
             return res.status(500).json({ message: 'Database error', error: err });
         }
-        console.log(results)
         // If no user found
         if (results.length === 0) {
             return res.status(401).json({ message: 'Invalid Username Or Email' });
         }
 
         const user = results[0];
-        const hashedPassword = user.PASSWORD;
+        const hashedPassword = user.password;
 
         // Compare passwords
         bcrypt.compare(password, hashedPassword, (err, isMatch) => {
@@ -81,7 +81,7 @@ export const fmrForgotPassword = (req, res) => {
     }
 
     // Check if user exists
-    const sql = "SELECT * FROM FARMERS WHERE ADMINMAIL = ?";
+    const sql = "SELECT * FROM farmeraccounts WHERE gmail = ?";
     sqldb.query(sql, [email], (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error', error: err });
         if (results.length === 0) {
@@ -92,7 +92,7 @@ export const fmrForgotPassword = (req, res) => {
         const expiryTime = new Date(Date.now() + 15 * 60 * 1000); // Code valid for 15 minutes
 
         // Update user record with reset code and expiry time
-        const updateSql = "UPDATE FARMERS SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+        const updateSql = "UPDATE farmeraccounts SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE gmail = ?";
         sqldb.query(updateSql, [resetCode, expiryTime, email], (updateErr) => {
             if (updateErr) return res.status(500).json({ message: 'Error updating reset code', error: updateErr });
 
@@ -135,7 +135,7 @@ export const fmrSendAgain = (req, res) => {
     const expiryTime = new Date(Date.now() + 15 * 60 * 1000); // Code valid for 15 minutes
 
     // Update the user's reset code and expiry time in the database
-    const updateSql = "UPDATE FARMERS SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE ADMINMAIL = ?";
+    const updateSql = "UPDATE farmeraccounts SET RESET_CODE = ?, RESET_EXPIRY = ? WHERE gmail = ?";
     sqldb.query(updateSql, [resetCode, expiryTime, email], (updateErr, results) => {
         console.log('Update query result:', results); // Log query result
         console.log('Update query error:', updateErr); // Log query error, if any
@@ -188,7 +188,7 @@ export const fmrCheckCode = (req, res) => {
     }
 
     // SQL query to check if the code and email match
-    const sql = "SELECT * FROM FARMERS WHERE ADMINMAIL = ? AND RESET_CODE = ?";
+    const sql = "SELECT * FROM farmeraccounts WHERE gmail = ? AND RESET_CODE = ?";
     sqldb.query(sql, [email, resetCode], (err, results) => {
         if (err) {
             return res.status(500).json({ message: 'Database error', error: err });
@@ -231,7 +231,7 @@ export const fmrUpdatePassword = (req, res) => {
         }
 
         // SQL query to update the password in the database
-        const sql = "UPDATE FARMERS SET PASSWORD = ? WHERE ADMINMAIL = ?";
+        const sql = "UPDATE farmeraccounts SET PASSWORD = ? WHERE gmail = ?";
 
         sqldb.query(sql, [hashedPassword, email], (err, results) => {
             if (err) {
@@ -244,7 +244,7 @@ export const fmrUpdatePassword = (req, res) => {
             }
 
             // SQL query to clear the RESET_CODE and RESET_EXPIRY fields
-            const clearCodeSql = "UPDATE FARMERS SET RESET_CODE = NULL, RESET_EXPIRY = NULL WHERE ADMINMAIL = ?";
+            const clearCodeSql = "UPDATE farmeraccounts SET RESET_CODE = NULL, RESET_EXPIRY = NULL WHERE gmail = ?";
 
             sqldb.query(clearCodeSql, [email], (err, clearResults) => {
                 if (err) {

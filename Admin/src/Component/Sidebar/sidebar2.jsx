@@ -20,8 +20,8 @@ const Sidebar2 = () => {
     return (
         <div className="sidebar">
             <div
-                className={`sidebar-item ${isActive("/dashboard-admin") ? "active" : ""}`}
-                onClick={() => navigate("/dashboard-admin")}
+                className={`sidebar-item ${isActive("/admin-dashboard-admin") ? "active" : ""}`}
+                onClick={() => navigate("/admin-dashboard-admin")}
             >
                 <FaHome className="sidebar-icon" /> <p>Dashboard</p>
             </div>
