@@ -127,10 +127,10 @@ const Fertilizer = () => {
     const matchesDate = filterDate ? request.requestDate === filterDate : true;
     const matchesStatus =
       activeTab === "newRequests"
-        ? request.status === "Pending"
+        ? request.status === "Pending" // Show pending requests for "New Requests" tab
         : activeTab === "confirmedRequests"
-        ? request.status === "Completed"
-        : request.status === "Deleted";
+        ? request.status === "Approved" // Show approved requests for "Confirmed Requests" tab
+        : request.status === "Rejected"; // Show rejected requests for "Deleted Requests" tab
     return matchesSearchTerm && matchesDate && matchesStatus;
   });
 

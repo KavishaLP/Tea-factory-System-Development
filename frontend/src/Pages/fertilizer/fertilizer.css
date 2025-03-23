@@ -114,21 +114,25 @@
   border-radius: 20px;
   font-size: 0.875rem;
   font-weight: 500;
+  text-transform: capitalize; /* Ensure status text is capitalized */
 }
 
+/* Pending Status */
 .status.pending {
-  background-color: #fed7d7;
-  color: #c53030;
+  background-color: #fed7d7; /* Light red background */
+  color: #c53030; /* Dark red text */
 }
 
-.status.completed {
-  background-color: #c6f6d5;
-  color: #2f855a;
+/* Approved Status */
+.status.approved {
+  background-color: #c6f6d5; /* Light green background */
+  color: #2f855a; /* Dark green text */
 }
 
-.status.deleted {
-  background-color: #bf18185d;
-  color: #783030;
+/* Rejected Status */
+.status.rejected {
+  background-color: #fbd38d; /* Light orange background */
+  color: #9c4221; /* Dark orange text */
 }
 
 /* Action Buttons */
