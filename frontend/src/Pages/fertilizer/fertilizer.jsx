@@ -72,9 +72,7 @@ const Fertilizer = () => {
         { requestId: requestId },
         { withCredentials: true }
       );
-      if (response.data.status === "Success") {
-        return response.data.updatedRequest;
-      } else {
+      if (response.data.status !== "Success") {
         throw new Error(response.data.message || "Failed to confirm request.");
       }
     } catch (error) {
@@ -108,9 +106,7 @@ const Fertilizer = () => {
         { requestId: requestId },
         { withCredentials: true }
       );
-      if (response.data.status === "Success") {
-        return response.data.updatedRequest;
-      } else {
+      if (response.data.status !== "Success") {
         throw new Error(response.data.message || "Failed to delete request.");
       }
     } catch (error) {
