@@ -248,22 +248,14 @@ export const getTeaPacketsRequests = (req, res) => {
         });
       }
   
-      if (results.length === 0) {
-        console.log(results.length)
-        return res.status(404).json({
-          status: "Success",
-          message: "No tea packet requests found.",
-          teaPacketRequests: [],
-        });
-      }
-  
+      // Always return 200, even if no results are found
       res.status(200).json({
         status: "Success",
-        message: "Tea packet requests fetched successfully.",
-        teaPacketRequests: results,
+        message: results.length === 0 ? "No tea packet requests found." : "Tea packet requests fetched successfully.",
+        teaPacketRequests: results, // This will be an empty array if no results are found
       });
     });
-};
+  };
 
 // Confirm fertilizer request
 export const confirmTeaPackets = async (req, res) => {
