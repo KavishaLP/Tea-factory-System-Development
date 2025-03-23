@@ -29,42 +29,23 @@ const Fertilizer = () => {
     fetchData();
   }, [activeTab]);
 
-  // Function to fetch fertilizer requests from the backend
+  // Fetch fertilizer requests from the backend
   const fetchFertilizerRequests = async () => {
-    const response = await axios.get("/api/fertilizerRequests", {
-      params: {
-        status: activeTab === "newRequests" ? "Pending" : activeTab === "confirmedRequests" ? "Completed" : "Deleted",
-      },
-    });
-    return response.data;
+    try {
+      const response = await axios.get(
+        "http://localhost:8081/api/admin/get-fertilizer-requests",
+        { withCredentials: true }
+      );
+      if (response.data.status === "Success") {
+        return response.data.fertilizerRequests;
+      } else {
+        throw new Error(response.data.message || "Failed to fetch fertilizer requests.");
+      }
+    } catch (error) {
+      console.error("Error fetching fertilizer requests:", error);
+      throw error;
+    }
   };
-
-  // Function to confirm a request
-  const confirmRequest = async (requestId) => {
-    const response = await axios.put(`/api/fertilizerRequests/${requestId}/confirm`);
-    return response.data;
-  };
-
-  // Function to delete a request
-  const deleteRequest = async (requestId) => {
-    const response = await axios.delete(`/api/fertilizerRequests/${requestId}`);
-    return response.data;
-  };
-
-  // Filter data based on search term, date, and status
-  const filteredData = requests.filter((request) => {
-    const matchesSearchTerm =
-      request.userId.includes(searchTerm) ||
-      request.userName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDate = filterDate ? request.requestDate === filterDate : true;
-    const matchesStatus =
-      activeTab === "newRequests"
-        ? request.status === "Pending"
-        : activeTab === "confirmedRequests"
-        ? request.status === "Completed"
-        : request.status === "Deleted";
-    return matchesSearchTerm && matchesDate && matchesStatus;
-  });
 
   // Handle Confirm action
   const handleConfirm = async (requestId) => {
@@ -80,6 +61,25 @@ const Fertilizer = () => {
     } catch (error) {
       setError("Failed to confirm request. Please try again.");
       console.error("Error confirming request:", error);
+    }
+  };
+
+  // Confirm a fertilizer request
+  const confirmRequest = async (requestId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/admin/confirm-fertilizer",
+        { requestId: requestId },
+        { withCredentials: true }
+      );
+      if (response.data.status === "Success") {
+        return response.data.updatedRequest;
+      } else {
+        throw new Error(response.data.message || "Failed to confirm request.");
+      }
+    } catch (error) {
+      console.error("Error confirming request:", error);
+      throw error;
     }
   };
 
@@ -99,6 +99,40 @@ const Fertilizer = () => {
       console.error("Error deleting request:", error);
     }
   };
+
+  // Delete a fertilizer request
+  const deleteRequest = async (requestId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/admin/delete-fertilizer",
+        { requestId: requestId },
+        { withCredentials: true }
+      );
+      if (response.data.status === "Success") {
+        return response.data.updatedRequest;
+      } else {
+        throw new Error(response.data.message || "Failed to delete request.");
+      }
+    } catch (error) {
+      console.error("Error deleting request:", error);
+      throw error;
+    }
+  };
+
+  // Filter data based on search term, date, and status
+  const filteredData = requests.filter((request) => {
+    const matchesSearchTerm =
+      request.userId.includes(searchTerm) ||
+      request.userName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDate = filterDate ? request.requestDate === filterDate : true;
+    const matchesStatus =
+      activeTab === "newRequests"
+        ? request.status === "Pending"
+        : activeTab === "confirmedRequests"
+        ? request.status === "Completed"
+        : request.status === "Deleted";
+    return matchesSearchTerm && matchesDate && matchesStatus;
+  });
 
   return (
     <div className="cfa-content">
