@@ -38,39 +38,25 @@ const TeaPacketDistribution = () => {
         "http://localhost:8081/api/admin/get-tea-packet-requests",
         { withCredentials: true }
       );
-
-      // Log the response for debugging
+  
       console.log("Backend Response:", response);
-
+  
       if (response.data.status === "Success") {
-        // Ensure teaPacketRequests is an array
-        return Array.isArray(response.data.teaPacketRequests)
-          ? response.data.teaPacketRequests
-          : [];
+        return response.data.teaPacketRequests || [];
       } else {
         throw new Error(response.data.message || "Failed to fetch tea packet requests.");
       }
     } catch (error) {
       console.error("Error fetching tea packet requests:", error);
-
-      // Log detailed error information
-      if (error.response) {
-        console.error("Response Data:", error.response.data);
-        console.error("Response Status:", error.response.status);
-        console.error("Response Headers:", error.response.headers);
-      } else if (error.request) {
-        console.error("Request:", error.request);
-      } else {
-        console.error("Error Message:", error.message);
-      }
-
       throw error;
     }
   };
 
+// ----------------------------------------------------------------------------------
+
   // Handle Confirm action
   const handleConfirm = async (requestId) => {
-    setError(""); // Clear any previous errors
+    setError("");
     try {
       await confirmRequest(requestId);
       setRequests((prevRequests) =>
@@ -104,7 +90,7 @@ const TeaPacketDistribution = () => {
 
   // Handle Delete action
   const handleDelete = async (requestId) => {
-    setError(""); // Clear any previous errors
+    setError("");
     try {
       await deleteRequest(requestId);
       setRequests((prevRequests) =>
@@ -135,6 +121,8 @@ const TeaPacketDistribution = () => {
       throw error;
     }
   };
+
+// ----------------------------------------------------------------------------------
 
   // Filter data based on search term, date, and status
   const filteredData = Array.isArray(requests) // Ensure requests is an array

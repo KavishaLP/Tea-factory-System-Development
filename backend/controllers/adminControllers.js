@@ -1,3 +1,5 @@
+//controllers/adminControllers.js
+
 import sqldb from '../config/sqldb.js';
 
 export const getAdvanceRequests = async (req, res) => {
@@ -221,7 +223,6 @@ export const fetchRequestAdvance = (req, res) => {
 
 // Get fertilizer requests
 export const getTeaPacketsRequests = (req, res) => {
-    // Query to fetch all tea packet requests
     const query = `
       SELECT 
         tpr.request_id,
@@ -238,7 +239,6 @@ export const getTeaPacketsRequests = (req, res) => {
       ORDER BY tpr.requestDate DESC;
     `;
   
-    // Execute the query
     sqldb.query(query, (err, results) => {
       if (err) {
         console.error("Error fetching tea packet requests:", err);
@@ -248,7 +248,6 @@ export const getTeaPacketsRequests = (req, res) => {
         });
       }
   
-      // Check if requests exist
       if (results.length === 0) {
         return res.status(404).json({
           status: "Success",
@@ -257,7 +256,6 @@ export const getTeaPacketsRequests = (req, res) => {
         });
       }
   
-      // Return the fetched requests
       res.status(200).json({
         status: "Success",
         message: "Tea packet requests fetched successfully.",
@@ -268,66 +266,52 @@ export const getTeaPacketsRequests = (req, res) => {
 
 // Confirm fertilizer request
 export const confirmTeaPackets = async (req, res) => {
-    console.log("Confirming tea packet request:", req.body);
-  
     const { requestId } = req.body;
   
     if (!requestId) {
       return res.status(400).json({ message: "Request ID is required." });
     }
   
-    try {
-      const sqlQuery = "UPDATE tea_packet_requests SET status = 'Approved' WHERE request_id = ?";
-      sqldb.query(sqlQuery, [requestId], (err, result) => {
-        if (err) {
-          console.error("Database Query Error:", err);
-          return res.status(500).json({ message: "Database error", error: err });
-        }
+    const sqlQuery = "UPDATE tea_packet_requests SET status = 'Approved' WHERE request_id = ?";
+    sqldb.query(sqlQuery, [requestId], (err, result) => {
+      if (err) {
+        console.error("Database Query Error:", err);
+        return res.status(500).json({ message: "Database error", error: err });
+      }
   
-        if (result.affectedRows === 0) {
-          return res.status(404).json({ message: "Tea packet request not found." });
-        }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Tea packet request not found." });
+      }
   
-        return res.status(200).json({
-          status: "Success",
-          message: "Tea packet request confirmed successfully.",
-        });
+      return res.status(200).json({
+        status: "Success",
+        message: "Tea packet request confirmed successfully.",
       });
-    } catch (error) {
-      console.error("Unexpected Error:", error);
-      return res.status(500).json({ message: "An unexpected error occurred.", error: error });
-    }
+    });
 };
 
 // Delete fertilizer request
 export const deleteTeaPackets = async (req, res) => {
-    console.log("Deleting tea packet request:", req.body);
-  
     const { requestId } = req.body;
   
     if (!requestId) {
       return res.status(400).json({ message: "Request ID is required." });
     }
   
-    try {
-      const sqlQuery = "UPDATE tea_packet_requests SET status = 'Rejected' WHERE request_id = ?";
-      sqldb.query(sqlQuery, [requestId], (err, result) => {
-        if (err) {
-          console.error("Database Query Error:", err);
-          return res.status(500).json({ message: "Database error", error: err });
-        }
+    const sqlQuery = "UPDATE tea_packet_requests SET status = 'Rejected' WHERE request_id = ?";
+    sqldb.query(sqlQuery, [requestId], (err, result) => {
+      if (err) {
+        console.error("Database Query Error:", err);
+        return res.status(500).json({ message: "Database error", error: err });
+      }
   
-        if (result.affectedRows === 0) {
-          return res.status(404).json({ message: "Tea packet request not found." });
-        }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Tea packet request not found." });
+      }
   
-        return res.status(200).json({
-          status: "Success",
-          message: "Tea packet request deleted successfully.",
-        });
+      return res.status(200).json({
+        status: "Success",
+        message: "Tea packet request deleted successfully.",
       });
-    } catch (error) {
-      console.error("Unexpected Error:", error);
-      return res.status(500).json({ message: "An unexpected error occurred.", error: error });
-    }
-};
+    });
+  };
