@@ -33,7 +33,7 @@ const Fertilizer = () => {
   const fetchFertilizerRequests = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8081/api/admin/get-fertilizer-requests",
+        "http://localhost:8081/api/manager/get-fertilizer-requests",
         { withCredentials: true }
       );
       if (response.data.status === "Success") {
@@ -68,7 +68,7 @@ const Fertilizer = () => {
   const confirmRequest = async (requestId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/admin/confirm-fertilizer",
+        "http://localhost:8081/api/manager/confirm-fertilizer",
         { requestId: requestId },
         { withCredentials: true }
       );
@@ -104,7 +104,7 @@ const Fertilizer = () => {
   const deleteRequest = async (requestId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/admin/delete-fertilizer",
+        "http://localhost:8081/api/manager/delete-fertilizer",
         { requestId: requestId },
         { withCredentials: true }
       );

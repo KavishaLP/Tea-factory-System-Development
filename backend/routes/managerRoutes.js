@@ -1,5 +1,6 @@
+//routes/managerRoutes.js
 import express from 'express';
-import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, getEmployeePaymentHistory } from '../controllers/managerControllers.js';
+import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, getEmployeePaymentHistory, getFertilizerRequests } from '../controllers/managerControllers.js';
 
 const router = express.Router();
 
@@ -11,9 +12,8 @@ router.post('/add-employee', addEmployee);
 router.post('/add-Employee-Payment', addEmployeePayment);
 router.post('/get-Employee-Payment-History', getEmployeePaymentHistory);
 
-
-
-
-
+router.get('/get-fertilizer-requests', getFertilizerRequests);
+// router.post('/confirm-fertilizer', confirmFertilizer);
+// router.post('/delete-fertilizer', deleteFertilizer);
 
 export default router;
