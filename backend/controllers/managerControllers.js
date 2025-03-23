@@ -126,9 +126,9 @@ export const addFarmerPayment = (req, res) => {
     });
 };
 
-// Get payment history function
+// Get payment history function (Approved only)
 export const getFarmerPaymentHistory = (req, res) => {
-    // SQL Query to fetch payment history from the farmer_payments table
+    // SQL Query to fetch only approved payment history
     const sql = `
         SELECT 
             userId, 
@@ -145,28 +145,29 @@ export const getFarmerPaymentHistory = (req, res) => {
             finalPayment, 
             created_at 
         FROM farmer_payments 
+        WHERE status = 'Approved' 
         ORDER BY created_at DESC
     `;
 
-    // Execute the query to fetch the payment history
+    // Execute the query to fetch the approved payment history
     sqldb.query(sql, (err, results) => {
-        console.log(results)
         if (err) {
             console.error('Database Error:', err);
             return res.status(500).json({ message: 'Error while fetching payment history', error: err });
         }
 
-        // Check if there are any records found
+        // Check if there are any approved records found
         if (results.length === 0) {
-            return res.status(404).json({ message: 'No payment history found.' });
+            return res.status(404).json({ message: 'No approved payment history found.' });
         }
 
-        console.log("Payment history fetched successfully:", results);
+        console.log("Approved payment history fetched successfully:", results);
 
         // Send the fetched data as a response
         return res.status(200).json({ Status: "Success", paymentHistory: results });
     });
 };
+
 
 export const addEmployee = async (req, res) => {
     console.log("Received Data:", req.body);

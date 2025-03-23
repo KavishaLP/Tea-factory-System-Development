@@ -85,6 +85,9 @@ function AddPayment() {
     }));
   }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);  
 
+
+{/*-------------------------------------------------------------------------------------------*/}
+
   // Function to fetch payment history
   useEffect(() => {
     // Check if activeTab is "viewHistory"
@@ -112,8 +115,6 @@ function AddPayment() {
       fetchPaymentHistory();
     }
   }, [activeTab]); // Depend on activeTab state change
-  
-
 
 {/*-------------------------------------------------------------------------------------------*/}
 
@@ -252,6 +253,7 @@ const handleSubmit = async (e) => {
           </button>
         </div>
 
+        {/* Farmer Payment Logs */}
         {activeTab === "toPayment" && (
           <div className="payment-history">
             <h3>Payment History</h3>
