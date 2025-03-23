@@ -1,5 +1,3 @@
-// src/Pages/TeaPaketDistribution/TeaPaketDistribution.jsx
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./TeaPaketDistribution.css";
@@ -40,13 +38,32 @@ const TeaPacketDistribution = () => {
         "http://localhost:8081/api/admin/get-tea-packet-requests",
         { withCredentials: true }
       );
+
+      // Log the response for debugging
+      console.log("Backend Response:", response);
+
       if (response.data.status === "Success") {
-        return response.data.teaPacketRequests || []; // Ensure an array is returned
+        // Ensure teaPacketRequests is an array
+        return Array.isArray(response.data.teaPacketRequests)
+          ? response.data.teaPacketRequests
+          : [];
       } else {
         throw new Error(response.data.message || "Failed to fetch tea packet requests.");
       }
     } catch (error) {
       console.error("Error fetching tea packet requests:", error);
+
+      // Log detailed error information
+      if (error.response) {
+        console.error("Response Data:", error.response.data);
+        console.error("Response Status:", error.response.status);
+        console.error("Response Headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("Request:", error.request);
+      } else {
+        console.error("Error Message:", error.message);
+      }
+
       throw error;
     }
   };
@@ -206,7 +223,7 @@ const TeaPacketDistribution = () => {
             {isLoading ? (
               <p>Loading...</p>
             ) : filteredData.length === 0 ? (
-              <p>No requests found.</p>
+              <p>No tea packet requests found.</p>
             ) : (
               <table className="history-table">
                 <thead>
