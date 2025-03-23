@@ -1,13 +1,35 @@
 import React, { useState } from "react";
 import "./FertilizerHistory.css";
 
-const FertilizerHistory = () => {
+const ProductivityHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
+  // Dummy data for productivity reports
+  const dummyData = Array.from({ length: 10 }).map((_, index) => ({
+    id: index + 1,
+    date: `2024-03-${String(index + 1).padStart(2, "0")}`,
+    userId: `USR${String(index + 1).padStart(3, "0")}`,
+    userName: `Farmer ${index + 1}`,
+    receivedTeaKilos: (index + 1) * 10,
+    teaPacketsManufactured: (index + 1) * 5,
+    salaryForEmployees: (index + 1) * 1000,
+    farmerPayments: (index + 1) * 500,
+    status: index % 2 === 0 ? "Completed" : "Pending",
+  }));
+
+  // Filter data based on search term and date
+  const filteredData = dummyData.filter((report) => {
+    const matchesSearchTerm =
+      report.userId.includes(searchTerm) ||
+      report.userName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDate = filterDate ? report.date === filterDate : true;
+    return matchesSearchTerm && matchesDate;
+  });
+
   return (
     <div className="cfa-content">
-      <h2>Fertilizer Distribution History</h2>
+      <h2>Productivity Report History</h2>
       <div className="cfa-grid">
         <div className="history-section">
           {/* Search and Filter Controls */}
@@ -38,22 +60,26 @@ const FertilizerHistory = () => {
                   <th>Date</th>
                   <th>User ID</th>
                   <th>User Name</th>
-                  <th>Fertilizer Type</th>
-                  <th>Amount (Kilos)</th>
+                  <th>Received Tea Kilos</th>
+                  <th>Tea Packets Manufactured</th>
+                  <th>Salary for Employees</th>
+                  <th>Farmer Payments</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <tr key={index}>
-                    <td>2024-03-{String(index + 1).padStart(2, '0')}</td>
-                    <td>USR{String(index + 1).padStart(3, '0')}</td>
-                    <td>Farmer {index + 1}</td>
-                    <td>Type {(index % 3) + 1}</td>
-                    <td>{(index + 1) * 5}</td>
+                {filteredData.map((report) => (
+                  <tr key={report.id}>
+                    <td>{report.date}</td>
+                    <td>{report.userId}</td>
+                    <td>{report.userName}</td>
+                    <td>{report.receivedTeaKilos}</td>
+                    <td>{report.teaPacketsManufactured}</td>
+                    <td>{report.salaryForEmployees}</td>
+                    <td>{report.farmerPayments}</td>
                     <td>
-                      <span className={`status ${index % 2 === 0 ? 'completed' : 'pending'}`}>
-                        {index % 2 === 0 ? 'Completed' : 'Pending'}
+                      <span className={`status ${report.status.toLowerCase()}`}>
+                        {report.status}
                       </span>
                     </td>
                   </tr>
@@ -76,4 +102,4 @@ const FertilizerHistory = () => {
   );
 };
 
-export default FertilizerHistory;
+export default ProductivityHistory;

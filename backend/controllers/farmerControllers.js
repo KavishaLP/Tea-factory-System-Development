@@ -51,10 +51,10 @@ export const requestAdvance = async (req, res) => {
 export const requestFertilizer = async (req, res) => {
     console.log("Received Data:", req.body);
 
-    const { userId, fertilizerType, fertilizerPacketType, amount } = req.body;
+    const { userId, fertilizerType, fertilizerPacketType, paymentOption, amount } = req.body;
 
     // Check for missing required fields
-    if (!userId || !fertilizerType || !fertilizerPacketType || !amount || amount <= 0) {
+    if (!userId || !fertilizerType || !fertilizerPacketType || !amount || !paymentOption || amount <= 0) {
         console.log("All required fields must be provided.");
         return res.status(400).json({ message: 'All required fields must be provided.' });
     }
@@ -79,10 +79,10 @@ export const requestFertilizer = async (req, res) => {
 
         // Insert the fertilizer request into the fertilizer_requests table
         const sqlInsert = `
-            INSERT INTO fertilizer_requests (userId, fertilizerType, packetType, amount, requestDate, status)
-            VALUES (?, ?, ?, ?, ?, 'Pending')
+            INSERT INTO fertilizer_requests (userId, fertilizerType, packetType, amount, paymentoption, requestDate, status)
+            VALUES (?, ?, ?, ?, ?, ?, 'Pending')
         `;
-        sqldb.query(sqlInsert, [userId, fertilizerType, fertilizerPacketType, amount, requestDate], (err, result) => {
+        sqldb.query(sqlInsert, [userId, fertilizerType, fertilizerPacketType, amount, paymentOption, requestDate], (err, result) => {
             if (err) {
                 console.error("Database Insert Error:", err);
                 return res.status(500).json({ message: 'Error inserting fertilizer request into database', error: err });

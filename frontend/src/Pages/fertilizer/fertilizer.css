@@ -1,191 +1,150 @@
-/* Reuse the same styles as CFA.css */
-.cfa-content {
-  flex: 1;
-  padding: 2rem;
-  margin-left: 280px;
-  margin-top: 70px;
-  margin-bottom: 80px;
-  overflow-y: auto;
-  background-color: #f5f5f5;
-  min-height: calc(100vh - 150px);
-  height: calc(100vh - 150px);
-  position: relative;
+/* Inherit base styles */
+.history-section {
+  width: 100%;
 }
 
-.cfa-grid {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: auto;
-  margin-bottom: 2rem;
-}
-
-.cfa-content h2 {
-  margin-bottom: 2rem;
-  color: #2c3e50;
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 600;
-}
-
-/* Requests Header */
-.requests-header {
+/* Controls Container */
+.controls-container {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
 }
 
-.history-button {
-  background: linear-gradient(135deg, #007bff, #0056b3); /* Gradient blue */
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
+.search-box {
+  flex: 1;
+  position: relative;
+  max-width: 400px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-right: 2.5rem;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
 }
 
-.history-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+.search-box input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
 }
 
-.history-button:active {
-  transform: translateY(0);
+.search-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #718096;
 }
 
-/* Requests Table */
-.requests-section {
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 1rem;
+.date-filter input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
-.requests-table {
+/* Table Container */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.history-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
-  min-width: 800px;
 }
 
-.requests-table th,
-.requests-table td {
+.history-table th,
+.history-table td {
   padding: 1rem;
-  border: 1px solid #e2e8f0; /* Light border color */
-  text-align: center;
-  font-size: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.requests-table th {
-  background-color: #f8f9fa; /* Light gray for header */
+.history-table th {
+  background-color: #f8f9fa;
   font-weight: 600;
-  color: #4a5568; /* Dark gray for text */
+  color: #4a5568;
 }
 
-.requests-table tr:hover {
-  background-color: #f0f4f8; /* Light hover effect */
+.history-table tr:hover {
+  background-color: #f7fafc;
 }
 
-.confirm-button {
-  background: linear-gradient(135deg, #ffa500, #ff8c00); /* Gradient orange */
-  color: white;
-  border: none;
+/* Status Badges */
+.status {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status.completed {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.status.pending {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #4a5568;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.confirm-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 165, 0, 0.3);
+.pagination button:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
 }
 
-.confirm-button:active {
-  transform: translateY(0);
+.pagination button.active {
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
 }
 
 /* Responsive Design */
-@media screen and (max-width: 1024px) {
-  .cfa-content {
-    margin-left: 240px;
-    margin-bottom: 70px;
-  }
-
-  .cfa-grid {
-    padding: 1.5rem;
-  }
-}
-
 @media screen and (max-width: 768px) {
-  .cfa-content {
-    margin-left: 80px;
-    padding: 1rem;
-    margin-bottom: 60px;
-    height: calc(100vh - 130px);
+  .controls-container {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .cfa-grid {
-    padding: 1.25rem;
+  .search-box {
+    max-width: none;
   }
 
-  .requests-header h2 {
-    font-size: 1.5rem;
+  .history-table {
+    display: block;
+    overflow-x: auto;
   }
 
-  .history-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .requests-table th,
-  .requests-table td {
+  .history-table th,
+  .history-table td {
     padding: 0.75rem;
     font-size: 0.9rem;
-  }
-
-  .confirm-button {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .cfa-content {
-    margin-left: 0;
-    padding: 0.75rem;
-    margin-bottom: 50px;
-    height: calc(100vh - 120px);
-  }
-
-  .cfa-grid {
-    padding: 1rem;
-  }
-
-  .requests-header h2 {
-    font-size: 1.25rem;
-  }
-
-  .history-button {
-    padding: 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .requests-table th,
-  .requests-table td {
-    padding: 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .confirm-button {
-    padding: 0.5rem;
-    font-size: 0.75rem;
   }
 }

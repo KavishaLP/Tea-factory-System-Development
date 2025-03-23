@@ -225,8 +225,6 @@ const handleSubmit = async (e) => {
   }
 };
 
-
-
   return (
     <div className="cfa-content">
       <h2>Payment Management</h2>
@@ -256,7 +254,7 @@ const handleSubmit = async (e) => {
         {/* Farmer Payment Logs */}
         {activeTab === "toPayment" && (
           <div className="payment-history">
-            <h3>Payment History</h3>
+            <button>To Load Logs Click Here</button>
             {historyLoading ? (
               <p>Loading...</p>
             ) : paymentsHistory.length > 0 ? (

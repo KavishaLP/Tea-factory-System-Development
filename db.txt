@@ -68,5 +68,7 @@ CREATE TABLE fertilizer_requests (
     amount INT NOT NULL, -- Number of packets requested
     requestDate DATE NOT NULL, -- Date of the request
     status ENUM('Pending', 'Approved', 'Rejected') NOT NULL DEFAULT 'Pending', -- Status of the request
+    status ENUM('cash', 'deductpayment');
     FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE -- Link to farmeraccounts table
 );
+

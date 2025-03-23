@@ -5,6 +5,7 @@ import "./requestfertilizer.css";
 const RequestFertilizer = () => {
   const [userId, setUserId] = useState("");
   const [fertilizerType, setFertilizerType] = useState("");
+  const [paymentOption, SetPaymentOption] = useState("");
   const [fertilizerPacketType, setFertilizerPacketType] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
@@ -14,7 +15,7 @@ const RequestFertilizer = () => {
     e.preventDefault();
 
     // Validation
-    if (!userId || !fertilizerType || !fertilizerPacketType || !amount || amount <= 0) {
+    if (!userId || !fertilizerType || !fertilizerPacketType|| !paymentOption || !amount || amount <= 0) {
       setMessage("Please fill all fields and enter a valid amount.");
       return;
     }
@@ -26,6 +27,7 @@ const RequestFertilizer = () => {
     const requestData = {
       userId,
       fertilizerType,
+      paymentOption,
       fertilizerPacketType,
       amount,
     };
@@ -70,6 +72,18 @@ const RequestFertilizer = () => {
           required
           placeholder="Enter User ID"
         />
+
+        <label>Payment Option:</label>
+        <select
+          value={paymentOption}
+          onChange={(e) => SetPaymentOption(e.target.value)}
+          required
+        >
+          <option value="">Select Type</option>
+          <option value="cash">Pay with Cash</option>
+          <option value="deductpayment">Deduct from Monthly Payment</option>
+
+        </select>
 
         <label>Fertilizer Type:</label>
         <select
