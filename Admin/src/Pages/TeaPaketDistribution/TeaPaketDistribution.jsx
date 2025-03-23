@@ -38,8 +38,8 @@ const TeaPacketDistribution = () => {
         "http://localhost:8081/api/admin/get-tea-packet-requests",
         { withCredentials: true }
       );
-      console.log("fucck");
   
+      console.log("Backend Response:", response);
   
       if (response.data.status === "Success") {
         return response.data.teaPacketRequests || [];
@@ -125,32 +125,28 @@ const TeaPacketDistribution = () => {
 // ----------------------------------------------------------------------------------
 
   // Filter data based on search term, date, and status
-  const filteredData = Array.isArray(requests) // Ensure requests is an array
-    ? requests.filter((request) => {
-        // Skip undefined or invalid objects
-        if (!request || !request.userId || !request.userName) {
-          return false;
-        }
+  const filteredData = Array.isArray(requests)
+  ? requests.filter((request) => {
+      if (!request || !request.userId || !request.userName) {
+        return false;
+      }
 
-        // Filter by search term
-        const matchesSearchTerm =
-          request.userId.includes(searchTerm) ||
-          request.userName.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearchTerm =
+        request.userId.includes(searchTerm) ||
+        request.userName.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Filter by date
-        const matchesDate = filterDate ? request.requestDate === filterDate : true;
+      const matchesDate = filterDate ? request.requestDate === filterDate : true;
 
-        // Filter by status based on the active tab
-        const matchesStatus =
-          activeTab === "newRequests"
-            ? request.status === "Pending" // Show pending requests for "New Requests" tab
-            : activeTab === "confirmedRequests"
-            ? request.status === "Approved" // Show approved requests for "Confirmed Requests" tab
-            : request.status === "Rejected"; // Show rejected requests for "Deleted Requests" tab
+      const matchesStatus =
+        activeTab === "newRequests"
+          ? request.status === "Pending"
+          : activeTab === "confirmedRequests"
+          ? request.status === "Approved"
+          : request.status === "Rejected";
 
-        return matchesSearchTerm && matchesDate && matchesStatus;
-      })
-    : []; // Default to empty array if requests is not an array
+      return matchesSearchTerm && matchesDate && matchesStatus;
+    })
+  : [];
 
   return (
     <div className="tpd-content">
