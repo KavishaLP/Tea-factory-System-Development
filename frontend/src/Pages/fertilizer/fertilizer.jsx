@@ -8,15 +8,18 @@ const Fertilizer = () => {
   const [filterDate, setFilterDate] = useState("");
   const [requests, setRequests] = useState([]); // State to store fetched requests
   const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [error, setError] = useState(""); // Error state
 
   // Fetch data on component mount or when the active tab changes
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
+      setError(""); // Clear any previous errors
       try {
         const data = await fetchFertilizerRequests();
         setRequests(data);
       } catch (error) {
+        setError("Failed to fetch data. Please try again later.");
         console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
@@ -43,6 +46,7 @@ const Fertilizer = () => {
 
   // Handle Confirm action
   const handleConfirm = async (requestId) => {
+    setError(""); // Clear any previous errors
     try {
       const updatedRequest = await confirmRequest(requestId);
       setRequests((prevRequests) =>
@@ -52,12 +56,14 @@ const Fertilizer = () => {
       );
       alert("Request confirmed successfully!");
     } catch (error) {
-      alert("Failed to confirm request. Please try again.");
+      setError("Failed to confirm request. Please try again.");
+      console.error("Error confirming request:", error);
     }
   };
 
   // Handle Delete action
   const handleDelete = async (requestId) => {
+    setError(""); // Clear any previous errors
     try {
       const updatedRequest = await deleteRequest(requestId);
       setRequests((prevRequests) =>
@@ -67,7 +73,8 @@ const Fertilizer = () => {
       );
       alert("Request deleted successfully!");
     } catch (error) {
-      alert("Failed to delete request. Please try again.");
+      setError("Failed to delete request. Please try again.");
+      console.error("Error deleting request:", error);
     }
   };
 
@@ -117,6 +124,13 @@ const Fertilizer = () => {
               />
             </div>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="error-message">
+              <p>{error}</p>
+            </div>
+          )}
 
           {/* History Table */}
           <div className="table-container">
