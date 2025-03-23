@@ -63,7 +63,9 @@ export const requestFertilizer = async (req, res) => {
 
     // Get the current date
     const requestDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-    // console.log("Request Date:", requestDate);
+
+    // Determine status based on payment option
+    const status = paymentOption.toLowerCase() === "cash" ? "Approved" : "Pending";
 
     // Check if the user exists in the farmeraccounts table
     const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ?";
@@ -80,9 +82,9 @@ export const requestFertilizer = async (req, res) => {
         // Insert the fertilizer request into the fertilizer_requests table
         const sqlInsert = `
             INSERT INTO fertilizer_requests (userId, fertilizerType, packetType, amount, paymentoption, requestDate, status)
-            VALUES (?, ?, ?, ?, ?, ?, 'Pending')
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
-        sqldb.query(sqlInsert, [userId, fertilizerType, fertilizerPacketType, amount, paymentOption, requestDate], (err, result) => {
+        sqldb.query(sqlInsert, [userId, fertilizerType, fertilizerPacketType, amount, paymentOption, requestDate, status], (err, result) => {
             if (err) {
                 console.error("Database Insert Error:", err);
                 return res.status(500).json({ message: 'Error inserting fertilizer request into database', error: err });
@@ -92,8 +94,9 @@ export const requestFertilizer = async (req, res) => {
             return res.status(200).json({
                 message: 'Fertilizer request submitted successfully.',
                 requestId: result.insertId,
-                status: "Success"
+                status: status
             });
         });
     });
 };
+

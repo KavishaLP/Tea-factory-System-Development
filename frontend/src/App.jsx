@@ -23,7 +23,6 @@ import CreateFarmerAccount from './Pages/createFarmerAccounts/CFA';
 import CreateEmployeeAccount from './Pages/createEmployeeAccounts/CEA';
 import Fertilizer from './Pages/fertilizer/fertilizer';
 import ProductivityReport from './Pages/ProductivityReport/ProductivityReport';
-import FertilizerHistory from './Pages/FertilizerHistory/FertilizerHistory';
 
 function App() {
   const location = useLocation();
@@ -65,7 +64,6 @@ function App() {
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport />} />
 
             <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
-            <Route path="/Mng-Fertilizer-History" element={<FertilizerHistory />} />
           </Routes>
         </main>
       </div>
