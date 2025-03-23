@@ -333,3 +333,103 @@ export const getFertilizerRequests = (req, res) => {
       });
     });
 };
+
+// Confirm fertilizer request
+export const confirmFertilizer = async (req, res) => {
+  const { requestId } = req.body;
+
+  if (!requestId) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Request ID is required.",
+    });
+  }
+
+  try {
+    console.log("Confirming request with ID:", requestId); // Log the requestId
+
+    // Update the status of the request to "Approved"
+    const query = `
+      UPDATE fertilizer_requests
+      SET status = 'Approved'
+      WHERE request_id = ?;
+    `;
+
+    // Execute the query
+    const [result] = await sqldb.query(query, [requestId]);
+
+    // Check if the request was found and updated
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        status: "Error",
+        message: "Fertilizer request not found.",
+      });
+    }
+
+    // Return success response
+    res.status(200).json({
+      status: "Success",
+      message: "Fertilizer request confirmed successfully.",
+    });
+  } catch (error) {
+    console.error("Error confirming fertilizer request:", error);
+    res.status(500).json({
+      status: "Error",
+      message: "An error occurred while confirming the fertilizer request.",
+      error: error.message, // Include the error message for debugging
+    });
+  }
+};
+
+// Delete fertilizer request
+export const deleteFertilizer = async (req, res) => {
+    const { requestId } = req.body; // Extract requestId from the request body
+  
+    if (!requestId) {
+      return res.status(400).json({
+        status: "Error",
+        message: "Request ID is required.",
+      });
+    }
+  
+    try {
+      // Update the status of the request to "Rejected"
+      const query = `
+        UPDATE fertilizer_requests
+        SET status = 'Rejected'
+        WHERE request_id = ?;
+      `;
+  
+      // Execute the query
+      const [result] = await sqldb.query(query, [requestId]);
+  
+      // Check if the request was found and updated
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          status: "Error",
+          message: "Fertilizer request not found.",
+        });
+      }
+  
+      // Fetch the updated request to return in the response
+      const fetchQuery = `
+        SELECT *
+        FROM fertilizer_requests
+        WHERE request_id = ?;
+      `;
+      const [updatedRequest] = await sqldb.query(fetchQuery, [requestId]);
+  
+      // Return success response with the updated request
+      res.status(200).json({
+        status: "Success",
+        message: "Fertilizer request deleted successfully.",
+        updatedRequest: updatedRequest[0],
+      });
+    } catch (error) {
+      console.error("Error deleting fertilizer request:", error);
+      res.status(500).json({
+        status: "Error",
+        message: "An error occurred while deleting the fertilizer request.",
+      });
+    }
+  };
