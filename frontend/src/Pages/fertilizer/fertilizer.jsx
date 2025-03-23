@@ -6,35 +6,47 @@ const Fertilizer = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
-  // Dummy data for productivity reports
+  // Dummy data for fertilizer requests
   const dummyData = Array.from({ length: 10 }).map((_, index) => ({
-    id: index + 1,
-    date: `2024-03-${String(index + 1).padStart(2, "0")}`,
+    request_id: index + 1,
     userId: `USR${String(index + 1).padStart(3, "0")}`,
     userName: `Farmer ${index + 1}`,
-    receivedTeaKilos: (index + 1) * 10,
-    teaPacketsManufactured: (index + 1) * 5,
-    salaryForEmployees: (index + 1) * 1000,
-    farmerPayments: (index + 1) * 500,
-    status: index % 2 === 0 ? "Completed" : "Pending",
+    fertilizerType: ["Urea", "Compost", "NPK"][index % 3],
+    packetType: ["5", "10", "50"][index % 3],
+    amount: (index + 1) * 5,
+    requestDate: `2024-03-${String(index + 1).padStart(2, "0")}`,
+    status: index % 2 === 0 ? "Pending" : "Completed",
+    paymentOption: ["Cash", "Credit"][index % 2],
   }));
 
   // Filter data based on search term, date, and status
-  const filteredData = dummyData.filter((report) => {
+  const filteredData = dummyData.filter((request) => {
     const matchesSearchTerm =
-      report.userId.includes(searchTerm) ||
-      report.userName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDate = filterDate ? report.date === filterDate : true;
+      request.userId.includes(searchTerm) ||
+      request.userName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDate = filterDate ? request.requestDate === filterDate : true;
     const matchesStatus =
       activeTab === "newRequests"
-        ? report.status === "Pending"
-        : report.status === "Completed";
+        ? request.status === "Pending"
+        : request.status === "Completed";
     return matchesSearchTerm && matchesDate && matchesStatus;
   });
 
+  // Handle Confirm action
+  const handleConfirm = (requestId) => {
+    alert(`Confirmed request with ID: ${requestId}`);
+    // Add backend logic to update status to "Completed"
+  };
+
+  // Handle Delete action
+  const handleDelete = (requestId) => {
+    alert(`Deleted request with ID: ${requestId}`);
+    // Add backend logic to delete the request
+  };
+
   return (
     <div className="cfa-content">
-      <h2>Productivity Report History</h2>
+      <h2>Fertilizer Request History</h2>
       <div className="cfa-grid">
         <div className="history-section">
           {/* Tabs */}
@@ -81,28 +93,45 @@ const Fertilizer = () => {
                   <th>Date</th>
                   <th>User ID</th>
                   <th>User Name</th>
-                  <th>Received Tea Kilos</th>
-                  <th>Tea Packets Manufactured</th>
-                  <th>Salary for Employees</th>
-                  <th>Farmer Payments</th>
+                  <th>Fertilizer Type</th>
+                  <th>Packet Type</th>
+                  <th>Amount (Kilos)</th>
+                  <th>Payment Option</th>
                   <th>Status</th>
+                  {activeTab === "newRequests" && <th>Action</th>}
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((report) => (
-                  <tr key={report.id}>
-                    <td>{report.date}</td>
-                    <td>{report.userId}</td>
-                    <td>{report.userName}</td>
-                    <td>{report.receivedTeaKilos}</td>
-                    <td>{report.teaPacketsManufactured}</td>
-                    <td>{report.salaryForEmployees}</td>
-                    <td>{report.farmerPayments}</td>
+                {filteredData.map((request) => (
+                  <tr key={request.request_id}>
+                    <td>{request.requestDate}</td>
+                    <td>{request.userId}</td>
+                    <td>{request.userName}</td>
+                    <td>{request.fertilizerType}</td>
+                    <td>{request.packetType}</td>
+                    <td>{request.amount}</td>
+                    <td>{request.paymentOption}</td>
                     <td>
-                      <span className={`status ${report.status.toLowerCase()}`}>
-                        {report.status}
+                      <span className={`status ${request.status.toLowerCase()}`}>
+                        {request.status}
                       </span>
                     </td>
+                    {activeTab === "newRequests" && (
+                      <td>
+                        <button
+                          className="confirm-button"
+                          onClick={() => handleConfirm(request.request_id)}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          className="delete-button"
+                          onClick={() => handleDelete(request.request_id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
