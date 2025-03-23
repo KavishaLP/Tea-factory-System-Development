@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import "./fertilizer.css";
+import "./Fertilizer.css";
 
-const ProductivityHistory = () => {
+const Fertilizer = () => {
+  const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests or confirmedRequests
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
@@ -18,13 +19,17 @@ const ProductivityHistory = () => {
     status: index % 2 === 0 ? "Completed" : "Pending",
   }));
 
-  // Filter data based on search term and date
+  // Filter data based on search term, date, and status
   const filteredData = dummyData.filter((report) => {
     const matchesSearchTerm =
       report.userId.includes(searchTerm) ||
       report.userName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDate = filterDate ? report.date === filterDate : true;
-    return matchesSearchTerm && matchesDate;
+    const matchesStatus =
+      activeTab === "newRequests"
+        ? report.status === "Pending"
+        : report.status === "Completed";
+    return matchesSearchTerm && matchesDate && matchesStatus;
   });
 
   return (
@@ -32,6 +37,22 @@ const ProductivityHistory = () => {
       <h2>Productivity Report History</h2>
       <div className="cfa-grid">
         <div className="history-section">
+          {/* Tabs */}
+          <div className="tabs-container">
+            <button
+              className={`tab-button ${activeTab === "newRequests" ? "active" : ""}`}
+              onClick={() => setActiveTab("newRequests")}
+            >
+              New Requests
+            </button>
+            <button
+              className={`tab-button ${activeTab === "confirmedRequests" ? "active" : ""}`}
+              onClick={() => setActiveTab("confirmedRequests")}
+            >
+              Confirmed Requests
+            </button>
+          </div>
+
           {/* Search and Filter Controls */}
           <div className="controls-container">
             <div className="search-box">
@@ -102,4 +123,4 @@ const ProductivityHistory = () => {
   );
 };
 
-export default ProductivityHistory;
+export default Fertilizer;
