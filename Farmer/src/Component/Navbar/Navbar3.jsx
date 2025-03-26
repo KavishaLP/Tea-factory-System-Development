@@ -14,7 +14,7 @@ const Navbar = () => {
         <i className="ri-notification-3-fill"></i>
         <div className="profile">
           {/* <img src={assets.profile} alt="Profile" className="profile-img" /> */}
-          <span className="admin-name">Admin Name</span>
+          <span className="farmer-name">Farmer Name</span>
         </div>
       </div>
     </nav>

@@ -1,8 +1,8 @@
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import { Routes, Route } from "react-router-dom";
-import Navbar from './Component/Navbar/Navbar2';
-import Sidebar from './Component/sidebar/sidebar2';
+import Navbar from './Component/Navbar/Navbar3';
+import Sidebar from './Component/sidebar/sidebar3';
 import Footer from './Component/Footer/Footer';
 
 import Login from './Pages/AuthPages/LoginRegister/login';

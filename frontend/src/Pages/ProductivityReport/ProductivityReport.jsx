@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./ProductivityReport.css";
 
 function ProductivityReport() {
-  const [activeTab, setActiveTab] = useState("addReport");
+  const [activeTab, setActiveTab] = useState("latestReport");
   const [formData, setFormData] = useState({
     recievedTeaKilos: "",
     teaPacketsManufactured: "",
@@ -70,10 +70,10 @@ function ProductivityReport() {
         {/* Tabs */}
         <div className="tabs-container">
           <button
-            className={`tab-button ${activeTab === "addReport" ? "active" : ""}`}
-            onClick={() => setActiveTab("addReport")}
+            className={`tab-button ${activeTab === "latestReport" ? "active" : ""}`}
+            onClick={() => setActiveTab("latestReport")}
           >
-            Add New Report
+            Latest Report
           </button>
           <button
             className={`tab-button ${activeTab === "viewReports" ? "active" : ""}`}
@@ -84,7 +84,7 @@ function ProductivityReport() {
         </div>
 
         {/* Add New Report Form */}
-        {activeTab === "addReport" && (
+        {activeTab === "latestReport" && (
           <form onSubmit={handleSubmit}>
             <div className="input-group">
               <label>Received Tea Kilos</label>
