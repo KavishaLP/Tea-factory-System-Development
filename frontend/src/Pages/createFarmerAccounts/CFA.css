@@ -1,4 +1,13 @@
 /* Container Styles */
+html, body {
+  height: 100%;
+  overflow: auto;
+}
+
+.cfa-content {
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+}
 .cfa-content {
   flex: 1;
   padding: 2rem;
