@@ -1,3 +1,4 @@
+/* Request Advance Container */
 .request-advance-container {
   background-color: #f8f9fa; /* Light gray background for a modern look */
   padding: 2rem; /* Increased padding for spacious feel */
@@ -5,16 +6,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%; /* Ensure container width adjusts */
   max-width: 1250px; /* Adjusted maximum width for better alignment with sidebar */
-  margin: 2rem 0 2rem 250px; /* Adjusted margin to leave space for the sidebar */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
+  margin: 2rem 0 2rem 300px; /* Increased margin for more space between container and sidebar */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
   border: 1px solid #dee2e6; /* Light border for definition */
 }
 
+/* Page Header Style */
 .page-header {
   background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
   color: white; /* Text color */
-  padding: 1rem; /* Padding for header */
+  padding: 1.25rem; /* Padding for header */
   width: 100%; /* Full width */
   text-align: center; /* Center text */
   font-size: 1.5rem; /* Font size */
@@ -24,45 +27,112 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
+/* Heading Style */
 h2 {
   text-align: center;
   color: #495057; /* Darker text color for better contrast */
   margin-bottom: 1rem; /* Added margin for spacing */
 }
 
+/* Form Styling */
 form {
   display: flex;
   flex-direction: column;
   width: 100%; /* Ensure form takes full width of the container */
 }
 
+/* Label Styling */
 label {
   font-weight: bold;
   margin-top: 10px;
 }
 
+/* Input Field Styling */
 input {
-  padding: 10px;
+  padding: 12px; /* Slightly increased padding for input fields */
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
   width: 100%; /* Ensure input fields take full width */
 }
 
+/* Button Styling */
 button {
   margin-top: 15px;
-  padding: 10px;
+  padding: 12px; /* Increased button padding for a modern look */
   background: #28a745;
   color: white;
   font-size: 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s ease-in-out; /* Smooth hover effect */
 }
 
+button:hover {
+  background-color: #218838; /* Darker shade on hover */
+  transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+/* Success Message Styling */
 .message {
   text-align: center;
   color: #28a745; /* Green color for success message */
   font-weight: bold;
   margin-top: 1rem; /* Added margin for spacing */
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 1024px) {
+  /* Adjust the left margin to account for the sidebar space in smaller screens */
+  .request-advance-container {
+    margin-left: 20px; /* Increased space for mobile/tablet */
+    width: calc(100% - 40px); /* Ensures container takes full width minus padding */
+    padding: 1.5rem; /* Reduced padding */
+    max-width: none; /* Allow full width usage */
+  }
+}
+
+@media (max-width: 768px) {
+  /* For smaller screens like tablets */
+  .request-advance-container {
+    margin-left: 20px; /* Small margin on the left for mobile/tablet */
+    padding: 1rem; /* Reduced padding */
+    width: 100%; /* Full width for tablet-sized screens */
+  }
+
+  .page-header {
+    font-size: 1.25rem; /* Smaller font size for mobile */
+  }
+
+  button {
+    font-size: 14px; /* Smaller button text on mobile */
+    padding: 10px; /* Reduced button padding for better mobile fit */
+  }
+
+  h2 {
+    font-size: 1.25rem; /* Smaller heading for mobile */
+  }
+}
+
+/* Mobile Specific Styles */
+@media (max-width: 480px) {
+  .request-advance-container {
+    margin: 1rem 0; /* Margin adjustments for mobile */
+    width: 100%; /* Full width */
+    padding: 0.75rem; /* Smaller padding for mobile */
+  }
+
+  .page-header {
+    font-size: 1.1rem; /* Smaller header for mobile */
+  }
+
+  h2 {
+    font-size: 1.1rem; /* Smaller heading for mobile */
+  }
+
+  button {
+    font-size: 12px; /* Further reduced button text for mobile */
+    padding: 8px; /* Smaller button padding */
+  }
 }
