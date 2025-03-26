@@ -48,7 +48,7 @@ function App() {
             <Route path="/request-advance" element={<RequestAdvance />} />
             <Route path="/request-fertilizer" element={<RequestFertilizer />} />
             <Route path="/view-payment" element={<Viewpayment />} />
-            <Route path="/dashboard-farmer" element={<DashboardFarmer />} />
+            <Route path="/farmer-dashboard" element={<DashboardFarmer />} />
           </Routes>
         </main>
       </div>
