@@ -56,7 +56,7 @@ CREATE TABLE tea_sack_updates (
     deduction_sack_weight DECIMAL(10,2) DEFAULT 0.00,
     deduction_sharped_tea DECIMAL(10,2) DEFAULT 0.00,
     deduction_other DECIMAL(10,2) DEFAULT 0.00,
-    total_fertilizer_amount DECIMAL(10,2) NOT NULL,
+    final_tea_sack_weight DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE
 );
 
