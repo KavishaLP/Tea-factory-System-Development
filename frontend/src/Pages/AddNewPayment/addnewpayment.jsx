@@ -347,17 +347,17 @@ const handleSubmit = async (e) => {
                 value={formData.userId}
                 onChange={handleUserIdChange}
                 required
-                placeholder="Start typing to search users"
+                placeholder="Start typing to search user IDs"
                 autoComplete="off"
               />
               {showSuggestions && userSuggestions.length > 0 && (
                 <ul className="suggestions-dropdown">
-                  {userSuggestions.map((user, index) => (
+                  {userSuggestions.map((userId, index) => (
                     <li 
                       key={index} 
-                      onClick={() => handleSuggestionClick(user)}
+                      onClick={() => handleSuggestionClick(userId)}
                     >
-                      {user.id} - {user.name} {/* Adjust based on your user object structure */}
+                      {userId}
                     </li>
                   ))}
                 </ul>
