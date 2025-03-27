@@ -46,22 +46,30 @@ useEffect(() => {
   }
 }, [query]);
 
-const fetchUsers = async (searchQuery) => {
+const fetchUsers = async () => {
   try {
-      const response = await fetch(`/api/users?search=${searchQuery}`); // Adjust backend API
-      const data = await response.json();
+    const response = await axios.get(
+      'http://localhost:8081/api/manager/get-users', // Update with your actual backend endpoint
+      { withCredentials: true }
+    );
 
-      if (data.length === 0) {
-          setNoResults(true);
-      } else {
-          setNoResults(false);
-      }
-
-      setUsers(data);
+    if (response.data) {
+      console.log("Users Fetched Successfully:", response.data);
+      return response.data; // Return the fetched data
+    } else {
+      throw new Error('Failed to fetch users. Please try again.');
+    }
   } catch (error) {
-      console.error("Error fetching users:", error);
+    if (error.response) {
+      console.error('Server Error:', error.response.data);
+      throw new Error(error.response.data.message || 'Server error. Please try again.');
+    } else {
+      console.error('Error fetching users:', error);
+      throw new Error('An error occurred while fetching users.');
+    }
   }
 };
+
 
 const handleSelectUser = (user) => {
   setQuery(user.name); // Update input with selected name
