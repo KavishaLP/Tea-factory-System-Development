@@ -12,12 +12,8 @@ function AddPayment() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [paymentsHistory, setPaymentHistory] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(true); 
-  
-  const [query, setQuery] = useState("");  // Stores input value
-  const [users, setUsers] = useState([]); // Stores user suggestions
-  const [selectedUser, setSelectedUser] = useState(null); // Selected user
-  const [noResults, setNoResults] = useState(false); // No match flag
+  const [historyLoading, setHistoryLoading] = useState(true);  
+
   
   const [formData, setFormData] = useState({
     userId:"",
@@ -34,49 +30,6 @@ function AddPayment() {
     finalPayment: "",
   });
 
-
-{/*-------------------------------------------------------------------------------------------*/}
-
-useEffect(() => {
-  if (query.length > 0) {
-      fetchUsers(query);
-  } else {
-      setUsers([]);
-      setNoResults(false);
-  }
-}, [query]);
-
-const fetchUsers = async () => {
-  try {
-    const response = await axios.get(
-      'http://localhost:8081/api/manager/get-users', // Update with your actual backend endpoint
-      { withCredentials: true }
-    );
-
-    if (response.data) {
-      console.log("Users Fetched Successfully:", response.data);
-      return response.data; // Return the fetched data
-    } else {
-      throw new Error('Failed to fetch users. Please try again.');
-    }
-  } catch (error) {
-    if (error.response) {
-      console.error('Server Error:', error.response.data);
-      throw new Error(error.response.data.message || 'Server error. Please try again.');
-    } else {
-      console.error('Error fetching users:', error);
-      throw new Error('An error occurred while fetching users.');
-    }
-  }
-};
-
-
-const handleSelectUser = (user) => {
-  setQuery(user.name); // Update input with selected name
-  setSelectedUser(user); // Store selected user
-  setUsers([]); // Clear suggestions
-  setNoResults(false);
-};
 
 {/*-------------------------------------------------------------------------------------------*/}
   // Automatically calculate the payment when paymentPerKilo or finalTeaKilos change
@@ -341,31 +294,15 @@ const handleSubmit = async (e) => {
         {activeTab === "addPayment" && (
           <form onSubmit={handleSubmit}>
             <div className="input-group">
-            <label>User ID:</label>
-            <input
+              <label>User ID</label>
+              <input
                 type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by user name..."
-            />
-
-            {users.length > 0 && (
-                <ul className="suggestions">
-                    {users.map((user) => (
-                        <li key={user.id} onClick={() => handleSelectUser(user)}>
-                            {user.name} ({user.id})
-                        </li>
-                    ))}
-                </ul>
-            )}
-
-            {noResults && <p style={{ color: "red" }}>No matching users found.</p>}
-
-            {selectedUser && (
-                <div>
-                    <p>Selected User: {selectedUser.name} (ID: {selectedUser.id})</p>
-                </div>
-            )}
+                name="userId"
+                value={formData.userId}
+                onChange={handleChange}
+                required
+                placeholder="Enter user ID"
+              />
             </div>
 
 {/*-------------------------------------------------------------------------------------------*/}
