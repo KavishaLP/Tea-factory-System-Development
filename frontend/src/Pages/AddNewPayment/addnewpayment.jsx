@@ -42,6 +42,7 @@ useEffect(() => {
       fetchUsers(query);
   } else {
       setUsers([]);
+      setNoResults(false);
   }
 }, [query]);
 
@@ -49,6 +50,13 @@ const fetchUsers = async (searchQuery) => {
   try {
       const response = await fetch(`/api/users?search=${searchQuery}`); // Adjust backend API
       const data = await response.json();
+
+      if (data.length === 0) {
+          setNoResults(true);
+      } else {
+          setNoResults(false);
+      }
+
       setUsers(data);
   } catch (error) {
       console.error("Error fetching users:", error);
@@ -59,6 +67,7 @@ const handleSelectUser = (user) => {
   setQuery(user.name); // Update input with selected name
   setSelectedUser(user); // Store selected user
   setUsers([]); // Clear suggestions
+  setNoResults(false);
 };
 
 {/*-------------------------------------------------------------------------------------------*/}
