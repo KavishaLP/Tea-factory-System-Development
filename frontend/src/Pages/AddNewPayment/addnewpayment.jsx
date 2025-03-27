@@ -83,15 +83,16 @@ const fetchDEtailsRelatedTOUser = async (userId) => {
     
     if (response.data.Status === 'Success') {
       console.log('User details:', response.data);
-      // setFormData(prev => ({
-      //   ...prev,
-      //   finalTeaKilos: response.data.totalKilos || "0"
-      // }))
-      ;
+      setFormData(prev => ({
+        ...prev,
+        finalTeaKilos: response.data.finalTeaKilos || "0",
+        transport: response.data.transport || "0",
+        advances: response.data.advances || "0"
+      }));
     }
   } catch (error) {
-    console.error('Error fetching tea kilos:', error);
-    setError('Failed to fetch tea kilos for this user');
+    console.error('Error fetching user details:', error);
+    setError('Failed to fetch details for this user');
   }
 };
 
@@ -413,6 +414,7 @@ const handleSubmit = async (e) => {
                 onChange={handleChange}
                 required
                 placeholder="Enter final tea kilos"
+                readOnly
               />
             </div>
 

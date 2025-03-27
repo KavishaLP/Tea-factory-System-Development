@@ -72,6 +72,19 @@ CREATE TABLE fertilizer_requests (
     FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE -- Link to farmeraccounts table
 );
 
+CREATE TABLE fertilizer_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each request
+    userId VARCHAR(100) NOT NULL, -- ID of the user making the request
+    fertilizer_veriance_id INT NOT NULL, -- Foreign key to fertilizer_prices table
+    amount INT NOT NULL, -- Number of packets requested
+    requestDate DATE NOT NULL, -- Date of the request
+    status ENUM('Pending', 'Approved', 'Rejected') NOT NULL DEFAULT 'Pending', -- Status of the request
+    paymentoption ENUM('cash', 'deductpayment'), -- Payment option
+    FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE, -- Link to farmeraccounts table
+    FOREIGN KEY (fertilizer_veriance_id) REFERENCES fertilizer_prices(fertilizer_veriance_id) ON DELETE CASCADE -- Link to fertilizer_prices table
+);
+
+
 CREATE TABLE tea_packet_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each request
     userId VARCHAR(100) NOT NULL, -- ID of the user making the request
@@ -83,3 +96,15 @@ CREATE TABLE tea_packet_requests (
     paymentoption ENUM('cash', 'deductpayment');
     FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE -- Link to farmeraccounts table
 );
+
+CREATE TABLE fertilizer_prices (
+    fertilizer_veriance_id  INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each price record
+    fertilizerType VARCHAR(50) NOT NULL, -- Type of fertilizer (e.g., Urea, Compost)
+    packetType VARCHAR(50) NOT NULL, -- Packet size (e.g., 5kg, 10kg)
+    price DECIMAL(10,2) NOT NULL -- Price of each packet
+);
+
+
+
+
+/// add fertilizer hadnn oona tablee ek update kara
