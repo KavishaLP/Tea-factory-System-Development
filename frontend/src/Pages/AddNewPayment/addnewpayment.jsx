@@ -12,8 +12,12 @@ function AddPayment() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [paymentsHistory, setPaymentHistory] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(true);  
-
+  const [historyLoading, setHistoryLoading] = useState(true); 
+  
+  const [query, setQuery] = useState("");  // Stores input value
+  const [users, setUsers] = useState([]); // Stores user suggestions
+  const [selectedUser, setSelectedUser] = useState(null); // Selected user
+  const [noResults, setNoResults] = useState(false); // No match flag
   
   const [formData, setFormData] = useState({
     userId:"",
@@ -30,6 +34,32 @@ function AddPayment() {
     finalPayment: "",
   });
 
+
+{/*-------------------------------------------------------------------------------------------*/}
+
+useEffect(() => {
+  if (query.length > 0) {
+      fetchUsers(query);
+  } else {
+      setUsers([]);
+  }
+}, [query]);
+
+const fetchUsers = async (searchQuery) => {
+  try {
+      const response = await fetch(`/api/users?search=${searchQuery}`); // Adjust backend API
+      const data = await response.json();
+      setUsers(data);
+  } catch (error) {
+      console.error("Error fetching users:", error);
+  }
+};
+
+const handleSelectUser = (user) => {
+  setQuery(user.name); // Update input with selected name
+  setSelectedUser(user); // Store selected user
+  setUsers([]); // Clear suggestions
+};
 
 {/*-------------------------------------------------------------------------------------------*/}
   // Automatically calculate the payment when paymentPerKilo or finalTeaKilos change
@@ -84,7 +114,6 @@ function AddPayment() {
       finalPayment: finalPayment.toFixed(2), // Round to two decimal places
     }));
   }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);  
-
 
 {/*-------------------------------------------------------------------------------------------*/}
 
@@ -295,15 +324,28 @@ const handleSubmit = async (e) => {
         {activeTab === "addPayment" && (
           <form onSubmit={handleSubmit}>
             <div className="input-group">
-              <label>User ID</label>
-              <input
+            <label>User ID:</label>
+            <input
                 type="text"
-                name="userId"
-                value={formData.userId}
-                onChange={handleChange}
-                required
-                placeholder="Enter user ID"
-              />
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by user name..."
+            />
+            {users.length > 0 && (
+                <ul className="suggestions">
+                    {users.map((user) => (
+                        <li key={user.id} onClick={() => handleSelectUser(user)}>
+                            {user.name} ({user.id})
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {selectedUser && (
+                <div>
+                    <p>Selected User: {selectedUser.name} (ID: {selectedUser.id})</p>
+                </div>
+            )}
             </div>
 
 {/*-------------------------------------------------------------------------------------------*/}
