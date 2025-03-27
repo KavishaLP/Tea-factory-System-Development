@@ -1,6 +1,6 @@
 //routes/managerRoutes.js
 import express from 'express';
-import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer, searchFarmersInDB } from '../controllers/managerControllers.js';
+import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer, searchFarmersInDB, getDEtailsRelatedTOUser } from '../controllers/managerControllers.js';
 
 const router = express.Router();
 
@@ -16,6 +16,7 @@ router.get('/get-fertilizer-requests', getFertilizerRequests);
 router.post('/confirm-fertilizer', confirmFertilizer);
 router.post('/delete-fertilizer', deleteFertilizer);
 router.post('/search-farmers-indb', searchFarmersInDB);
+router.post('/get-user-tea-kilos', getDEtailsRelatedTOUser);
 
 
 export default router;

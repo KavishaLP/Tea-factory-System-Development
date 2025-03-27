@@ -1,7 +1,11 @@
 //controllers/managerControllers.js
 
 import bcrypt from 'bcryptjs';
+import util from 'util';
 import sqldb from '../config/sqldb.js';
+import moment  from 'moment-timezone';
+
+const query = util.promisify(sqldb.query).bind(sqldb);
 
 export const addFarmer = async (req, res) => {
     console.log("Received Data:", req.body);
@@ -406,8 +410,10 @@ export const deleteFertilizer = async (req, res) => {
 
 // Backend function to search farmers by ID only
 export const searchFarmersInDB = async (req, res) => {
-    const date = new Date();
-    console.log(date);
+    
+    const date = moment().tz("Asia/Colombo").format("YYYY-MM-DD HH:mm:ss");
+    console.log(date); // Outputs time in your timezone
+    
     // console.log("Searching Farmers:", req.body);
     const { query } = req.body;
     
@@ -453,3 +459,50 @@ export const searchFarmersInDB = async (req, res) => {
         });
     }
 };
+
+// Get details related to user
+export const getDEtailsRelatedTOUser = async (req, res) => {
+    console.log("Getting details related to user:", req.body);
+    const { userId } = req.body;
+  
+    try {
+      // Get current month's start and end dates
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  
+      // Execute all queries in parallel
+      const [totalKilos] = await query(
+        `SELECT SUM(teaWeight) AS totalKilos FROM tea_collections WHERE farmerId = ? AND collectionDate BETWEEN ? AND ?`,
+        [userId, firstDay, lastDay]
+      );
+  
+      const [totalAdvancePayments] = await query(
+        `SELECT SUM(amount) AS totalAdvancePayments FROM advance_payment WHERE userId = ? AND date BETWEEN ? AND ?`,
+        [userId, firstDay, lastDay]
+      );
+  
+      const [totalFertilizerAmount] = await query(
+        `SELECT SUM(total_fertilizer_amount) AS totalFertilizerAmount FROM tea_sack_updates WHERE userId = ? AND date BETWEEN ? AND ?`,
+        [userId, firstDay, lastDay]
+      );
+  
+      const [totalFertilizerRequests] = await query(
+        `SELECT SUM(amount) AS totalFertilizerRequests FROM fertilizer_requests WHERE userId = ? AND requestDate BETWEEN ? AND ?`,
+        [userId, firstDay, lastDay]
+      );
+  
+      // Send JSON response
+      res.json({
+        Status: 'Success',
+        totalKilos: totalKilos.totalKilos || 0,
+        totalAdvancePayments: totalAdvancePayments.totalAdvancePayments || 0,
+        totalFertilizerAmount: totalFertilizerAmount.totalFertilizerAmount || 0,
+        totalFertilizerRequests: totalFertilizerRequests.totalFertilizerRequests || 0
+      });
+  
+    } catch (error) {
+      console.error("Server Error:", error);
+      res.status(500).json({ Status: 'Error', Error: 'Internal server error' });
+    }
+  };

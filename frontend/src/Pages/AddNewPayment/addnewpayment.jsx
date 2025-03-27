@@ -43,6 +43,7 @@ const fetchUserSuggestions = async (query) => {
       { query },
       { withCredentials: true }
     );
+    console.log(response.data);
     
     if (response.data.Status === 'Success') {
       // Only keep the IDs from the response
