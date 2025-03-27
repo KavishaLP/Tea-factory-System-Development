@@ -469,63 +469,90 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
   }
 
   try {
-    const now = moment().tz("Asia/Colombo");
+    // Get current month's start and end dates, converted to the Asia/Colombo timezone
+    const now = moment().tz("Asia/Colombo"); // Get current time in Asia/Colombo timezone
     const firstDay = moment().tz("Asia/Colombo").startOf('month').format("YYYY-MM-DD");
     const lastDay = moment().tz("Asia/Colombo").endOf('month').format("YYYY-MM-DD");
 
-    // Query to get total advance payments (only approved ones)
+    // Query 1: Sum of final_tea_sack_weight for the user in the selected month
+    const teaSackWeightQuery = `
+      SELECT SUM(final_tea_sack_weight) AS totalTeaSackWeight
+      FROM tea_sack_updates
+      WHERE userId = ? AND date BETWEEN ? AND ?
+    `;
+
+    // Query 2: Get the tea_delivery_method from farmeraccounts table for transport calculation
+    const farmerAccountQuery = `
+      SELECT tea_delivery_method
+      FROM farmeraccounts
+      WHERE userId = ?
+    `;
+
+    // Query 3: Sum of advance payments (approved ones) for the user in the selected month
     const advancePaymentQuery = `
-      SELECT SUM(amount) AS totalAdvancePayments 
-      FROM advance_payment 
-      WHERE userId = ? AND action = 'Approved' 
-      AND date BETWEEN ? AND ?
+      SELECT SUM(amount) AS totalAdvancePayments
+      FROM advance_payment
+      WHERE userId = ? AND action = 'Approved' AND date BETWEEN ? AND ?
     `;
 
-    // Query to get total fertilizer amount from `tea_sack_updates`
-    const fertilizerAmountQuery = `
-      SELECT SUM(total_fertilizer_amount) AS totalFertilizerAmount 
-      FROM tea_sack_updates 
-      WHERE userId = ? 
-      AND date BETWEEN ? AND ?
+    // Query 4: Sum of tea packet request amounts for the user in the selected month
+    const teaPacketRequestQuery = `
+      SELECT SUM(amount) AS totalTeaPacketAmount
+      FROM tea_packet_requests
+      WHERE userId = ? AND requestDate BETWEEN ? AND ?
     `;
 
-    // Query to get total fertilizer requests count
-    const fertilizerRequestQuery = `
-      SELECT COUNT(*) AS totalFertilizerRequests 
-      FROM fertilizer_requests 
-      WHERE userId = ? 
-      AND requestDate BETWEEN ? AND ?
-    `;
-
-    sqldb.query(advancePaymentQuery, [userId, firstDay, lastDay], (err, advanceResults) => {
+    // Start by querying the tea_sack_updates table
+    sqldb.query(teaSackWeightQuery, [userId, firstDay, lastDay], (err, teaSackResults) => {
       if (err) {
-        console.error("Database Error (advance payment):", err);
+        console.error("Database Error (tea sack weight):", err);
         return res.status(500).json({ Status: 'Error', Error: 'Database error' });
       }
 
-      sqldb.query(fertilizerAmountQuery, [userId, firstDay, lastDay], (err, fertilizerResults) => {
+      // Query farmeraccounts table for the tea_delivery_method
+      sqldb.query(farmerAccountQuery, [userId], (err, farmerResults) => {
         if (err) {
-          console.error("Database Error (fertilizer amount):", err);
+          console.error("Database Error (farmer accounts):", err);
           return res.status(500).json({ Status: 'Error', Error: 'Database error' });
         }
 
-        sqldb.query(fertilizerRequestQuery, [userId, firstDay, lastDay], (err, requestResults) => {
+        const teaDeliveryMethod = farmerResults[0]?.tea_delivery_method;
+        const finalTeaKilos = teaSackResults[0]?.totalTeaSackWeight || 0;
+        
+        // Calculate transport cost based on tea_delivery_method
+        let transport = 0;
+        if (teaDeliveryMethod === 'factory_vehicle') {
+          transport = 0;
+        } else if (teaDeliveryMethod === 'farmer_vehicle') {
+          transport = finalTeaKilos * 12; // Multiply final_tea_sack_weight by 12
+        }
+
+        // Query for advance payments
+        sqldb.query(advancePaymentQuery, [userId, firstDay, lastDay], (err, advanceResults) => {
           if (err) {
-            console.error("Database Error (fertilizer requests):", err);
+            console.error("Database Error (advance payments):", err);
             return res.status(500).json({ Status: 'Error', Error: 'Database error' });
           }
 
-          // Get values from query results
-          const totalAdvancePayments = advanceResults[0]?.totalAdvancePayments || 0;
-          const totalFertilizerAmount = fertilizerResults[0]?.totalFertilizerAmount || 0;
-          const totalFertilizerRequests = requestResults[0]?.totalFertilizerRequests || 0;
+          // Query for tea packet request amounts
+          sqldb.query(teaPacketRequestQuery, [userId, firstDay, lastDay], (err, packetResults) => {
+            if (err) {
+              console.error("Database Error (tea packet requests):", err);
+              return res.status(500).json({ Status: 'Error', Error: 'Database error' });
+            }
 
-          // Send the final response
-          res.json({
-            Status: 'Success',
-            totalAdvancePayments,
-            totalFertilizerAmount,
-            totalFertilizerRequests
+            // Get values from results
+            const totalAdvancePayments = advanceResults[0]?.totalAdvancePayments || 0;
+            const totalTeaPacketAmount = packetResults[0]?.totalTeaPacketAmount || 0;
+
+            // Send the final response
+            res.json({
+              Status: 'Success',
+              finalTeaKilos,
+              transport,
+              totalAdvancePayments,
+              totalTeaPacketAmount
+            });
           });
         });
       });
@@ -535,5 +562,4 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
     res.status(500).json({ Status: 'Error', Error: 'Internal server error' });
   }
 };
-
   
