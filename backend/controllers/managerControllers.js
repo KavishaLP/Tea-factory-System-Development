@@ -462,8 +462,11 @@ export const searchFarmersInDB = async (req, res) => {
 
 // Get details related to user
 export const getDEtailsRelatedTOUser = async (req, res) => {
-    console.log("Getting details related to user:", req.body);
     const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ Status: 'Error', Error: 'userId is required' });
+    }
   
     try {
       // Get current month's start and end dates
@@ -471,38 +474,66 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
       const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   
-      // Execute all queries in parallel
-      const [totalKilos] = await query(
-        `SELECT SUM(teaWeight) AS totalKilos FROM tea_collections WHERE farmerId = ? AND collectionDate BETWEEN ? AND ?`,
-        [userId, firstDay, lastDay]
-      );
+      // Query to get total advance payments (only approved ones)
+      const advancePaymentQuery = `
+        SELECT SUM(amount) AS totalAdvancePayments 
+        FROM advance_payment 
+        WHERE userId = ? AND action = 'Approved' 
+        AND date BETWEEN ? AND ?
+      `;
   
-      const [totalAdvancePayments] = await query(
-        `SELECT SUM(amount) AS totalAdvancePayments FROM advance_payment WHERE userId = ? AND date BETWEEN ? AND ?`,
-        [userId, firstDay, lastDay]
-      );
+      // Query to get total fertilizer amount from `tea_sack_updates`
+      const fertilizerAmountQuery = `
+        SELECT SUM(total_fertilizer_amount) AS totalFertilizerAmount 
+        FROM tea_sack_updates 
+        WHERE userId = ? 
+        AND date BETWEEN ? AND ?
+      `;
   
-      const [totalFertilizerAmount] = await query(
-        `SELECT SUM(total_fertilizer_amount) AS totalFertilizerAmount FROM tea_sack_updates WHERE userId = ? AND date BETWEEN ? AND ?`,
-        [userId, firstDay, lastDay]
-      );
+      // Query to get total fertilizer requests count
+      const fertilizerRequestQuery = `
+        SELECT COUNT(*) AS totalFertilizerRequests 
+        FROM fertilizer_requests 
+        WHERE userId = ? 
+        AND requestDate BETWEEN ? AND ?
+      `;
   
-      const [totalFertilizerRequests] = await query(
-        `SELECT SUM(amount) AS totalFertilizerRequests FROM fertilizer_requests WHERE userId = ? AND requestDate BETWEEN ? AND ?`,
-        [userId, firstDay, lastDay]
-      );
+      sqldb.query(advancePaymentQuery, [userId, firstDay, lastDay], (err, advanceResults) => {
+        if (err) {
+          console.error("Database Error (advance payment):", err);
+          return res.status(500).json({ Status: 'Error', Error: 'Database error' });
+        }
   
-      // Send JSON response
-      res.json({
-        Status: 'Success',
-        totalKilos: totalKilos.totalKilos || 0,
-        totalAdvancePayments: totalAdvancePayments.totalAdvancePayments || 0,
-        totalFertilizerAmount: totalFertilizerAmount.totalFertilizerAmount || 0,
-        totalFertilizerRequests: totalFertilizerRequests.totalFertilizerRequests || 0
+        sqldb.query(fertilizerAmountQuery, [userId, firstDay, lastDay], (err, fertilizerResults) => {
+          if (err) {
+            console.error("Database Error (fertilizer amount):", err);
+            return res.status(500).json({ Status: 'Error', Error: 'Database error' });
+          }
+  
+          sqldb.query(fertilizerRequestQuery, [userId, firstDay, lastDay], (err, requestResults) => {
+            if (err) {
+              console.error("Database Error (fertilizer requests):", err);
+              return res.status(500).json({ Status: 'Error', Error: 'Database error' });
+            }
+  
+            // Get values from query results
+            const totalAdvancePayments = advanceResults[0]?.totalAdvancePayments || 0;
+            const totalFertilizerAmount = fertilizerResults[0]?.totalFertilizerAmount || 0;
+            const totalFertilizerRequests = requestResults[0]?.totalFertilizerRequests || 0;
+  
+            // Send the final response
+            res.json({
+              Status: 'Success',
+              totalAdvancePayments,
+              totalFertilizerAmount,
+              totalFertilizerRequests
+            });
+          });
+        });
       });
-  
     } catch (error) {
       console.error("Server Error:", error);
       res.status(500).json({ Status: 'Error', Error: 'Internal server error' });
     }
   };
+  

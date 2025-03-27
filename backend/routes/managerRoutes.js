@@ -16,7 +16,7 @@ router.get('/get-fertilizer-requests', getFertilizerRequests);
 router.post('/confirm-fertilizer', confirmFertilizer);
 router.post('/delete-fertilizer', deleteFertilizer);
 router.post('/search-farmers-indb', searchFarmersInDB);
-router.post('/get-user-tea-kilos', getDEtailsRelatedTOUser);
+router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
 
 
 export default router;

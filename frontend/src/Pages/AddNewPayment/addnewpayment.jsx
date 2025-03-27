@@ -73,10 +73,33 @@ const handleUserIdChange = (e) => {
   }
 };
 
+const fetchDEtailsRelatedTOUser = async (userId) => {
+  try {
+    const response = await axios.post(
+      'http://localhost:8081/api/manager/get-details-related-to-user',
+      { userId },
+      { withCredentials: true }
+    );
+    
+    if (response.data.Status === 'Success') {
+      console.log('User details:', response.data);
+      // setFormData(prev => ({
+      //   ...prev,
+      //   finalTeaKilos: response.data.totalKilos || "0"
+      // }))
+      ;
+    }
+  } catch (error) {
+    console.error('Error fetching tea kilos:', error);
+    setError('Failed to fetch tea kilos for this user');
+  }
+};
+
 const handleSuggestionClick = (userId) => {
   setFormData(prev => ({ ...prev, userId }));
   setUserSuggestions([]);
   setShowSuggestions(false);
+  fetchDEtailsRelatedTOUser(userId); // Fetch tea kilos when user is selected
 };
 
 {/*-------------------------------------------------------------------------------------------*/}
