@@ -340,6 +340,7 @@ const handleSubmit = async (e) => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by user name..."
             />
+
             {users.length > 0 && (
                 <ul className="suggestions">
                     {users.map((user) => (
@@ -349,6 +350,8 @@ const handleSubmit = async (e) => {
                     ))}
                 </ul>
             )}
+
+            {noResults && <p style={{ color: "red" }}>No matching users found.</p>}
 
             {selectedUser && (
                 <div>
