@@ -490,7 +490,7 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
 
     // Query 3: Sum of advance payments (approved ones) for the user in the selected month
     const advancePaymentQuery = `
-      SELECT SUM(amount) AS totalAdvancePayments
+      SELECT SUM(amount) AS advances
       FROM advance_payment
       WHERE userId = ? AND action = 'Approved' AND date BETWEEN ? AND ?
     `;
@@ -542,7 +542,7 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
             }
 
             // Get values from results
-            const totalAdvancePayments = advanceResults[0]?.totalAdvancePayments || 0;
+            const advances = advanceResults[0]?.advances || 0;
             const totalTeaPacketAmount = packetResults[0]?.totalTeaPacketAmount || 0;
 
             // Send the final response
@@ -550,8 +550,7 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
               Status: 'Success',
               finalTeaKilos,
               transport,
-              totalAdvancePayments,
-              totalTeaPacketAmount
+              advances,
             });
           });
         });
