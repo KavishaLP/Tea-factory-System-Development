@@ -10,6 +10,7 @@ function AddPayment() {
   const [activeTab, setActiveTab] = useState("addPayment");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentDate, setCurrentDate] = useState("");
 
   const [paymentsHistory, setPaymentHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);  
@@ -130,6 +131,17 @@ const handleSuggestionClick = (userId) => {
       finalPayment: finalPayment.toFixed(2), // Round to two decimal places
     }));
   }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);  
+
+  //Fetch Current Year and Month
+  useEffect(() => {
+    // Get current date when component mounts
+    const date = new Date();
+    console.log(date);
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November", "December"];
+    const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    setCurrentDate(formattedDate);
+  }, []);
 
 {/*-------------------------------------------------------------------------------------------*/}
 
@@ -272,7 +284,10 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="cfa-content">
-      <h2>Payment Management</h2>
+      <div className="header-section">
+        <h2>Payment Management</h2>
+        <p className="current-date">{currentDate}</p>
+      </div>
       <div className="cfa-grid">
         {/* Tabs */}
         <div className="tabs-container">

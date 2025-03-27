@@ -1,6 +1,6 @@
 //routes/managerRoutes.js
 import express from 'express';
-import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer } from '../controllers/managerControllers.js';
+import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer, searchFarmersInDB } from '../controllers/managerControllers.js';
 
 const router = express.Router();
 

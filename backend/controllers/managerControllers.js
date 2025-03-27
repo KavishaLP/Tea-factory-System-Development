@@ -403,3 +403,53 @@ export const deleteFertilizer = async (req, res) => {
         return res.status(500).json({ message: "An unexpected error occurred.", error: error });
     }
 };
+
+// Backend function to search farmers by ID only
+export const searchFarmersInDB = async (req, res) => {
+    const date = new Date();
+    console.log(date);
+    // console.log("Searching Farmers:", req.body);
+    const { query } = req.body;
+    
+    // Validate query exists and is at least 2 characters
+    if (!query || typeof query !== 'string' || query.trim().length < 2) {
+        return res.status(400).json({ 
+            Status: 'Error', 
+            Error: 'Search query must be at least 2 characters long' 
+        });
+    }
+
+    try {
+        const searchTerm = `%${query}%`;
+        
+        // Search only by userId (case insensitive)
+        const sql = `
+            SELECT userId as id 
+            FROM farmeraccounts 
+            WHERE userId LIKE ?
+            ORDER BY userId
+            LIMIT 10
+        `;
+        
+        sqldb.query(sql, [searchTerm], (err, results) => {
+            if (err) {
+                console.error("Database Search Error:", err);
+                return res.status(500).json({ 
+                    Status: 'Error', 
+                    Error: 'Database search error' 
+                });
+            }
+
+            return res.json({ 
+                Status: 'Success', 
+                farmers: results 
+            });
+        });
+    } catch (error) {
+        console.error("Search Farmers Error:", error);
+        return res.status(500).json({ 
+            Status: 'Error', 
+            Error: 'Internal server error' 
+        });
+    }
+};
