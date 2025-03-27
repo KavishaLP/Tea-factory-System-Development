@@ -84,7 +84,6 @@ CREATE TABLE fertilizer_requests (
     FOREIGN KEY (fertilizer_veriance_id) REFERENCES fertilizer_prices(fertilizer_veriance_id) ON DELETE CASCADE -- Link to fertilizer_prices table
 );
 
-
 CREATE TABLE tea_packet_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each request
     userId VARCHAR(100) NOT NULL, -- ID of the user making the request
@@ -103,8 +102,5 @@ CREATE TABLE fertilizer_prices (
     packetType VARCHAR(50) NOT NULL, -- Packet size (e.g., 5kg, 10kg)
     price DECIMAL(10,2) NOT NULL -- Price of each packet
 );
-
-
-
 
 /// add fertilizer hadnn oona tablee ek update kara
