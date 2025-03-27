@@ -38,13 +38,14 @@ function AddPayment() {
 const fetchUserSuggestions = async (query) => {
   try {
     const response = await axios.post(
-      'http://localhost:8081/api/manager/search-farmers',
+      'http://localhost:8081/api/manager/search-farmers-indb',
       { query },
       { withCredentials: true }
     );
     
     if (response.data.Status === 'Success') {
-      setUserSuggestions(response.data.users);
+      // Only keep the IDs from the response
+      setUserSuggestions(response.data.farmers.map(farmer => farmer.id));
     } else {
       setUserSuggestions([]);
     }
@@ -70,8 +71,8 @@ const handleUserIdChange = (e) => {
   }
 };
 
-const handleSuggestionClick = (user) => {
-  setFormData(prev => ({ ...prev, userId: user.id })); // or user.userId depending on your DB structure
+const handleSuggestionClick = (userId) => {
+  setFormData(prev => ({ ...prev, userId }));
   setUserSuggestions([]);
   setShowSuggestions(false);
 };

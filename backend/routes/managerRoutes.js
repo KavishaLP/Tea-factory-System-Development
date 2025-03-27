@@ -15,6 +15,7 @@ router.post('/get-Employee-Payment-History', getEmployeePaymentHistory);
 router.get('/get-fertilizer-requests', getFertilizerRequests);
 router.post('/confirm-fertilizer', confirmFertilizer);
 router.post('/delete-fertilizer', deleteFertilizer);
+router.post('/search-farmers-indb', searchFarmersInDB);
 
 
 export default router;
