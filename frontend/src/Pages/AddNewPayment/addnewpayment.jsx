@@ -14,6 +14,8 @@ function AddPayment() {
   const [paymentsHistory, setPaymentHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);  
 
+  const [userSuggestions, setUserSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   
   const [formData, setFormData] = useState({
     userId:"",
@@ -30,6 +32,49 @@ function AddPayment() {
     finalPayment: "",
   });
 
+
+{/*-------------------------------------------------------------------------------------------*/}
+
+const fetchUserSuggestions = async (query) => {
+  try {
+    const response = await axios.post(
+      'http://localhost:8081/api/manager/search-farmers',
+      { query },
+      { withCredentials: true }
+    );
+    
+    if (response.data.Status === 'Success') {
+      setUserSuggestions(response.data.users);
+    } else {
+      setUserSuggestions([]);
+    }
+  } catch (error) {
+    console.error('Error fetching user suggestions:', error);
+    setUserSuggestions([]);
+  }
+};
+
+const handleUserIdChange = (e) => {
+  const { value } = e.target;
+  
+  // Update the form data
+  setFormData(prev => ({ ...prev, userId: value }));
+  
+  // Fetch suggestions when there's at least 2 characters
+  if (value.length >= 2) {
+    fetchUserSuggestions(value);
+    setShowSuggestions(true);
+  } else {
+    setUserSuggestions([]);
+    setShowSuggestions(false);
+  }
+};
+
+const handleSuggestionClick = (user) => {
+  setFormData(prev => ({ ...prev, userId: user.id })); // or user.userId depending on your DB structure
+  setUserSuggestions([]);
+  setShowSuggestions(false);
+};
 
 {/*-------------------------------------------------------------------------------------------*/}
   // Automatically calculate the payment when paymentPerKilo or finalTeaKilos change
@@ -299,10 +344,23 @@ const handleSubmit = async (e) => {
                 type="text"
                 name="userId"
                 value={formData.userId}
-                onChange={handleChange}
+                onChange={handleUserIdChange}
                 required
-                placeholder="Enter user ID"
+                placeholder="Start typing to search users"
+                autoComplete="off"
               />
+              {showSuggestions && userSuggestions.length > 0 && (
+                <ul className="suggestions-dropdown">
+                  {userSuggestions.map((user, index) => (
+                    <li 
+                      key={index} 
+                      onClick={() => handleSuggestionClick(user)}
+                    >
+                      {user.id} - {user.name} {/* Adjust based on your user object structure */}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
 {/*-------------------------------------------------------------------------------------------*/}
