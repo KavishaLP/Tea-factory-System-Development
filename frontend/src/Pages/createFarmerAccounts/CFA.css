@@ -5,15 +5,11 @@ html, body {
 }
 
 .cfa-content {
-  height: calc(100vh - 70px);
-  overflow-y: auto;
-}
-.cfa-content {
-  flex: 1;
+  height: auto;
   padding: 2rem;
   margin-left: 280px;
   margin-top: 70px;
-  overflow-y: auto;
+  overflow-y: visible;
   background-color: #f5f5f5;
   min-height: calc(100vh - 70px);
 }
@@ -25,6 +21,7 @@ html, body {
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: visible;
 }
 
 .cfa-content h2 {
@@ -41,6 +38,7 @@ form {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   width: 100%;
+  overflow: visible;
 }
 
 .input-group {
@@ -212,6 +210,22 @@ button.loading::after {
   }
 }
 
+/* DateTime Picker Styling */
+.react-datetime-picker {
+  width: 100%;
+}
+
+.react-datetime-picker__wrapper {
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  padding: 0.5rem !important;
+  background-color: #f8fafc;
+}
+
+.react-datetime-picker__inputGroup {
+  padding: 0.25rem;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .input-group.two-column {
@@ -226,5 +240,13 @@ button.loading::after {
   .farmer-accounts-table td {
     padding: 0.5rem;
     font-size: 0.8rem;
+  }
+  
+  .cfa-content {
+    padding: 1rem;
+  }
+  
+  .cfa-grid {
+    padding: 1.5rem;
   }
 }

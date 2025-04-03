@@ -22,17 +22,18 @@ body, html {
   padding-bottom: 60px; /* Prevents content from touching footer */
 }
 
-/* Footer Styles (removed position: fixed) */
+/* Footer Styles */
 .footer {
   width: 100%;
   background: #343a40;
   color: white;
   text-align: center;
-  padding: 15px;
-  /* Removed position: fixed */
+  padding: 15px 0;
+  z-index: 900;
+  margin-top: auto; /* Push to bottom */
 }
 
-/* Rest of your existing footer styles remain the same */
+/* Footer container layout */
 .footer-container {
   display: flex;
   justify-content: space-between;

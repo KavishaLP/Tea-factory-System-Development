@@ -6,8 +6,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 1250px; /* Adjusted maximum width for better alignment with sidebar */
-  margin: 2rem 0 2rem 250px; /* Adjusted margin to leave space for the sidebar */
+  width: 90%; /* Take 90% of the available width */
+  max-width: 900px; /* Maximum width for larger screens */
+  margin: 1rem auto; /* Center horizontally */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
   border: 1px solid #dee2e6; /* Light border for definition */
 }
@@ -28,13 +29,14 @@
 
 /* Content box */
 .content-box {
-  background-color: #f9f9f9;
+  background-color: #ffffff; /* Changed to white for better contrast */
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 80%;
+  width: 100%; /* Take full width */
   max-width: 800px;
   overflow-x: auto;
+  margin-bottom: 1.5rem; /* Add margin at the bottom */
 }
 
 /* Table styling */
@@ -81,4 +83,47 @@
   color: #28a745; /* Green color for success message */
   font-weight: bold;
   margin-top: 1rem; /* Added margin for spacing */
+  width: 100%;
+}
+
+/* Media queries for responsiveness */
+@media screen and (max-width: 1200px) {
+  .view-payments-container {
+    width: 95%;
+    padding: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .view-payments-container {
+    width: 95%;
+    padding: 1rem;
+  }
+  
+  .page-header {
+    padding: 0.75rem;
+    font-size: 1.3rem;
+  }
+  
+  .content-box {
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .view-payments-container {
+    width: 100%;
+    padding: 1rem 0.75rem;
+    border-radius: 0;
+  }
+  
+  .content-box {
+    padding: 10px;
+  }
+  
+  .payments-table th,
+  .payments-table td {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
 }

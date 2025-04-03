@@ -5,8 +5,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 1250px; /* Adjusted maximum width for better alignment with sidebar */
-    margin: 2rem 0 2rem 250px; /* Adjusted margin to leave space for the sidebar */
+    width: 90%; /* Take 90% of the available width */
+    max-width: 900px; /* Maximum width for larger screens */
+    margin: 1rem auto; /* Center horizontally */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
     border: 1px solid #dee2e6; /* Light border for definition */
   }
@@ -34,6 +35,7 @@
     display: flex;
     flex-direction: column;
     width: 100%; /* Ensure form takes full width of the container */
+    max-width: 800px; /* Added max-width for better form layout */
   }
   
   label {
@@ -58,6 +60,14 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%; /* Make button full width */
+    max-width: 300px; /* Limit button width */
+    align-self: center; /* Center the button */
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background: #218838;
   }
   
   .message {
@@ -65,23 +75,60 @@
     color: #28a745; /* Green color for success message */
     font-weight: bold;
     margin-top: 1rem; /* Added margin for spacing */
+    width: 100%;
   }
   
   /* Footer */
   .footer {
-    position: absolute;
+    position: relative; /* Changed from absolute to relative */
     bottom: 0;
-    left: 250px;
-    right: 0;
+    width: 100%; /* Full width */
     background: #222;
     color: white;
     text-align: center;
     padding: 10px 0;
     font-size: 14px;
+    margin-top: 2rem; /* Add space above the footer */
   }
   
   .footer a {
     color: #00ccff;
     text-decoration: none;
+  }
+  
+  /* Media queries for responsiveness */
+  @media screen and (max-width: 1200px) {
+    .request-fertilizer-container {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .request-fertilizer-container {
+      width: 95%;
+      padding: 1rem;
+    }
+    
+    .page-header {
+      padding: 0.75rem;
+      font-size: 1.3rem;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .request-fertilizer-container {
+      width: 100%;
+      padding: 1rem 0.75rem;
+      border-radius: 0;
+    }
+    
+    form {
+      padding: 0 0.5rem;
+    }
+    
+    button {
+      max-width: 100%;
+    }
   }
   

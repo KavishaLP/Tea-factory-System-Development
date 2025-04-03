@@ -3,36 +3,33 @@ body {
     overflow-x: hidden; /* Prevent horizontal scrolling for the entire page */
 }
 
-/* Adjusted Dashboard Container */
+/* Dashboard Container */
 .dashboard-container {
-    background-color: #f8f9fa;
-    padding: 2rem;
-    border-radius: 12px;
+    background-color: #f8f9fa; /* Light gray background */
+    padding: 2rem; /* Spacious padding */
+    border-radius: 12px; /* Rounded corners */
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: calc(100% - 300px); /* Subtract sidebar width for space */
-    margin: 2rem auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dee2e6;
-    margin-left: 320px; /* Account for sidebar width (fixed at 280px) */
-    margin-right: 2rem;
-    overflow: hidden; /* Prevent overflow */
-    width: 100%; /* Ensure container takes up full width */
+    width: 90%; /* Take 90% of the available width */
+    max-width: 900px; /* Maximum width for larger screens */
+    margin: 1rem auto; /* Center horizontally */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    border: 1px solid #dee2e6; /* Light border */
 }
 
 /* Page header style */
 .page-header {
-    background: linear-gradient(135deg, #00a000, #008000);
-    color: white;
-    padding: 1rem;
-    width: 100%;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+    color: white; /* Text color */
+    padding: 1rem; /* Padding for header */
+    width: 100%; /* Full width */
+    text-align: center; /* Center text */
+    font-size: 1.5rem; /* Font size */
+    font-weight: 600; /* Bold text */
+    border-radius: 8px; /* Rounded corners */
+    margin-bottom: 1.5rem; /* Space below header */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
 /* Dashboard Summary Cards */
@@ -42,7 +39,7 @@ body {
     justify-content: center;
     width: 100%;
     flex-wrap: wrap;
-    overflow: hidden; /* Prevent horizontal scrolling */
+    margin-bottom: 1rem; /* Add space at the bottom */
 }
 
 .card {
@@ -52,20 +49,28 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     flex: 1;
-    max-width: 300px;
+    max-width: 280px;
     min-width: 250px;
-    overflow: hidden; /* Ensure card content doesn't overflow horizontally */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Add hover effect to cards */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* Cards text */
 .card h3 {
     margin-bottom: 10px;
     color: #495057;
+    font-size: 1.1rem;
 }
 
 .card p {
     font-size: 1.25rem;
     font-weight: 600;
+    color: #28a745;
 }
 
 .card-icon {
@@ -74,39 +79,53 @@ body {
     color: #2e7d32;
 }
 
-/* Sidebar and Content Layout Adjustment */
-@media (max-width: 1024px) {
+/* Media queries for responsiveness */
+@media screen and (max-width: 1200px) {
     .dashboard-container {
-        margin-left: 240px; /* Adjusted for smaller sidebar width */
-        max-width: calc(100% - 240px);
+        width: 95%;
+        padding: 1.5rem;
     }
 }
 
-@media (max-width: 768px) {
-    /* For smaller screen sizes */
+@media screen and (max-width: 768px) {
     .dashboard-container {
-        margin-left: 80px; /* Adjusted for mobile sidebar */
-        max-width: calc(100% - 80px);
+        width: 95%;
+        padding: 1rem;
     }
-
+    
     .page-header {
-        font-size: 1.25rem; /* Slightly smaller font size for mobile */
+        padding: 0.75rem;
+        font-size: 1.3rem;
     }
+    
+    .dashboard-summary {
+        gap: 15px;
+    }
+    
+    .card {
+        min-width: 220px;
+    }
+}
 
+@media screen and (max-width: 480px) {
+    .dashboard-container {
+        width: 100%;
+        padding: 1rem 0.75rem;
+        border-radius: 0;
+    }
+    
+    .page-header {
+        font-size: 1.1rem;
+    }
+    
     .dashboard-summary {
         flex-direction: column;
         align-items: center;
+        gap: 15px;
     }
-
+    
     .card {
-        max-width: 90%; /* Cards will take more width on mobile */
-    }
-}
-
-/* Adjusting for Sidebar Visibility (Mobile) */
-@media screen and (max-width: 480px) {
-    .dashboard-container {
-        margin-left: 0; /* Full width for small screens */
         max-width: 100%;
+        width: 100%;
     }
 }

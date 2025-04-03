@@ -7,5 +7,69 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Main container structure */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Content wrapper to handle sidebar and main content */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - 70px - 50px); /* viewport height minus navbar and footer */
+}
+
+/* Main content with sidebar present */
+.main-content.with-sidebar {
+  margin-left: 280px; /* Match sidebar width */
+  width: calc(100% - 280px);
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+/* Footer positioning */
+.footer {
+  width: 100%;
+  background: #343a40;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  z-index: 900;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+  .main-content.with-sidebar {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .main-content.with-sidebar {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .main-content.with-sidebar {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 

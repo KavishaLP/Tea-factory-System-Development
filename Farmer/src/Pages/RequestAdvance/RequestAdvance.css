@@ -6,10 +6,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%; /* Ensure container width adjusts */
-  max-width: 1250px; /* Adjusted maximum width for better alignment with sidebar */
-  margin: 2rem 0 2rem 300px; /* Increased margin for more space between container and sidebar */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
+  width: 90%; /* Take 90% of the available width */
+  max-width: 900px; /* Maximum width for larger screens */
+  margin: 1rem auto; /* Center horizontally */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
   border: 1px solid #dee2e6; /* Light border for definition */
 }
 
@@ -39,6 +39,7 @@ form {
   display: flex;
   flex-direction: column;
   width: 100%; /* Ensure form takes full width of the container */
+  max-width: 800px;
 }
 
 /* Label Styling */
@@ -66,6 +67,9 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  width: 100%; /* Make button full width */
+  max-width: 300px; /* Limit button width */
+  align-self: center; /* Center the button */
   transition: all 0.3s ease-in-out; /* Smooth hover effect */
 }
 
@@ -80,59 +84,56 @@ button:hover {
   color: #28a745; /* Green color for success message */
   font-weight: bold;
   margin-top: 1rem; /* Added margin for spacing */
+  width: 100%;
 }
 
-/* Responsive Design for Smaller Screens */
-@media (max-width: 1024px) {
-  /* Adjust the left margin to account for the sidebar space in smaller screens */
+/* Media queries for responsiveness */
+@media screen and (max-width: 1200px) {
   .request-advance-container {
-    margin-left: 20px; /* Increased space for mobile/tablet */
-    width: calc(100% - 40px); /* Ensures container takes full width minus padding */
-    padding: 1.5rem; /* Reduced padding */
-    max-width: none; /* Allow full width usage */
+    width: 95%;
+    padding: 1.5rem;
   }
 }
 
-@media (max-width: 768px) {
-  /* For smaller screens like tablets */
+@media screen and (max-width: 768px) {
   .request-advance-container {
-    margin-left: 20px; /* Small margin on the left for mobile/tablet */
-    padding: 1rem; /* Reduced padding */
-    width: 100%; /* Full width for tablet-sized screens */
+    width: 95%;
+    padding: 1rem;
   }
-
+  
   .page-header {
-    font-size: 1.25rem; /* Smaller font size for mobile */
+    padding: 0.75rem;
+    font-size: 1.3rem;
   }
-
+  
   button {
-    font-size: 14px; /* Smaller button text on mobile */
-    padding: 10px; /* Reduced button padding for better mobile fit */
+    font-size: 14px;
+    padding: 10px;
   }
-
+  
   h2 {
-    font-size: 1.25rem; /* Smaller heading for mobile */
+    font-size: 1.25rem;
   }
 }
 
-/* Mobile Specific Styles */
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
   .request-advance-container {
-    margin: 1rem 0; /* Margin adjustments for mobile */
-    width: 100%; /* Full width */
-    padding: 0.75rem; /* Smaller padding for mobile */
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0;
   }
-
+  
   .page-header {
-    font-size: 1.1rem; /* Smaller header for mobile */
+    font-size: 1.1rem;
   }
-
+  
   h2 {
-    font-size: 1.1rem; /* Smaller heading for mobile */
+    font-size: 1.1rem;
   }
-
+  
   button {
-    font-size: 12px; /* Further reduced button text for mobile */
-    padding: 8px; /* Smaller button padding */
+    font-size: 12px;
+    padding: 8px;
+    max-width: 100%;
   }
 }
