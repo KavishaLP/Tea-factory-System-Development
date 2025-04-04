@@ -1,190 +1,191 @@
-/* Container for the entire TeaSackUpdate component */
-.tea-sack-update-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 70px); /* Subtract Navbar height */
+/* Tea Sack Update CSS - Simple Version with One Scrollbar */
+
+/* Remove all scrollbars by default */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevent scrolling on the container */
 }
 
-/* Wrapper for the main content */
-.tea-sack-update-content-wrapper {
-  flex-grow: 1; /* Allow the content to grow and fill available space */
-  margin-left: 150px; /* Adjust this value to match the Sidebar width */
-  margin-right: 10px; /* Add margin to the right to avoid touching the edge */
-  overflow-y: auto; /* Allow scrolling if content overflows */
-  padding-bottom: 20px; /* Add padding at the bottom to ensure content is visible */
-}
-
-/* Main content area */
-.tea-sack-update-content {
-  background-color: #ffffff; /* White background for content */
-  padding: 30px; /* Increased padding for a more spacious feel */
-  border-radius: 12px; /* Rounded corners for a modern look */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow for depth */
-  min-height: calc(100vh - 90px); /* Ensure it takes up at least the available space */
-  display: flex;
-  flex-direction: column; /* Stack children vertically */
-  gap: 20px; /* Increased space between form elements */
-  overflow-y: auto; /* Allow scrolling if content overflows */
-}
-
-/* Page header styling */
-.tea-sack-update-page-header {
-  margin-bottom: 20px;
-}
-
-.tea-sack-update-page-header h1 {
-  font-size: 24px;
-  color: #333;
-}
-
-/* Search bar styling */
-.tea-sack-update-search-bar {
+/* Main container */
+.tea-sack-update-container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px; /* Increased margin for better spacing */
+}
+
+/* Content wrapper - THIS is the only scrollable element */
+.tea-sack-update-content-wrapper {
+  margin-left: 150px; /* Space for sidebar */
+  margin-top: 70px; /* Space for navbar */
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Content area */
+.tea-sack-update-content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+/* Page Header */
+.tea-sack-update-page-header h1 {
+  font-size: 28px;
+  color: #67ae8d;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Search Bar */
+.tea-sack-update-search-bar {
+  margin-bottom: 25px;
 }
 
 .tea-sack-update-search-bar label {
-  font-weight: 600; /* Bold label for emphasis */
-  margin-bottom: 5px; /* Space between label and input */
-  color: #333; /* Darker color for better readability */
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
 }
 
 .tea-sack-update-search-bar input {
-  padding: 10px; /* Increased padding for comfort */
-  border-radius: 6px; /* Rounded corners */
-  border: 1px solid #ccc; /* Light border */
   width: 100%;
-  margin-top: 5px;
-  transition: border-color 0.3s; /* Smooth transition for focus */
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
-.tea-sack-update-search-bar input:focus {
-  border-color: #2ecc71; /* Change border color on focus */
-  outline: none; /* Remove default outline */
-}
-
-/* Form styling */
+/* Form Styling */
 .tea-sack-update-form {
-  background-color: #d4edda; /* Light green background for the form */
-  padding: 20px; /* Increased padding */
-  border-radius: 12px; /* Rounded corners */
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* Increased gap between elements */
+  background-color: #f9f9f9;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
 }
 
 .tea-sack-update-form label {
-  font-weight: 600; /* Bold label for emphasis */
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  margin-top: 15px;
 }
 
 .tea-sack-update-form input[type="text"],
 .tea-sack-update-form input[type="date"] {
-  padding: 10px; /* Increased padding */
-  border-radius: 6px; /* Rounded corners */
-  border: 1px solid #ccc; /* Light border */
   width: 100%;
-  transition: border-color 0.3s; /* Smooth transition for focus */
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: #fff;
 }
 
-.tea-sack-update-form input[type="text"]:focus,
-.tea-sack-update-form input[type="date"]:focus {
-  border-color: #2ecc71; /* Change border color on focus */
-  outline: none; /* Remove default outline */
-}
-
-/* Deduction section styling */
+/* Deduction Section */
 .tea-sack-update-deduction-section {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .tea-sack-update-deduction-fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px; /* Increased space between fields */
-  margin-top: 5px; /* Reduces space above the deduction fields */
+  gap: 15px;
+  margin-top: 10px;
 }
 
 .tea-sack-update-deduction-fields div {
   display: flex;
   align-items: center;
-  gap: 10px; /* Increased space between label and input */
 }
 
 .tea-sack-update-deduction-fields span {
-  flex: 1;
-  font-size: 0.9em; /* Reduced label font size */
-  text-align: left;
-  color: #555; /* Darker color for better readability */
+  min-width: 120px;
+  font-size: 0.95em;
 }
 
 .tea-sack-update-deduction-fields input {
   flex: 1;
-  padding: 8px; /* Increased input padding */
-  font-size: 0.9em; /* Reduced input font size */
-  border-radius: 6px; /* Rounded corners */
-  border: 1px solid #ccc; /* Light border */
-  transition: border-color 0.3s; /* Smooth transition for focus */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
 }
 
-.tea-sack-update-deduction-fields input:focus {
-  border-color: #2ecc71; /* Change border color on focus */
-  outline: none; /* Remove default outline */
-}
-
-/* Total tea sack amount styling */
+/* Tea Sack Amount */
 .tea-sack-update-teasack-amount {
   display: flex;
   align-items: center;
-  gap: 10px; /* Sets consistent space between label and input */
-  margin-top: 5px;
+  margin-top: 20px;
+  background-color: #f0f8ff;
+  padding: 15px;
+  border-radius: 8px;
 }
 
 .tea-sack-update-teasack-amount label {
-  width: 30%; /* Makes label width match the deduction labels */
-  font-size: 0.9em;
-  text-align: left;
-  color: #333; /* Darker color for better readability */
+  min-width: 140px;
+  font-weight: 700;
+  margin: 0;
 }
 
 .tea-sack-update-teasack-amount input {
-  width: 60%; /* Ensures input aligns next to label with matching size */
-  padding: 8px; /* Increased input padding */
-  border-radius: 6px; /* Rounded corners */
-  border: 1px solid #ccc; /* Light border */
-  font-size: 0.9em;
-  transition: border-color 0.3s; /* Smooth transition for focus */
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-weight: 600;
+  color: #27ae60;
 }
 
-.tea-sack-update-teasack-amount input:focus {
-  border-color: #2ecc71; /* Change border color on focus */
-  outline: none; /* Remove default outline */
-}
-
-/* Submit button styling */
+/* Submit Button */
 .tea-sack-update-submit-button {
-  background-color: #28a745; /* Green background for submit button */
+  background-color: #28a745;
   color: white;
   border: none;
-  padding: 12px; /* Increased padding */
-  border-radius: 6px; /* Rounded corners */
-  cursor: pointer;
+  padding: 14px;
+  border-radius: 8px;
   font-size: 1em;
-  width: 50%;
-  margin-top: 10px; /* Space above button */
-  transition: background-color 0.3s; /* Smooth transition for hover */
+  font-weight: 600;
+  width: 200px;
+  margin: 25px auto 0;
+  display: block;
+  cursor: pointer;
 }
 
 .tea-sack-update-submit-button:hover {
-  background-color: #218838; /* Darker green on hover */
+  background-color: #218838;
 }
 
-/* Error message styling */
+/* Error Message */
 .tea-sack-update-error {
-  color: #dc3545; /* Red color for error messages */
+  color: #dc3545;
   font-size: 0.9em;
   margin-top: 10px;
+  padding: 10px;
+  background-color: #f8d7da;
+  border-radius: 5px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .tea-sack-update-content-wrapper {
+    margin-left: 0;
+  }
+  
+  .tea-sack-update-deduction-fields {
+    grid-template-columns: 1fr;
+  }
+  
+  .tea-sack-update-content {
+    padding: 20px;
+  }
+  
+  .tea-sack-update-form {
+    padding: 20px;
+  }
+  
+  .tea-sack-update-submit-button {
+    width: 100%;
+  }
 }

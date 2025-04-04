@@ -8,3 +8,46 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f8f9fa;
 }
+
+/* Global layout styles to center content with sidebar consideration */
+.content-wrapper {
+  margin-left: 150px; /* Space for sidebar */
+  margin-top: 70px; /* Space for navbar */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - 70px); /* Full height minus navbar */
+  overflow-y: auto; /* Single scrollbar */
+}
+
+/* Main content container used across pages */
+.page-content {
+  width: 100%;
+  max-width: 1200px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+/* Form containers across the app */
+.form-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 25px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-wrapper {
+    margin-left: 0; /* No sidebar on mobile */
+    padding: 15px;
+  }
+  
+  .page-content {
+    padding: 20px;
+  }
+}
