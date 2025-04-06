@@ -561,4 +561,15 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
     res.status(500).json({ Status: 'Error', Error: 'Internal server error' });
   }
 };
+export const getAllFarmers = (req, res) => {
+    const query = 'SELECT * FROM farmeraccounts';
   
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching farmer accounts:', err);
+        return res.status(500).json({ status: 'error', message: 'Database query failed.' });
+      }
+  
+      res.status(200).json({ status: 'success', data: results });
+    });
+  };

@@ -32,9 +32,10 @@ const CreateFarmerAccount = () => {
             "http://localhost:8081/api/manager/get-farmer-accounts",
             { withCredentials: true }
           );
-          if (response.data.status === "Success") {
-            setFarmerAccounts(response.data.farmerAccounts);
-          } else {
+          if (response.data.status === "success") {
+            setFarmerAccounts(response.data.data);
+          }
+           else {
             setError("Failed to fetch farmer accounts. Please try again later.");
           }
         } catch (error) {
