@@ -2,18 +2,24 @@
 .tpd-content {
   display: flex;
   min-height: calc(100vh - 70px); /* Account for navbar */
+  background-color: #f5f7fa; /* Added background color */
 }
 
 .tpd-grid {
   margin-left: 150px; /* Match sidebar width */
   width: calc(100% - 150px); /* Remaining space */
   padding: 20px;
+  transition: margin-left 0.3s ease; /* Smooth sidebar collapse */
 }
 
 .history-section {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 /* Enhanced Tabs */
@@ -21,7 +27,13 @@
   display: flex;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid #e2e8f0;
-  padding-left: 0.5rem; /* Add some breathing room */
+  padding-left: 0.5rem;
+  overflow-x: auto; /* For mobile scrolling */
+  scrollbar-width: none; /* Hide scrollbar */
+}
+
+.tabs-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .tab-button {
@@ -34,6 +46,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .tab-button.active {
@@ -52,6 +65,7 @@
 
 .tab-button:hover {
   color: #16a34a;
+  background-color: #f0fdf4;
 }
 
 /* Improved Controls */
@@ -65,6 +79,7 @@
   background: #f8fafc;
   padding: 1rem;
   border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
 .search-box {
@@ -96,12 +111,20 @@
   top: 50%;
   transform: translateY(-50%);
   color: #94a3b8;
+  pointer-events: none;
 }
 
 .date-filter {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.date-filter label {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
 .date-filter input {
@@ -111,6 +134,7 @@
   font-size: 0.9rem;
   transition: all 0.2s ease;
   background: white;
+  min-width: 150px;
 }
 
 .date-filter input:focus {
@@ -122,15 +146,16 @@
 .table-container {
   background: white;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
+  margin-top: 1.5rem;
 }
 
 .history-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  min-width: 800px; /* Minimum table width */
 }
 
 .history-table th,
@@ -148,6 +173,41 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+}
+
+/* Column Widths */
+.history-table th:nth-child(1),
+.history-table td:nth-child(1) {
+  width: 10%;
+  min-width: 100px;
+}
+
+.history-table th:nth-child(2),
+.history-table td:nth-child(2) {
+  width: 20%;
+  min-width: 150px;
+}
+
+.history-table th:nth-child(3),
+.history-table td:nth-child(3) {
+  width: 15%;
+  min-width: 120px;
+}
+
+.history-table th:nth-child(4),
+.history-table td:nth-child(4) {
+  width: 15%;
+  min-width: 120px;
+}
+
+.history-table th:nth-child(5),
+.history-table td:nth-child(5) {
+  width: 20%;
+  min-width: 180px;
+  text-align: center;
 }
 
 .history-table tr:last-child td {
@@ -160,13 +220,16 @@
 
 /* Status Badges */
 .status {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-align: center;
   min-width: 80px;
+  box-sizing: border-box;
+  line-height: 1;
 }
 
 .status.pending {
@@ -187,7 +250,10 @@
 /* Action Buttons */
 .action-buttons {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .action-button {
@@ -198,9 +264,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.25rem;
+  min-width: 80px;
 }
 
 .confirm-button {
@@ -211,6 +279,7 @@
 .confirm-button:hover {
   background-color: #15803d;
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .delete-button {
@@ -221,6 +290,7 @@
 .delete-button:hover {
   background-color: #dc2626;
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Pagination */
@@ -231,6 +301,7 @@
   gap: 0.5rem;
   margin-top: 2rem;
   padding: 1rem 0;
+  flex-wrap: wrap;
 }
 
 .pagination button {
@@ -256,6 +327,30 @@
   border-color: #16a34a;
 }
 
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+}
+
+.empty-state svg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+.empty-state p {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 1024px) {
   .tpd-grid {
@@ -271,6 +366,7 @@
   
   .controls-container {
     flex-direction: column;
+    align-items: stretch;
   }
   
   .search-box,
@@ -278,14 +374,29 @@
     width: 100%;
   }
   
+  .date-filter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
   .history-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
+    min-width: 100%;
+  }
+  
+  .history-table th,
+  .history-table td {
+    padding: 0.75rem;
+    font-size: 0.85rem;
   }
   
   .action-buttons {
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-button {
+    width: 100%;
   }
 }
 
@@ -297,12 +408,29 @@
   }
   
   .tabs-container {
-    overflow-x: auto;
     padding-bottom: 8px;
   }
   
   .tab-button {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
+  }
+  
+  .history-table th,
+  .history-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .status {
+    min-width: 70px;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .pagination button {
+    padding: 0.4rem 0.6rem;
+    min-width: 30px;
+    font-size: 0.8rem;
   }
 }
