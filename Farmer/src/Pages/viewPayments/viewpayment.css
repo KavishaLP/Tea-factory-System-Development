@@ -54,7 +54,7 @@
 }
 
 .payments-table thead {
-  background-color: #4caf50; /* Header background color */
+  background-color: #2ecc71; /* Header background color */
   color: white; /* Header text color */
 }
 
@@ -80,7 +80,7 @@
 
 .message {
   text-align: center;
-  color: #28a745; /* Green color for success message */
+  color: #2ecc71; /* Green color for success message */
   font-weight: bold;
   margin-top: 1rem; /* Added margin for spacing */
   width: 100%;

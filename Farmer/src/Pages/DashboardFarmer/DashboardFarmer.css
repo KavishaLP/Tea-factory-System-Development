@@ -20,7 +20,7 @@ body {
 
 /* Page header style */
 .page-header {
-    background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+    background: linear-gradient(135deg, #2ecc71, #2ecc71); /* Gradient green */
     color: white; /* Text color */
     padding: 1rem; /* Padding for header */
     width: 100%; /* Full width */
@@ -70,13 +70,13 @@ body {
 .card p {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #28a745;
+    color: #2ecc71;
 }
 
 .card-icon {
     font-size: 2rem;
     margin-bottom: 10px;
-    color: #2e7d32;
+    color: #2ecc71;
 }
 
 /* Media queries for responsiveness */

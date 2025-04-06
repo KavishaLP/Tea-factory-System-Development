@@ -15,7 +15,7 @@
 
 /* Page Header Style */
 .page-header {
-  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
+  background: linear-gradient(135deg, #2ecc71, #2ecc71); /* Gradient green */
   color: white; /* Text color */
   padding: 1.25rem; /* Padding for header */
   width: 100%; /* Full width */
@@ -61,7 +61,7 @@ input {
 button {
   margin-top: 15px;
   padding: 12px; /* Increased button padding for a modern look */
-  background: #28a745;
+  background: #2ecc71;
   color: white;
   font-size: 16px;
   border: none;
@@ -74,14 +74,14 @@ button {
 }
 
 button:hover {
-  background-color: #218838; /* Darker shade on hover */
+  background-color: #2ecc71; /* Darker shade on hover */
   transform: translateY(-2px); /* Slight lift effect on hover */
 }
 
 /* Success Message Styling */
 .message {
   text-align: center;
-  color: #28a745; /* Green color for success message */
+  color: #2ecc71; /* Green color for success message */
   font-weight: bold;
   margin-top: 1rem; /* Added margin for spacing */
   width: 100%;
