@@ -37,11 +37,19 @@ h3 {
   margin-top: 1.5rem;
 }
 
+.form-section {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.form-section.full-width {
+  width: 100%;
+}
+
 .form-row {
   display: flex;
   gap: 1.5rem;
   width: 100%;
-  margin-bottom: 1rem;
 }
 
 .form-group {
@@ -66,6 +74,10 @@ input, select {
 .items-container {
   width: 100%;
   margin-top: 1.5rem;
+}
+
+.items-container.full-width {
+  width: 100%;
 }
 
 .items-table {
@@ -139,6 +151,10 @@ input, select {
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 2px dashed #ccc;
+  width: 100%;
+}
+
+.total-section.full-width {
   width: 100%;
 }
 
@@ -239,6 +255,10 @@ button {
 @media screen and (max-width: 600px) {
   .request-fertilizer-container {
     padding: 1rem;
+    border-radius: 0;
+    margin: 0 auto;
+    box-shadow: none;
+    border: none;
   }
 
   .items-table {
