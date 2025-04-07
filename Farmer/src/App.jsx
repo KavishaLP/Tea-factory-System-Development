@@ -1,3 +1,5 @@
+import ProtectedRoute from './Pages/ProtectedRoute';
+
 import './App.css';
 import { useLocation } from 'react-router-dom';
 import { Routes, Route } from "react-router-dom";
