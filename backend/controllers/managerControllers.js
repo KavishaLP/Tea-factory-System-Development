@@ -175,6 +175,8 @@ export const getFarmerPaymentHistory = (req, res) => {
 };
 
 
+//---------------------------------------------------------------------------------------------------
+
 
 export const addEmployee = async (req, res) => {
     try {
@@ -229,6 +231,7 @@ export const addEmployee = async (req, res) => {
 };
 
 export const getAllEmployers = async (req, res) => {
+    console.log("Fetching all employee accounts", req.body);
     try {
         const sql = `
             SELECT 
@@ -246,7 +249,7 @@ export const getAllEmployers = async (req, res) => {
         const results = await query(sql);
         
         res.status(200).json({
-            success: true,
+            status: 'success',
             data: results
         });
     } catch (error) {
@@ -258,7 +261,6 @@ export const getAllEmployers = async (req, res) => {
         });
     }
 };
-
 
 export const addEmployeePayment = (req, res) => {
     const {
@@ -310,6 +312,10 @@ export const addEmployeePayment = (req, res) => {
     });
 };
 
+
+//---------------------------------------------------------------------------------------------------
+
+
 export const getEmployeePaymentHistory = (req, res) => {
     // SQL Query to fetch payment history from the employee_payments table
     const sql = `
@@ -343,8 +349,6 @@ export const getEmployeePaymentHistory = (req, res) => {
         return res.status(200).json({ Status: "Success", paymentHistory: results });
     });
 };
-
-
 
 // Get fertilizer requests
 export const getFertilizerRequests = (req, res) => {
@@ -612,6 +616,7 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
     res.status(500).json({ Status: 'Error', Error: 'Internal server error' });
   }
 };
+
 export const getAllFarmers = (req, res) => {
     const query = 'SELECT * FROM farmeraccounts';
   

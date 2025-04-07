@@ -27,8 +27,9 @@ const CreateEmployeeAccount = () => {
             "http://localhost:8081/api/manager/get-employee-accounts",
             { withCredentials: true }
           );
+          console.log("Employee accounts response:", response.data);
           if (response.data.status === "Success") {
-            setEmployeeAccounts(response.data.employeeAccounts);
+            setEmployeeAccounts(response.data.data);
           } else {
             setError("Failed to fetch employee accounts. Please try again later.");
           }
