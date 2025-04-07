@@ -82,7 +82,7 @@ const Fertilizer = () => {
     }
   };
 
-  // Handle Reject action (renamed from Delete for clarity)
+  // Handle Reject action
   const handleReject = async (requestId) => {
     setError(""); // Clear any previous errors
     try {
@@ -99,7 +99,7 @@ const Fertilizer = () => {
     }
   };
 
-  // Reject a fertilizer request (renamed from deleteRequest for clarity)
+  // Reject a fertilizer request
   const rejectRequest = async (requestId) => {
     try {
       const response = await axios.post(
@@ -142,6 +142,9 @@ const Fertilizer = () => {
 
       return matchesSearchTerm && matchesDate && matchesStatus;
     });
+
+  console.log("Current active tab:", activeTab); // Debug: check active tab
+  console.log("Filtered data length:", filteredData.length); // Debug: check if there's any data
 
   return (
     <div className="cfa-content">
