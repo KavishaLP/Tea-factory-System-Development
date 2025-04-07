@@ -8,6 +8,8 @@ const RequestFertilizer = () => {
   const [paymentOption, SetPaymentOption] = useState("");
   const [fertilizerPacketType, setFertilizerPacketType] = useState("");
   const [amount, setAmount] = useState("");
+  const [totalPrize, setTotalPrize] = useState("");
+  const [finalAmount, setFinalAmount] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -98,7 +100,7 @@ const RequestFertilizer = () => {
           <option value="DAP">DAP</option>
         </select>
 
-        <label>Fertilizer Packet Type:</label>
+        <label>Fertilizer Packet Weight:</label>
         <select
           value={fertilizerPacketType}
           onChange={(e) => setFertilizerPacketType(e.target.value)}
@@ -117,6 +119,26 @@ const RequestFertilizer = () => {
           onChange={(e) => setAmount(e.target.value)}
           required
           placeholder="Enter amount"
+        />
+
+        <label>Total Amount</label>
+        <input
+          type="number"
+          value={totalPrize}
+          onChange={(e) => setAmount(e.target.value)}
+          required
+          placeholder=""
+          disabled
+        />
+
+        <label>Final Amount</label>
+        <input
+          type="number"
+          value={finalAmount}
+          onChange={(e) => setAmount(e.target.value)}
+          required
+          placeholder=""
+          disabled
         />
 
         {message && <p className="message">{message}</p>}

@@ -104,3 +104,4 @@ CREATE TABLE fertilizer_prices (
 );
 
 /// add fertilizer hadnn oona tablee ek update kara
+

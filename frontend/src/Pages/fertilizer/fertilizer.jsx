@@ -86,7 +86,7 @@ const Fertilizer = () => {
     }
   };
 
-  // Handle Delete action
+// Handle Delete action
   const handleDelete = async (requestId) => {
     setError(""); // Clear any previous errors
     try {
@@ -103,7 +103,7 @@ const Fertilizer = () => {
     }
   };
 
-  // Delete a fertilizer request
+// Delete a fertilizer request
   const deleteRequest = async (requestId) => {
     try {
       const response = await axios.post(
@@ -120,7 +120,7 @@ const Fertilizer = () => {
     }
   };
 
-  // Filter data based on search term, date, and status
+// Filter data based on search term, date, and status
   const filteredData = requests
     .filter((request) => {
       // Skip undefined or invalid objects

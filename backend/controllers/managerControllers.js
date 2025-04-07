@@ -7,6 +7,8 @@ import moment  from 'moment-timezone';
 
 const query = util.promisify(sqldb.query).bind(sqldb);
 
+//---------------------------------------------------------------------------------------------------
+
 export const addFarmer = async (req, res) => {
     console.log("Received Data:", req.body);
 
@@ -174,6 +176,18 @@ export const getFarmerPaymentHistory = (req, res) => {
     });
 };
 
+export const getAllFarmers = (req, res) => {
+    const query = 'SELECT * FROM farmeraccounts';
+  
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching farmer accounts:', err);
+        return res.status(500).json({ status: 'error', message: 'Database query failed.' });
+      }
+  
+      res.status(200).json({ status: 'success', data: results });
+    });
+};
 
 //---------------------------------------------------------------------------------------------------
 
@@ -312,10 +326,6 @@ export const addEmployeePayment = (req, res) => {
     });
 };
 
-
-//---------------------------------------------------------------------------------------------------
-
-
 export const getEmployeePaymentHistory = (req, res) => {
     // SQL Query to fetch payment history from the employee_payments table
     const sql = `
@@ -349,6 +359,10 @@ export const getEmployeePaymentHistory = (req, res) => {
         return res.status(200).json({ Status: "Success", paymentHistory: results });
     });
 };
+
+
+//---------------------------------------------------------------------------------------------------
+
 
 // Get fertilizer requests
 export const getFertilizerRequests = (req, res) => {
@@ -462,6 +476,8 @@ export const deleteFertilizer = async (req, res) => {
         return res.status(500).json({ message: "An unexpected error occurred.", error: error });
     }
 };
+
+//---------------------------------------------------------------------------------------------------
 
 // Backend function to search farmers by ID only
 export const searchFarmersInDB = async (req, res) => {
@@ -617,15 +633,3 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
   }
 };
 
-export const getAllFarmers = (req, res) => {
-    const query = 'SELECT * FROM farmeraccounts';
-  
-    sqldb.query(query, (err, results) => {
-      if (err) {
-        console.error('Error fetching farmer accounts:', err);
-        return res.status(500).json({ status: 'error', message: 'Database query failed.' });
-      }
-  
-      res.status(200).json({ status: 'success', data: results });
-    });
-  };
