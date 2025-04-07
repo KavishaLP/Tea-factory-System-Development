@@ -477,7 +477,9 @@ export const deleteFertilizer = async (req, res) => {
     }
 };
 
+
 //---------------------------------------------------------------------------------------------------
+
 
 // Backend function to search farmers by ID only
 export const searchFarmersInDB = async (req, res) => {
