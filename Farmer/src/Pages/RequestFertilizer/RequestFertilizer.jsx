@@ -58,36 +58,38 @@ const RequestFertilizer = () => {
   const handleItemChange = (index, field, value) => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
-    
-    // When fertilizer type changes, reset packet type and price
+  
+    // When fertilizer type changes, reset packet type, variance ID, price, and total price
     if (field === 'fertilizerType') {
       updatedItems[index].packetType = "";
       updatedItems[index].fertilizer_veriance_id = "";
       updatedItems[index].price = 0;
       updatedItems[index].totalPrice = 0;
     }
-    
-    // When packet type changes, update price
+  
+    // When packet type changes, set the price automatically
     if (field === 'packetType') {
       const selectedPacket = fertilizerPrices.find(
-        item => item.fertilizer_veriance_id === parseInt(value, 10)
+        (item) =>
+          item.fertilizerType === updatedItems[index].fertilizerType &&
+          item.packetType === value
       );
       if (selectedPacket) {
         updatedItems[index].price = selectedPacket.price;
-        if (updatedItems[index].amount) {
-          updatedItems[index].totalPrice = selectedPacket.price * parseInt(updatedItems[index].amount, 10);
-        }
+        updatedItems[index].fertilizer_veriance_id = selectedPacket.fertilizer_veriance_id;
       }
     }
-    
+  
     // When amount changes, update total price
-    if (field === 'amount' && updatedItems[index].price) {
-      updatedItems[index].totalPrice = updatedItems[index].price * parseInt(value, 10);
+    if (field === 'amount') {
+      const amount = parseFloat(value) || 0;
+      const price = parseFloat(updatedItems[index].price) || 0;
+      updatedItems[index].totalPrice = amount * price;
     }
-    
+  
     setItems(updatedItems);
   };
-
+  
   const addNewItem = () => {
     // Check if all fields in current items are filled
     const incompleteItem = items.find(item => 
