@@ -3,20 +3,21 @@ import axios from "axios";
 import "./Fertilizer.css";
 
 const Fertilizer = () => {
-  const [activeTab, setActiveTab] = useState("newRequests");
+  const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests, confirmedRequests, or deletedRequests
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
-  const [requests, setRequests] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [selectedRequests, setSelectedRequests] = useState([]);
+  const [requests, setRequests] = useState([]); // State to store fetched requests
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [error, setError] = useState(""); // Error state
 
+  // Fetch data on component mount or when the active tab changes
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      setError("");
+      setError(""); // Clear any previous errors
       try {
         const data = await fetchFertilizerRequests();
+        console.log("Fetched Data:", data); // Log the fetched data
         setRequests(data);
       } catch (error) {
         setError("Failed to fetch data. Please try again later.");
@@ -29,6 +30,7 @@ const Fertilizer = () => {
     fetchData();
   }, [activeTab]);
 
+  // Fetch fertilizer requests from the backend
   const fetchFertilizerRequests = async () => {
     try {
       const response = await axios.get(
@@ -46,66 +48,13 @@ const Fertilizer = () => {
     }
   };
 
-  const handleSelectRequest = (requestId) => {
-    setSelectedRequests(prev => 
-      prev.includes(requestId) 
-        ? prev.filter(id => id !== requestId)
-        : [...prev, requestId]
-    );
-  };
-
-  const handleBulkConfirm = async () => {
-    if (selectedRequests.length === 0) {
-      setError("Please select at least one request to confirm.");
-      return;
-    }
-
-    try {
-      await Promise.all(selectedRequests.map(requestId => confirmRequest(requestId)));
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
-          selectedRequests.includes(request.request_id)
-            ? { ...request, status: "Approved" }
-            : request
-        )
-      );
-      setSelectedRequests([]);
-      alert(`${selectedRequests.length} request(s) confirmed successfully!`);
-    } catch (error) {
-      setError("Failed to confirm requests. Please try again.");
-      console.error("Error confirming requests:", error);
-    }
-  };
-
-  const handleBulkReject = async () => {
-    if (selectedRequests.length === 0) {
-      setError("Please select at least one request to reject.");
-      return;
-    }
-
-    try {
-      await Promise.all(selectedRequests.map(requestId => deleteRequest(requestId)));
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
-          selectedRequests.includes(request.request_id)
-            ? { ...request, status: "Rejected" }
-            : request
-        )
-      );
-      setSelectedRequests([]);
-      alert(`${selectedRequests.length} request(s) rejected successfully!`);
-    } catch (error) {
-      setError("Failed to reject requests. Please try again.");
-      console.error("Error rejecting requests:", error);
-    }
-  };
-
+  // Handle Confirm action
   const handleConfirm = async (requestId) => {
-    setError("");
+    setError(""); // Clear any previous errors
     try {
       await confirmRequest(requestId);
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
+      setRequests((prevRequests) =>
+        prevRequests.map((request) =>
           request.request_id === requestId ? { ...request, status: "Approved" } : request
         )
       );
@@ -116,22 +65,7 @@ const Fertilizer = () => {
     }
   };
 
-  const handleReject = async (requestId) => {
-    setError("");
-    try {
-      await deleteRequest(requestId);
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
-          request.request_id === requestId ? { ...request, status: "Rejected" } : request
-        )
-      );
-      alert("Request rejected successfully!");
-    } catch (error) {
-      setError("Failed to reject request. Please try again.");
-      console.error("Error rejecting request:", error);
-    }
-  };
-
+  // Confirm a fertilizer request
   const confirmRequest = async (requestId) => {
     try {
       const response = await axios.post(
@@ -148,6 +82,24 @@ const Fertilizer = () => {
     }
   };
 
+  // Handle Delete action
+  const handleDelete = async (requestId) => {
+    setError(""); // Clear any previous errors
+    try {
+      await deleteRequest(requestId);
+      setRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request.request_id === requestId ? { ...request, status: "Rejected" } : request
+        )
+      );
+      alert("Request deleted successfully!");
+    } catch (error) {
+      setError("Failed to delete request. Please try again.");
+      console.error("Error deleting request:", error);
+    }
+  };
+
+  // Delete a fertilizer request
   const deleteRequest = async (requestId) => {
     try {
       const response = await axios.post(
@@ -164,24 +116,29 @@ const Fertilizer = () => {
     }
   };
 
+  // Filter data based on search term, date, and status
   const filteredData = requests
     .filter((request) => {
+      // Skip undefined or invalid objects
       if (!request || !request.userId || !request.userName) {
         return false;
       }
 
+      // Filter by search term
       const matchesSearchTerm =
         request.userId.includes(searchTerm) ||
         request.userName.toLowerCase().includes(searchTerm.toLowerCase());
 
+      // Filter by date
       const matchesDate = filterDate ? request.requestDate === filterDate : true;
 
+      // Filter by status based on the active tab
       const matchesStatus =
         activeTab === "newRequests"
-          ? request.status === "Pending"
+          ? request.status === "Pending" // Show pending requests for "New Requests" tab
           : activeTab === "confirmedRequests"
-          ? request.status === "Approved"
-          : request.status === "Rejected";
+          ? request.status === "Approved" // Show approved requests for "Confirmed Requests" tab
+          : request.status === "Rejected"; // Show rejected requests for "Deleted Requests" tab
 
       return matchesSearchTerm && matchesDate && matchesStatus;
     });
@@ -191,6 +148,7 @@ const Fertilizer = () => {
       <h2>Fertilizer Request History</h2>
       <div className="cfa-grid">
         <div className="history-section">
+          {/* Tabs */}
           <div className="tabs-container">
             <button
               className={`tab-button ${activeTab === "newRequests" ? "active" : ""}`}
@@ -208,29 +166,11 @@ const Fertilizer = () => {
               className={`tab-button ${activeTab === "deletedRequests" ? "active" : ""}`}
               onClick={() => setActiveTab("deletedRequests")}
             >
-              Rejected Requests
+              Deleted Requests
             </button>
           </div>
 
-          {activeTab === "newRequests" && (
-            <div className="bulk-actions">
-              <button 
-                className="bulk-confirm-btn"
-                onClick={handleBulkConfirm}
-                disabled={selectedRequests.length === 0}
-              >
-                Confirm Selected ({selectedRequests.length})
-              </button>
-              <button 
-                className="bulk-reject-btn"
-                onClick={handleBulkReject}
-                disabled={selectedRequests.length === 0}
-              >
-                Reject Selected ({selectedRequests.length})
-              </button>
-            </div>
-          )}
-
+          {/* Search and Filter Controls */}
           <div className="controls-container">
             <div className="search-box">
               <input
@@ -250,12 +190,14 @@ const Fertilizer = () => {
             </div>
           </div>
 
+          {/* Error Message */}
           {error && (
             <div className="error-message">
               <p>{error}</p>
             </div>
           )}
 
+          {/* History Table */}
           <div className="table-container">
             {isLoading ? (
               <p>Loading...</p>
@@ -265,36 +207,26 @@ const Fertilizer = () => {
               <table className="history-table">
                 <thead>
                   <tr>
-                    {activeTab === "newRequests" && <th>Select</th>}
                     <th>Date</th>
                     <th>User ID</th>
                     <th>User Name</th>
                     <th>Fertilizer Type</th>
                     <th>Packet Type</th>
-                    <th>Amount</th>
+                    <th>Amount(packets)&(Kilos)</th>
                     <th>Payment Option</th>
                     <th>Status</th>
-                    {activeTab === "newRequests" && <th>Actions</th>}
+                    {activeTab === "newRequests" && <th>Action</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {filteredData.map((request) => (
                     <tr key={request.request_id}>
-                      {activeTab === "newRequests" && (
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={selectedRequests.includes(request.request_id)}
-                            onChange={() => handleSelectRequest(request.request_id)}
-                          />
-                        </td>
-                      )}
                       <td>{request.requestDate}</td>
                       <td>{request.userId}</td>
                       <td>{request.userName}</td>
                       <td>{request.fertilizerType}</td>
                       <td>{request.packetType}</td>
-                      <td>{request.amount} ({request.amount * parseInt(request.packetType)} kg)</td>
+                      <td>{request.amount}</td>
                       <td>{request.paymentOption}</td>
                       <td>
                         <span className={`status ${request.status.toLowerCase()}`}>
@@ -302,21 +234,19 @@ const Fertilizer = () => {
                         </span>
                       </td>
                       {activeTab === "newRequests" && (
-                        <td>
-                          <div className="action-buttons">
-                            <button
-                              className="confirm-button"
-                              onClick={() => handleConfirm(request.request_id)}
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              className="reject-button"
-                              onClick={() => handleReject(request.request_id)}
-                            >
-                              Reject
-                            </button>
-                          </div>
+                        <td className="action-buttons">
+                          <button
+                            className="confirm-button"
+                            onClick={() => handleConfirm(request.request_id)}
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            className="delete-button"
+                            onClick={() => handleDelete(request.request_id)}
+                          >
+                            Reject
+                          </button>
                         </td>
                       )}
                     </tr>
@@ -326,6 +256,7 @@ const Fertilizer = () => {
             )}
           </div>
 
+          {/* Pagination */}
           <div className="pagination">
             <button>&laquo;</button>
             <button className="active">1</button>
