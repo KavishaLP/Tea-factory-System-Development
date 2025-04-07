@@ -14,7 +14,7 @@ const verifyUser = (req, res, next) => {
       return res.status(403).json({ Status: "Error", message: "Invalid token" });
     }
 
-    req.id = decoded.id;       // Attach user id
+    req.id = decoded.id;
     next();
   });
 };

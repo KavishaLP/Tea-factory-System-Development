@@ -1,4 +1,4 @@
-// src/Components/ProtectedRoute.jsx
+// src/ProtectedRoute.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
