@@ -134,99 +134,101 @@ const RequestFertilizer = () => {
         <h2>Request Fertilizer</h2>
       </div>
       <form onSubmit={handleSubmit}>
-        <div className="form-section">
-          <label>User ID:</label>
-          <input
-            type="text"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            required
-            placeholder="Enter User ID"
-          />
-        </div>
+        <div className="form-row">
+          <div className="form-group">
+            <label>User ID:</label>
+            <input
+              type="text"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              required
+              placeholder="Enter User ID"
+            />
+          </div>
 
-        <div className="form-section">
-          <label>Payment Option:</label>
-          <select
-            value={paymentOption}
-            onChange={(e) => setPaymentOption(e.target.value)}
-            required
-          >
-            <option value="">Select Type</option>
-            <option value="cash">Pay with Cash</option>
-            <option value="deductpayment">Deduct from Monthly Payment</option>
-          </select>
+          <div className="form-group">
+            <label>Payment Option:</label>
+            <select
+              value={paymentOption}
+              onChange={(e) => setPaymentOption(e.target.value)}
+              required
+            >
+              <option value="">Select Type</option>
+              <option value="cash">Pay with Cash</option>
+              <option value="deductpayment">Deduct from Monthly Payment</option>
+            </select>
+          </div>
         </div>
 
         <div className="items-container">
           <h3>Fertilizer Items</h3>
-          {items.map((item, index) => (
-            <div key={index} className="fertilizer-item">
-              <div className="item-header">
-                <h4>Item #{index + 1}</h4>
-                {items.length > 1 && (
-                  <button 
-                    type="button" 
-                    className="remove-item-btn"
-                    onClick={() => removeItem(index)}
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-              
-              <div className="form-section">
-                <label>Fertilizer Type:</label>
-                <select
-                  value={item.fertilizerType}
-                  onChange={(e) => handleItemChange(index, 'fertilizerType', e.target.value)}
-                  required
-                >
-                  <option value="">Select Type</option>
-                  <option value="Urea">Urea</option>
-                  <option value="Compost">Compost</option>
-                  <option value="NPK">NPK</option>
-                  <option value="DAP">DAP</option>
-                </select>
-              </div>
-
-              <div className="form-section">
-                <label>Fertilizer Packet Weight:</label>
-                <select
-                  value={item.fertilizerPacketType}
-                  onChange={(e) => handleItemChange(index, 'fertilizerPacketType', e.target.value)}
-                  required
-                >
-                  <option value="">Select Weight</option>
-                  <option value="5">5 Kg</option>
-                  <option value="10">10 Kg</option>
-                  <option value="50">50 Kg</option>
-                </select>
-              </div>
-
-              <div className="form-section">
-                <label>Number of Packets:</label>
-                <input
-                  type="number"
-                  value={item.amount}
-                  onChange={(e) => handleItemChange(index, 'amount', e.target.value)}
-                  required
-                  min="1"
-                  placeholder="Enter number of packets"
-                />
-              </div>
-
-              <div className="form-section">
-                <label>Item Total Price (LKR):</label>
-                <input
-                  type="text"
-                  value={item.totalPrice.toLocaleString()}
-                  readOnly
-                  className="price-display"
-                />
-              </div>
+          <div className="items-table">
+            <div className="table-header">
+              <div className="header-cell">Fertilizer Type</div>
+              <div className="header-cell">Packet Weight</div>
+              <div className="header-cell">Total Packets</div>
+              <div className="header-cell">Total Amount (LKR)</div>
+              <div className="header-cell">Actions</div>
             </div>
-          ))}
+
+            {items.map((item, index) => (
+              <div key={index} className="table-row">
+                <div className="table-cell">
+                  <select
+                    value={item.fertilizerType}
+                    onChange={(e) => handleItemChange(index, 'fertilizerType', e.target.value)}
+                    required
+                  >
+                    <option value="">Select Type</option>
+                    <option value="Urea">Urea</option>
+                    <option value="Compost">Compost</option>
+                    <option value="NPK">NPK</option>
+                    <option value="DAP">DAP</option>
+                  </select>
+                </div>
+
+                <div className="table-cell">
+                  <select
+                    value={item.fertilizerPacketType}
+                    onChange={(e) => handleItemChange(index, 'fertilizerPacketType', e.target.value)}
+                    required
+                  >
+                    <option value="">Select Weight</option>
+                    <option value="5">5 Kg</option>
+                    <option value="10">10 Kg</option>
+                    <option value="50">50 Kg</option>
+                  </select>
+                </div>
+
+                <div className="table-cell">
+                  <input
+                    type="number"
+                    value={item.amount}
+                    onChange={(e) => handleItemChange(index, 'amount', e.target.value)}
+                    required
+                    min="1"
+                    placeholder="Enter packets"
+                  />
+                </div>
+
+                <div className="table-cell price-cell">
+                  {item.totalPrice.toLocaleString()}
+                </div>
+
+                <div className="table-cell action-cell">
+                  {items.length > 1 && (
+                    <button 
+                      type="button" 
+                      className="remove-item-btn"
+                      onClick={() => removeItem(index)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
 
           <button 
             type="button" 
@@ -237,14 +239,9 @@ const RequestFertilizer = () => {
           </button>
         </div>
 
-        <div className="form-section total-section">
-          <label>Final Total Amount (LKR):</label>
-          <input
-            type="text"
-            value={calculateTotal().toLocaleString()}
-            readOnly
-            className="total-display"
-          />
+        <div className="total-section">
+          <div className="total-label">Final Total Amount:</div>
+          <div className="total-amount">{calculateTotal().toLocaleString()} LKR</div>
         </div>
 
         {message && <p className={`message ${message.includes("successfully") ? "success" : "error"}`}>{message}</p>}
