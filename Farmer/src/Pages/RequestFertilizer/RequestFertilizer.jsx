@@ -26,7 +26,7 @@ const RequestFertilizer = () => {
     const fetchFertilizerPrices = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8081/api/fertilizer/prices",
+          "http://localhost:8081/api/farmer/fertilizer-prices",
           { withCredentials: true }
         );
         setFertilizerPrices(response.data);
