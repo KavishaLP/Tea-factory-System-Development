@@ -82,25 +82,25 @@ const Fertilizer = () => {
     }
   };
 
-  // Handle Delete action
-  const handleDelete = async (requestId) => {
+  // Handle Reject action (renamed from Delete for clarity)
+  const handleReject = async (requestId) => {
     setError(""); // Clear any previous errors
     try {
-      await deleteRequest(requestId);
+      await rejectRequest(requestId);
       setRequests((prevRequests) =>
         prevRequests.map((request) =>
           request.request_id === requestId ? { ...request, status: "Rejected" } : request
         )
       );
-      alert("Request deleted successfully!");
+      alert("Request rejected successfully!");
     } catch (error) {
-      setError("Failed to delete request. Please try again.");
-      console.error("Error deleting request:", error);
+      setError("Failed to reject request. Please try again.");
+      console.error("Error rejecting request:", error);
     }
   };
 
-  // Delete a fertilizer request
-  const deleteRequest = async (requestId) => {
+  // Reject a fertilizer request (renamed from deleteRequest for clarity)
+  const rejectRequest = async (requestId) => {
     try {
       const response = await axios.post(
         "http://localhost:8081/api/manager/delete-fertilizer",
@@ -108,10 +108,10 @@ const Fertilizer = () => {
         { withCredentials: true }
       );
       if (response.data.status !== "Success") {
-        throw new Error(response.data.message || "Failed to delete request.");
+        throw new Error(response.data.message || "Failed to reject request.");
       }
     } catch (error) {
-      console.error("Error deleting request:", error);
+      console.error("Error rejecting request:", error);
       throw error;
     }
   };
@@ -200,9 +200,9 @@ const Fertilizer = () => {
           {/* History Table */}
           <div className="table-container">
             {isLoading ? (
-              <p>Loading...</p>
+              <p className="loading-message">Loading...</p>
             ) : filteredData.length === 0 ? (
-              <p>No requests found.</p>
+              <p className="no-data-message">No requests found.</p>
             ) : (
               <table className="history-table">
                 <thead>
@@ -215,7 +215,7 @@ const Fertilizer = () => {
                     <th>Amount(packets)&(Kilos)</th>
                     <th>Payment Option</th>
                     <th>Status</th>
-                    {activeTab === "newRequests" && <th>Action</th>}
+                    {activeTab === "newRequests" && <th>Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -242,8 +242,8 @@ const Fertilizer = () => {
                             Confirm
                           </button>
                           <button
-                            className="delete-button"
-                            onClick={() => handleDelete(request.request_id)}
+                            className="reject-button"
+                            onClick={() => handleReject(request.request_id)}
                           >
                             Reject
                           </button>
