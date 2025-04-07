@@ -164,40 +164,48 @@
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  min-width: 170px; /* Ensure minimum width for buttons container */
 }
 
+/* Button styling - Added !important to override any conflicting styles */
 .confirm-button {
-  background-color: #4caf50;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  font-size: 0.875rem;
+  background-color: #4caf50 !important;
+  color: white !important;
+  padding: 0.5rem 1rem !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  display: inline-block !important;
+  min-width: 80px !important;
+  text-align: center !important;
 }
 
 .confirm-button:hover {
-  background-color: #45a049;
-  transform: scale(1.05);
+  background-color: #45a049 !important;
+  transform: scale(1.05) !important;
 }
 
 .reject-button {
-  background-color: #f44336;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  font-size: 0.875rem;
+  background-color: #f44336 !important;
+  color: white !important;
+  padding: 0.5rem 1rem !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  display: inline-block !important;
+  min-width: 80px !important;
+  text-align: center !important;
 }
 
 .reject-button:hover {
-  background-color: #e53935;
-  transform: scale(1.05);
+  background-color: #e53935 !important;
+  transform: scale(1.05) !important;
 }
 
 /* Pagination */
