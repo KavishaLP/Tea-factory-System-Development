@@ -89,7 +89,7 @@ const RequestFertilizer = () => {
   
     setItems(updatedItems);
   };
-  
+
   const addNewItem = () => {
     // Check if all fields in current items are filled
     const incompleteItem = items.find(item => 
@@ -101,16 +101,18 @@ const RequestFertilizer = () => {
       return;
     }
 
-    // Check for duplicate items
-    const newItemType = items[items.length - 1].fertilizerType;
-    const newItemPacket = items[items.length - 1].packetType;
-    const duplicate = items.some((item, idx) => 
-      idx !== items.length - 1 && 
-      item.fertilizerType === newItemType && 
-      item.packetType === newItemPacket
-    );
+    // Check for duplicate items (same type and packet)
+    const hasDuplicate = items.some((item, idx) => {
+      if (idx === items.length - 1) return false; // Skip the current item being edited
+      
+      const lastItem = items[items.length - 1];
+      return (
+        item.fertilizerType === lastItem.fertilizerType && 
+        item.packetType === lastItem.packetType
+      );
+    });
 
-    if (duplicate) {
+    if (hasDuplicate) {
       setMessage("This fertilizer type and packet combination already exists in your request.");
       return;
     }
@@ -154,6 +156,20 @@ const RequestFertilizer = () => {
         setMessage("Please fill all fields for all fertilizer items and enter valid amounts.");
         return;
       }
+    }
+
+    // Check for duplicates in the final submission
+    const uniqueItems = new Set();
+    const hasDuplicates = items.some(item => {
+      const key = `${item.fertilizerType}-${item.packetType}`;
+      if (uniqueItems.has(key)) return true;
+      uniqueItems.add(key);
+      return false;
+    });
+
+    if (hasDuplicates) {
+      setMessage("Your request contains duplicate fertilizer items. Please remove duplicates before submitting.");
+      return;
     }
 
     setIsLoading(true);
@@ -283,7 +299,7 @@ const RequestFertilizer = () => {
                     {item.fertilizerType && getPacketTypes(item.fertilizerType).map(packet => (
                       <option 
                         key={packet.fertilizer_veriance_id} 
-                        value={packet.fertilizer_veriance_id}
+                        value={packet.packetType}
                       >
                         {packet.packetType}
                       </option>
