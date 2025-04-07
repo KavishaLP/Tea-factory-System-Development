@@ -164,6 +164,48 @@ button.loading::after {
 .employee-accounts-table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
+/* ----------------- */
+
+.employee-accounts-table {
+  width: 100%;
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.employee-accounts-table h3 {
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.employee-accounts-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.employee-accounts-table th,
+.employee-accounts-table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.9rem;
+  word-wrap: break-word;
+}
+
+.employee-accounts-table th {
+  background-color: #f1f1f1;
+  font-weight: 600;
+  color: #333;
+}
+
+.employee-accounts-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
 
 @keyframes spin {
   to {
