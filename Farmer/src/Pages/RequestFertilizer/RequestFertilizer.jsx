@@ -59,7 +59,7 @@ const RequestFertilizer = () => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
   
-    // When fertilizer type changes, reset packet type, variance ID, price, and total price
+    // When fertilizer type changes, reset dependent fields
     if (field === 'fertilizerType') {
       updatedItems[index].packetType = "";
       updatedItems[index].fertilizer_veriance_id = "";
@@ -67,56 +67,48 @@ const RequestFertilizer = () => {
       updatedItems[index].totalPrice = 0;
     }
   
-    // When packet type changes, set the price automatically
+    // When packet type changes, update price and variance ID
     if (field === 'packetType') {
       const selectedPacket = fertilizerPrices.find(
-        (item) =>
-          item.fertilizerType === updatedItems[index].fertilizerType &&
-          item.packetType === value
+        item => item.fertilizer_veriance_id === parseInt(value, 10)
       );
       if (selectedPacket) {
         updatedItems[index].price = selectedPacket.price;
         updatedItems[index].fertilizer_veriance_id = selectedPacket.fertilizer_veriance_id;
+        updatedItems[index].packetType = selectedPacket.packetType;
       }
     }
   
     // When amount changes, update total price
     if (field === 'amount') {
       const amount = parseFloat(value) || 0;
-      const price = parseFloat(updatedItems[index].price) || 0;
-      updatedItems[index].totalPrice = amount * price;
+      updatedItems[index].totalPrice = amount * updatedItems[index].price;
     }
   
     setItems(updatedItems);
   };
 
   const addNewItem = () => {
-    // Check if all fields in current items are filled
-    const incompleteItem = items.find(item => 
-      !item.fertilizerType || !item.packetType || !item.amount
-    );
-    
-    if (incompleteItem) {
+    // Check if current item is complete
+    const currentItem = items[items.length - 1];
+    if (!currentItem.fertilizerType || !currentItem.packetType || !currentItem.amount) {
       setMessage("Please complete current item before adding a new one.");
       return;
     }
 
-    // Check for duplicate items (same type and packet)
-    const hasDuplicate = items.some((item, idx) => {
-      if (idx === items.length - 1) return false; // Skip the current item being edited
-      
-      const lastItem = items[items.length - 1];
-      return (
-        item.fertilizerType === lastItem.fertilizerType && 
-        item.packetType === lastItem.packetType
-      );
-    });
+    // Check for duplicates in existing items (excluding the current one being edited)
+    const existingItems = items.slice(0, -1);
+    const isDuplicate = existingItems.some(item => 
+      item.fertilizerType === currentItem.fertilizerType && 
+      item.packetType === currentItem.packetType
+    );
 
-    if (hasDuplicate) {
-      setMessage("This fertilizer type and packet combination already exists in your request.");
+    if (isDuplicate) {
+      setMessage("This fertilizer type and packet combination already exists. Please edit the existing item instead.");
       return;
     }
 
+    // Add new empty item
     setItems([
       ...items,
       {
@@ -144,13 +136,13 @@ const RequestFertilizer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
+    // Basic validation
     if (!userId || !paymentOption) {
       setMessage("Please fill all required fields.");
       return;
     }
 
-    // Validate each item
+    // Validate all items
     for (const item of items) {
       if (!item.fertilizerType || !item.packetType || !item.amount || item.amount <= 0) {
         setMessage("Please fill all fields for all fertilizer items and enter valid amounts.");
@@ -158,24 +150,21 @@ const RequestFertilizer = () => {
       }
     }
 
-    // Check for duplicates in the final submission
-    const uniqueItems = new Set();
-    const hasDuplicates = items.some(item => {
-      const key = `${item.fertilizerType}-${item.packetType}`;
-      if (uniqueItems.has(key)) return true;
-      uniqueItems.add(key);
-      return false;
-    });
-
-    if (hasDuplicates) {
-      setMessage("Your request contains duplicate fertilizer items. Please remove duplicates before submitting.");
-      return;
+    // Final duplicate check before submission
+    const uniqueCombinations = new Set();
+    for (const item of items) {
+      const comboKey = `${item.fertilizerType}-${item.packetType}`;
+      if (uniqueCombinations.has(comboKey)) {
+        setMessage(`Duplicate found: ${item.fertilizerType} (${item.packetType}). Please remove duplicates before submitting.`);
+        return;
+      }
+      uniqueCombinations.add(comboKey);
     }
 
     setIsLoading(true);
     setMessage("");
 
-    // Prepare data to send to the backend
+    // Prepare request data
     const requestData = {
       userId,
       paymentOption,
@@ -188,18 +177,15 @@ const RequestFertilizer = () => {
     };
 
     try {
-      // Send data to the backend
       const response = await axios.post(
         "http://localhost:8081/api/farmer/fertilizer-request",
         requestData,
         { withCredentials: true }
       );
 
-      // Handle success
       setMessage("Fertilizer request submitted successfully!");
-      console.log("Response from backend:", response.data);
-
-      // Clear form fields
+      
+      // Reset form
       setUserId("");
       setPaymentOption("");
       setItems([{
@@ -211,8 +197,7 @@ const RequestFertilizer = () => {
         totalPrice: 0
       }]);
     } catch (error) {
-      // Handle error
-      console.error("Error submitting fertilizer request:", error);
+      console.error("Error submitting request:", error);
       setMessage(error.response?.data?.message || "An error occurred while submitting the request.");
     } finally {
       setIsLoading(false);
@@ -290,7 +275,7 @@ const RequestFertilizer = () => {
 
                 <div className="table-cell">
                   <select
-                    value={item.packetType}
+                    value={item.fertilizer_veriance_id}
                     onChange={(e) => handleItemChange(index, 'packetType', e.target.value)}
                     required
                     disabled={!item.fertilizerType}
@@ -299,7 +284,7 @@ const RequestFertilizer = () => {
                     {item.fertilizerType && getPacketTypes(item.fertilizerType).map(packet => (
                       <option 
                         key={packet.fertilizer_veriance_id} 
-                        value={packet.packetType}
+                        value={packet.fertilizer_veriance_id}
                       >
                         {packet.packetType}
                       </option>
