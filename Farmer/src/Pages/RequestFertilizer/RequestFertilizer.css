@@ -12,6 +12,12 @@
   border: 1px solid #dee2e6;
 }
 
+.loading-message {
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #555;
+}
+
 .page-header {
   background: linear-gradient(135deg, #2ecc71, #27ae60);
   color: white;
@@ -102,9 +108,13 @@ input, select {
   border-right: 1px solid rgba(255,255,255,0.2);
 }
 
+.header-cell:nth-child(3), .header-cell:nth-child(5) {
+  flex: 0.8;
+}
+
 .header-cell:last-child {
   border-right: none;
-  flex: 0.8;
+  flex: 0.6;
 }
 
 .table-row {
@@ -126,8 +136,13 @@ input, select {
   border-right: 1px solid #eee;
 }
 
+.table-cell:nth-child(3), .table-cell:nth-child(5) {
+  flex: 0.8;
+}
+
 .table-cell:last-child {
   border-right: none;
+  flex: 0.6;
 }
 
 .price-cell {
@@ -136,7 +151,7 @@ input, select {
 }
 
 .action-cell {
-  flex: 0.8;
+  flex: 0.6;
 }
 
 .table-cell select, .table-cell input {
