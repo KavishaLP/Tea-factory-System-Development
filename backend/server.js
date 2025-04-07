@@ -6,6 +6,8 @@
 
 //npm i -D nodemon ->developer depemdancy
 
+import verifyUser from './middleware/authMiddleware.js';
+
 import  authRoutes from './routes/authRoutes.js';
 import managerRoutes from './routes/managerRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
@@ -35,6 +37,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/manager', managerRoutes);
 app.use('/api/farmer', farmerRoutes);
 app.use('/api/admin', adminRoutes);
+
+app.get('/verify-token', verifyUser, (req, res) => {
+    res.json({ status: "ok" });
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;
