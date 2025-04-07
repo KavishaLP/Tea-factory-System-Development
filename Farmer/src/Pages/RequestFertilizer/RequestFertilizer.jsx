@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./requestfertilizer.css";
 
-const RequestFertilizer = () => {
+const RequestFertilizer = ({userId} ) => {
+  console.log("User ID:", userId); // Log the userId prop
   const [userId, setUserId] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
   const [message, setMessage] = useState("");

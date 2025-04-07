@@ -35,6 +35,9 @@ function App() {
     return !hiddenPaths.includes(location.pathname);
   };
 
+  // Dummy userId, you should fetch it from an API or localStorage
+  const userId = '12345';  // Example: Replace with actual userId
+
   return (
     <div className="container">
       {shouldDisplayNavbar() && <Navbar />}
@@ -55,12 +58,25 @@ function App() {
               path="/farmer-dashboard" 
               element={
                 <ProtectedRoute>
-                  <DashboardFarmer />
+                  <DashboardFarmer userId={userId} />
                 </ProtectedRoute>
               } 
             />
-            <Route path="/request-advance" element={<RequestAdvance />} />
-            <Route path="/request-fertilizer" element={<RequestFertilizer />} />
+            <Route 
+              path="/request-advance" 
+              element={
+                <ProtectedRoute>
+                  <RequestAdvance userId={userId}/>
+                </ProtectedRoute>
+              } />
+
+            <Route 
+              path="/request-fertilizer" 
+              element={
+                <ProtectedRoute>
+                  <RequestFertilizer />
+                </ProtectedRoute>
+            }/>
             <Route path="/view-payment" element={<Viewpayment />} />
           </Routes>
         </main>
