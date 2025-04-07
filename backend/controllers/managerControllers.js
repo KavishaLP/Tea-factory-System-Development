@@ -366,23 +366,26 @@ export const getEmployeePaymentHistory = (req, res) => {
 
 // Get fertilizer requests
 export const getFertilizerRequests = (req, res) => {
-    // Query to fetch all fertilizer requests
+    // Updated query to fetch fertilizer request + fertilizer details
     const query = `
       SELECT 
         fr.request_id,
         fr.userId,
-        fr.fertilizerType,
-        fr.packetType,
+        fr.fertilizer_veriance_id,
         fr.amount,
         fr.requestDate,
         fr.status,
         fr.paymentOption,
-        fa.userName
+        fa.userName,
+        fp.fertilizerType,
+        fp.packetType,
+        fp.price
       FROM fertilizer_requests fr
       JOIN farmeraccounts fa ON fr.userId = fa.userId
+      JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
       ORDER BY fr.requestDate DESC;
     `;
-  
+
     // Execute the query
     sqldb.query(query, (err, results) => {
       if (err) {
@@ -392,7 +395,7 @@ export const getFertilizerRequests = (req, res) => {
           message: "An error occurred while fetching fertilizer requests.",
         });
       }
-  
+
       // Check if requests exist
       if (results.length === 0) {
         return res.status(404).json({
@@ -401,7 +404,7 @@ export const getFertilizerRequests = (req, res) => {
           fertilizerRequests: [],
         });
       }
-  
+
       // Return the fetched requests
       res.status(200).json({
         status: "Success",
