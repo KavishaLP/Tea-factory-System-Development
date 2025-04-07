@@ -139,21 +139,16 @@ export const requestFertilizer = async (req, res) => {
             await new Promise((resolve, reject) => {
                 const sqlInsert = `
                     INSERT INTO fertilizer_requests 
-                    (userId, fertilizer_veriance_id, fertilizerType, packetType, 
-                     amount, paymentoption, requestDate, status, unitPrice, totalPrice)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (userId, fertilizer_veriance_id, amount, paymentoption, requestDate, status)
+                    VALUES (?, ?, ?, ?, ?, ?)
                 `;
                 sqldb.query(sqlInsert, [
                     userId,
                     item.fertilizer_veriance_id,
-                    fertilizerDetails.fertilizerType,
-                    fertilizerDetails.packetType,
                     item.amount,
                     paymentOption,
                     requestDate,
                     status,
-                    fertilizerDetails.price,
-                    item.totalPrice
                 ], (err) => {
                     if (err) return reject(err);
                     resolve();
