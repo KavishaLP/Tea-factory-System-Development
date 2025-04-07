@@ -143,9 +143,6 @@ const Fertilizer = () => {
       return matchesSearchTerm && matchesDate && matchesStatus;
     });
 
-  console.log("Current active tab:", activeTab); // Debug: check active tab
-  console.log("Filtered data length:", filteredData.length); // Debug: check if there's any data
-
   return (
     <div className="cfa-content">
       <h2>Fertilizer Request History</h2>
