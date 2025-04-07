@@ -175,39 +175,90 @@ export const getFarmerPaymentHistory = (req, res) => {
 };
 
 
+
 export const addEmployee = async (req, res) => {
-    console.log("Received Data:", req.body);
+    try {
+        const { userId, firstName, lastName, mobile1, mobile2 } = req.body;
 
-    const { userId, firstName, lastName, mobile1, mobile2 } = req.body;
-
-    // Check for missing required fields
-    if (!userId || !firstName || !lastName || !mobile1) {
-        return res.status(400).json({ message: 'All required fields must be provided.' });
-    }
-
-    // Check if the employee already exists by userId
-    const sqlCheck = "SELECT * FROM employeeaccounts WHERE userId = ?";
-    sqldb.query(sqlCheck, [userId], (err, results) => {
-        if (err) {
-            console.error("Database Check Error:", err);
-            return res.status(500).json({ message: 'Database error', error: err });
+        // Validate required fields
+        if (!userId || !firstName || !lastName || !mobile1) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Missing required fields: userId, firstName, lastName, mobile1'
+            });
         }
 
-        if (results.length > 0) {
-            return res.status(400).json({ message: 'Employee with this user ID already exists.' });
+        // Check if employee exists
+        const existing = await query(
+            "SELECT userId FROM employeeaccounts WHERE userId = ?", 
+            [userId]
+        );
+        
+        if (existing.length > 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Employee with this ID already exists'
+            });
         }
 
-        // Insert new employee into the database
-        const sqlInsert = "INSERT INTO employeeaccounts (userId, firstName, lastName, mobile1, mobile2) VALUES (?, ?, ?, ?, ?)";
-        sqldb.query(sqlInsert, [userId, firstName, lastName, mobile1, mobile2], (err, result) => {
-            if (err) {
-                console.error("Database Insert Error:", err);
-                return res.status(500).json({ message: 'Error inserting employee data into database', error: err });
-            }
-            return res.status(200).json({ message: 'Employee added successfully', employeeId: result.insertId });
+        // Insert new employee
+        const result = await query(
+            "INSERT INTO employeeaccounts (userId, firstName, lastName, mobile1, mobile2) VALUES (?, ?, ?, ?, ?)",
+            [userId, firstName, lastName, mobile1, mobile2 || null]
+        );
+
+        // Get the newly created employee
+        const newEmployee = await query(
+            "SELECT id, userId, firstName, lastName, mobile1, mobile2 FROM employeeaccounts WHERE id = ?",
+            [result.insertId]
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'Employee added successfully',
+            data: newEmployee[0]
         });
-    });
+    } catch (error) {
+        console.error("Error adding employee:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to add employee',
+            error: error.message
+        });
+    }
 };
+
+export const getAllEmployers = async (req, res) => {
+    try {
+        const sql = `
+            SELECT 
+                id,
+                userId,
+                firstName,
+                lastName,
+                mobile1,
+                mobile2,
+                DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as created_at
+            FROM employeeaccounts
+            ORDER BY created_at DESC
+        `;
+        
+        const results = await query(sql);
+        
+        res.status(200).json({
+            success: true,
+            data: results
+        });
+    } catch (error) {
+        console.error("Error fetching employee accounts:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch employee accounts',
+            error: error.message
+        });
+    }
+};
+
 
 export const addEmployeePayment = (req, res) => {
     const {
