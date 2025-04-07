@@ -100,3 +100,25 @@ export const requestFertilizer = async (req, res) => {
     });
 };
 
+export const FetchFertilizerPrices = async (req, res) => {
+    console.log("Fetching fertilizer prices...");
+
+    const sql = `
+        SELECT fertilizer_veriance_id, fertilizerType, packetType, price 
+        FROM fertilizer_prices
+    `;
+
+    sqldb.query(sql, (err, results) => {
+        if (err) {
+            console.error("Database Fetch Error:", err);
+            return res.status(500).json({ message: 'Database error while fetching fertilizer prices', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'No fertilizer prices found.' });
+        }
+
+        return res.status(200).json(results);
+    });
+};
+
