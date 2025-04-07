@@ -212,7 +212,7 @@ const Fertilizer = () => {
                     <th>User Name</th>
                     <th>Fertilizer Type</th>
                     <th>Packet Type</th>
-                    <th>Amount(packets)&(Kilos)</th>
+                    <th>Amount</th>
                     <th>Payment Option</th>
                     <th>Status</th>
                     {activeTab === "newRequests" && <th>Actions</th>}
