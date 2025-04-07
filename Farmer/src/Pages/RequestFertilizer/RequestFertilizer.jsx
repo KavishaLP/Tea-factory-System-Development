@@ -134,33 +134,35 @@ const RequestFertilizer = () => {
         <h2>Request Fertilizer</h2>
       </div>
       <form onSubmit={handleSubmit}>
-        <div className="form-row">
-          <div className="form-group">
-            <label>User ID:</label>
-            <input
-              type="text"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              required
-              placeholder="Enter User ID"
-            />
-          </div>
+        <div className="form-section full-width">
+          <div className="form-row">
+            <div className="form-group">
+              <label>User ID:</label>
+              <input
+                type="text"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                required
+                placeholder="Enter User ID"
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Payment Option:</label>
-            <select
-              value={paymentOption}
-              onChange={(e) => setPaymentOption(e.target.value)}
-              required
-            >
-              <option value="">Select Type</option>
-              <option value="cash">Pay with Cash</option>
-              <option value="deductpayment">Deduct from Monthly Payment</option>
-            </select>
+            <div className="form-group">
+              <label>Payment Option:</label>
+              <select
+                value={paymentOption}
+                onChange={(e) => setPaymentOption(e.target.value)}
+                required
+              >
+                <option value="">Select Type</option>
+                <option value="cash">Pay with Cash</option>
+                <option value="deductpayment">Deduct from Monthly Payment</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <div className="items-container">
+        <div className="items-container full-width">
           <h3>Fertilizer Items</h3>
           <div className="items-table">
             <div className="table-header">
@@ -239,7 +241,7 @@ const RequestFertilizer = () => {
           </button>
         </div>
 
-        <div className="total-section">
+        <div className="total-section full-width">
           <div className="total-label">Final Total Amount:</div>
           <div className="total-amount">{calculateTotal().toLocaleString()} LKR</div>
         </div>
