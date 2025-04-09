@@ -11,7 +11,87 @@ const query = util.promisify(sqldb.query).bind(sqldb);
 
 //---------------------------------------------------------------------------------------------------
 
+export const addFarmer = async (req, res) => {
+    console.log("Received Data:", req.body);
 
+    const { userId, userName, firstName, lastName, address, mobile1, mobile2, gmail, password, reenterPassword } = req.body;
+
+    if (!userId || !userName || !firstName || !lastName || !address || !mobile1 || !gmail || !password || !reenterPassword) {
+        return res.status(400).json({ message: 'All required fields must be provided.' });
+    }
+
+    if (password !== reenterPassword) {
+        return res.status(400).json({ message: 'Passwords do not match.' });
+    }
+
+    const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ? OR gmail = ? OR userName = ?";
+    sqldb.query(sqlCheck, [userId, gmail, userName], (err, results) => {
+        if (err) {
+            console.error("Database Check Error:", err);
+            return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        if (results.length > 0) {
+            return res.status(400).json({ message: 'Farmer with this user ID, email, or username already exists.' });
+        }
+
+        bcrypt.hash(password, 10)
+            .then((hashedPassword) => {
+                const sqlInsert = `
+                    INSERT INTO farmeraccounts 
+                    (userId, userName, firstName, lastName, address, mobile1, mobile2, gmail, password) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                sqldb.query(sqlInsert, [userId, userName, firstName, lastName, address, mobile1, mobile2, gmail, hashedPassword], (err, result) => {
+                    if (err) {
+                        console.error("Database Insert Error:", err);
+                        return res.status(500).json({ message: 'Error inserting farmer data into database', error: err });
+                    }
+
+                    // If gmail is provided, send email
+                    if (gmail) {
+                        const transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            auth: {
+                                user: process.env.MAIL_SENDER,
+                                pass: process.env.MAIL_APP_PASSWORD,
+                            },
+                        });
+
+                        const mailOptions = {
+                            from: process.env.MAIL_SENDER,
+                            to: gmail,
+                            subject: "Your Farmer Account Created - Tea Factory",
+                            html: `
+                                <p>Dear ${firstName} ${lastName},</p>
+                                <p>Your farmer account has been successfully created with our Tea Factory Management System.</p>
+                                <p><strong>Username:</strong> ${userName}</p>
+                                <p>You can now access the system and manage your fertilizer requests and other services easily.</p>
+                                <br/>
+                                <p>Thank you for joining us!</p>
+                                <p>Tea Factory Team</p>
+                            `,
+                        };
+
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                console.error('Error sending email:', error);
+                                // Do not fail, just log and continue
+                            } else {
+                                console.log('Email sent:', info.response);
+                            }
+                        });
+                    }
+
+                    return res.status(200).json({ message: 'Farmer account created successfully', farmerId: result.insertId });
+                });
+            })
+            .catch((err) => {
+                console.error("Password Hashing Error:", err);
+                return res.status(500).json({ message: 'Error hashing password', error: err });
+            });
+    });
+};
 
 
 // Add payment function
