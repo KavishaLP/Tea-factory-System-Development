@@ -128,7 +128,7 @@ export const addTeaSack = async (req, res) => {
   } = req.body;
 
   // Validate required fields
-  if (!userId || !date || !teaSackWeight || !totalFertilizerAmount) {
+  if (!userId || !date || !teaSackWeight || !totalTeaSackAmount) {
     return res.status(400).json({ message: 'All required fields must be provided.' });
   }
 
