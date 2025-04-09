@@ -4,56 +4,15 @@ import bcrypt from 'bcryptjs';
 import util from 'util';
 import sqldb from '../config/sqldb.js';
 import moment  from 'moment-timezone';
+import nodemailer from 'nodemailer'; // make sure you import it at the top
+
 
 const query = util.promisify(sqldb.query).bind(sqldb);
 
 //---------------------------------------------------------------------------------------------------
 
-export const addFarmer = async (req, res) => {
-    console.log("Received Data:", req.body);
 
-    const { userId, userName, firstName, lastName, address, mobile1, mobile2, gmail, password, reenterPassword } = req.body;
 
-    // Check for missing required fields
-    if (!userId || !userName || !firstName || !lastName || !address || !mobile1 || !gmail || !password || !reenterPassword) {
-        return res.status(400).json({ message: 'All required fields must be provided.' });
-    }
-
-    // Check if passwords match
-    if (password !== reenterPassword) {
-        return res.status(400).json({ message: 'Passwords do not match.' });
-    }
-
-    // Check if the farmer already exists by userId, gmail, or userName
-    const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ? OR gmail = ? OR userName = ?";
-    sqldb.query(sqlCheck, [userId, gmail, userName], (err, results) => {
-        if (err) {
-            console.error("Database Check Error:", err);
-            return res.status(500).json({ message: 'Database error', error: err });
-        }
-
-        if (results.length > 0) {
-            return res.status(400).json({ message: 'Farmer with this user ID, email, or username already exists.' });
-        }
-
-        // Hash the password securely
-        bcrypt.hash(password, 10)
-            .then((hashedPassword) => {
-                const sqlInsert = "INSERT INTO farmeraccounts (userId, userName, firstName, lastName, address, mobile1, mobile2, gmail, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                sqldb.query(sqlInsert, [userId, userName, firstName, lastName, address, mobile1, mobile2, gmail, hashedPassword], (err, result) => {
-                    if (err) {
-                        console.error("Database Insert Error:", err);
-                        return res.status(500).json({ message: 'Error inserting farmer data into database', error: err });
-                    }
-                    return res.status(200).json({ message: 'Farmer account created successfully', farmerId: result.insertId });
-                });
-            })
-            .catch((err) => {
-                console.error("Password Hashing Error:", err);
-                return res.status(500).json({ message: 'Error hashing password', error: err });
-            });
-    });
-};
 
 // Add payment function
 export const addFarmerPayment = (req, res) => {
@@ -414,7 +373,7 @@ export const getFertilizerRequests = (req, res) => {
     });
 };
 
-// Confirm fertilizer request
+// Approve fertilizer request and send email
 export const confirmFertilizer = async (req, res) => {
     console.log("Confirming fertilizer request:", req.body);
 
@@ -436,9 +395,68 @@ export const confirmFertilizer = async (req, res) => {
                 return res.status(404).json({ message: "Fertilizer request not found." });
             }
 
-            return res.status(200).json({
-                status: "Success",
-                message: "Fertilizer request confirmed successfully.",
+            // After approving, get user's email
+            const getEmailQuery = `
+                SELECT fa.gmail 
+                FROM fertilizer_requests fr
+                JOIN farmeraccounts fa ON fr.userId = fa.userId
+                WHERE fr.request_id = ?
+            `;
+            sqldb.query(getEmailQuery, [requestId], (emailErr, emailResults) => {
+                if (emailErr) {
+                    console.error("Error fetching user email:", emailErr);
+                    return res.status(500).json({ message: "Error fetching user email", error: emailErr });
+                }
+
+                if (emailResults.length === 0) {
+                    return res.status(404).json({ message: "User email not found." });
+                }
+
+                const userEmail = emailResults[0].gmail;
+
+                if (!userEmail) {
+                    // User doesn't have an email -> just return success (no mail sending)
+                    return res.status(200).json({
+                        status: "Success",
+                        message: "Fertilizer request confirmed successfully. (No email sent - user has no email)",
+                    });
+                }
+
+                // Setup nodemailer transporter
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASS,
+                    },
+                });
+
+                // Email content
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: userEmail,
+                    subject: 'Tea Factory Fertilizer Request Approved',
+                    text: `Dear Farmer,
+
+Your fertilizer request has been approved successfully.
+
+Please follow the next steps as informed by the Tea Factory.
+
+Thank you,
+Tea Factory Management`,
+                };
+
+                transporter.sendMail(mailOptions, (mailErr, info) => {
+                    if (mailErr) {
+                        console.error("Error sending email:", mailErr);
+                        return res.status(500).json({ message: "Error sending email", error: mailErr });
+                    }
+
+                    return res.status(200).json({
+                        status: "Success",
+                        message: "Fertilizer request confirmed and email notification sent successfully.",
+                    });
+                });
             });
         });
     } catch (error) {
@@ -469,9 +487,64 @@ export const deleteFertilizer = async (req, res) => {
                 return res.status(404).json({ message: "Fertilizer request not found." });
             }
 
-            return res.status(200).json({
-                status: "Success",
-                message: "Fertilizer request deleted successfully.",
+            // After rejecting, get user's email
+            const getEmailQuery = `
+                SELECT fa.gmail 
+                FROM fertilizer_requests fr
+                JOIN farmeraccounts fa ON fr.userId = fa.userId
+                WHERE fr.request_id = ?
+            `;
+            sqldb.query(getEmailQuery, [requestId], (emailErr, emailResults) => {
+                if (emailErr) {
+                    console.error("Error fetching user email:", emailErr);
+                    return res.status(500).json({ message: "Error fetching user email", error: emailErr });
+                }
+
+                if (emailResults.length === 0) {
+                    return res.status(404).json({ message: "User email not found." });
+                }
+
+                const userEmail = emailResults[0].gmail;
+
+                if (!userEmail) {
+                    // User has no email -> just return success
+                    return res.status(200).json({
+                        status: "Success",
+                        message: "Fertilizer request rejected successfully. (No email sent - user has no email)",
+                    });
+                }
+
+                // If user has email -> send rejection email
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASS
+                    }
+                });
+
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: userEmail,
+                    subject: 'Tea Factory Fertilizer Request Update',
+                    text: `Dear Farmer,\n\nWe regret to inform you that your fertilizer request has been rejected.\n\nPlease contact the Tea Factory for more details if needed.\n\nThank you.`,
+                };
+
+                transporter.sendMail(mailOptions, (mailErr, info) => {
+                    if (mailErr) {
+                        console.error("Error sending rejection email:", mailErr);
+                        // Even if email fails, we still treat the request as rejected
+                        return res.status(200).json({
+                            status: "Success",
+                            message: "Fertilizer request rejected successfully. (Failed to send email)",
+                        });
+                    }
+
+                    return res.status(200).json({
+                        status: "Success",
+                        message: "Fertilizer request rejected successfully and email notification sent.",
+                    });
+                });
             });
         });
     } catch (error) {
@@ -479,7 +552,6 @@ export const deleteFertilizer = async (req, res) => {
         return res.status(500).json({ message: "An unexpected error occurred.", error: error });
     }
 };
-
 
 //---------------------------------------------------------------------------------------------------
 
