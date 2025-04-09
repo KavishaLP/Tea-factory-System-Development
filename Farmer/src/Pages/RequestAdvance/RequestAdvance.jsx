@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./RequestAdvance.css"; // Import the CSS file
 
-const RequestAdvance = () => {
+const RequestAdvance = ({userId}) => {
   const [formData, setFormData] = useState({
-    farmerId: "",
+    farmerId: userId,
     amount: "",
   });
   const [error, setError] = useState("");
@@ -36,7 +36,6 @@ const RequestAdvance = () => {
         console.log("Advance request submitted:", response.data);
         alert("Advance request submitted successfully!");
         setFormData({
-          farmerId: "",
           amount: "",
         });
       })
@@ -53,17 +52,6 @@ const RequestAdvance = () => {
         <h2>Request Advance</h2>
       </div>
       <form onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label>Farmer ID:</label>
-          <input
-            type="text"
-            name="farmerId"
-            value={formData.farmerId}
-            onChange={handleChange}
-            required
-            placeholder="Enter Farmer ID"
-          />
-        </div>
 
         <div className="input-group">
           <label>Advance Amount (Rs):</label>

@@ -1,7 +1,7 @@
 import './Navbar.css';
 // import assets from '../../assets/assets.js';
 
-const Navbar = () => {
+const Navbar = ({userId}) => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -14,7 +14,7 @@ const Navbar = () => {
         <i className="ri-notification-3-fill"></i>
         <div className="profile">
           {/* <img src={assets.profile} alt="Profile" className="profile-img" /> */}
-          <span className="farmer-name">Farmer Name</span>
+          <span className="farmer-name">{userId}</span>
         </div>
       </div>
     </nav>

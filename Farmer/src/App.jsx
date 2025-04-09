@@ -39,7 +39,7 @@ function App() {
 
   return (
     <div className="container">
-      {shouldDisplayNavbar() && <Navbar />}
+      {shouldDisplayNavbar() &&  <Navbar />}
       <div className="content-wrapper">
         {shouldDisplaySidebar() && <Sidebar />}
         

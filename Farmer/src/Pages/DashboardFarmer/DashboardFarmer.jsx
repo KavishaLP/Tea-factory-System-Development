@@ -2,11 +2,11 @@ import React from "react";
 import { FaMoneyBillWave, FaSeedling, FaHistory, FaSignOutAlt, FaHome } from "react-icons/fa";
 import "./DashboardFarmer.css";
 
-const DashboardFarmer = () => {
+const DashboardFarmer = ({userId}) => {
   return (
     <div className="dashboard-container">
       <div className="page-header">
-        <h2>Welcome, Farmer</h2>
+        <h2>Welcome, {userId}</h2>
       </div>
       <div className="dashboard-summary">
         <div className="card">
