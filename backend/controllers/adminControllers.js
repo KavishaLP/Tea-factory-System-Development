@@ -124,7 +124,7 @@ export const addTeaSack = async (req, res) => {
     date,
     teaSackWeight,
     deductions = {}, // Default to empty object to avoid undefined errors
-    totalFertilizerAmount
+    totalTeaSackAmount
   } = req.body;
 
   // Validate required fields
@@ -156,7 +156,7 @@ export const addTeaSack = async (req, res) => {
           deduction_sack_weight,
           deduction_sharped_tea,
           deduction_other,
-          total_fertilizer_amount
+          final_tea_sack_weight
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
@@ -169,7 +169,7 @@ export const addTeaSack = async (req, res) => {
         deductions.sackWeight || 0.00,
         deductions.sharpedTea || 0.00,
         deductions.other || 0.00,
-        totalFertilizerAmount
+        totalTeaSackAmount
       ];
 
       sqldb.query(insertQuery, values, (err, result) => {
