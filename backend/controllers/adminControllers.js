@@ -117,79 +117,82 @@ export const deleteAdvance = async (req, res) => {
 
 
 export const addTeaSack = async (req, res) => {
-    console.log("Received Data:", req.body);
+  console.log("Received Data:", req.body);
 
-    const {
-        userId,
-        date,
-        teaSackWeight,
-        deductions,
-        totalFertilizerAmount
-    } = req.body;
+  const {
+      userId,
+      date,
+      teaSackWeight,
+      deductions = {}, // Default to empty object to avoid undefined errors
+      totalFertilizerAmount
+  } = req.body;
 
-    // Validate required fields
-    if (!userId || !date || !teaSackWeight || !totalFertilizerAmount) {
-        return res.status(400).json({ message: 'All required fields must be provided.' });
-    }
+  // Validate required fields
+  if (!userId || !date || !teaSackWeight || !totalFertilizerAmount) {
+      return res.status(400).json({ message: 'All required fields must be provided.' });
+  }
 
-    try {
-        // Check if the user exists in the farmeraccounts table
-        const checkUserQuery = "SELECT * FROM farmeraccounts WHERE userId = ?";
-        sqldb.query(checkUserQuery, [userId], (err, results) => {
-            if (err) {
-                console.error("Database Check Error:", err);
-                return res.status(500).json({ message: 'Database error', error: err });
-            }
+  try {
+      // Check if the user exists in the farmeraccounts table
+      const checkUserQuery = "SELECT * FROM farmeraccounts WHERE userId = ?";
+      sqldb.query(checkUserQuery, [userId], (err, results) => {
+          if (err) {
+              console.error("Database Check Error:", err);
+              return res.status(500).json({ message: 'Database error', error: err });
+          }
 
-            if (results.length === 0) {
-                return res.status(404).json({ message: 'User not found.' });
-            }
+          if (results.length === 0) {
+              return res.status(404).json({ message: 'User not found.' });
+          }
 
-            // Insert tea sack data into the tea_sack_updates table
-            const insertQuery = `
-                INSERT INTO tea_sack_updates (
-                    userId,
-                    date,
-                    tea_sack_weight,
-                    deduction_water,
-                    deduction_damage_tea,
-                    deduction_sack_weight,
-                    deduction_sharped_tea,
-                    deduction_other,
-                    total_fertilizer_amount
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `;
-            const values = [
-                userId,
-                date,
-                teaSackWeight,
-                deductions.water || 0.00,
-                deductions.damageTea || 0.00,
-                deductions.sackWeight || 0.00,
-                deductions.sharpedTea || 0.00,
-                deductions.other || 0.00,
-                totalFertilizerAmount
-            ];
+          // Insert tea sack data into the tea_sack_updates table
+          const insertQuery = `
+              INSERT INTO tea_sack_updates (
+                  userId,
+                  date,
+                  tea_sack_weight,
+                  deduction_water,
+                  deduction_damage_tea,
+                  deduction_sack_weight,
+                  deduction_sharped_tea,
+                  deduction_other,
+                  total_fertilizer_amount
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
 
-            sqldb.query(insertQuery, values, (err, result) => {
-                if (err) {
-                    console.error("Database Insert Error:", err);
-                    return res.status(500).json({ message: 'Error inserting tea sack data into database', error: err });
-                }
+          const values = [
+              userId,
+              date,
+              teaSackWeight,
+              deductions.water || 0.00,
+              deductions.damageTea || 0.00,
+              deductions.sackWeight || 0.00,
+              deductions.sharpedTea || 0.00,
+              deductions.other || 0.00,
+              totalFertilizerAmount
+          ];
 
-                // Success response
-                return res.status(200).json({
-                    status: "Success",
-                    message: "Tea sack data submitted successfully.",
-                    teaSackId: result.insertId
-                });
-            });
-        });
-    } catch (error) {
-        console.error("Unexpected Error:", error);
-        return res.status(500).json({ message: 'An unexpected error occurred.', error: error });
-    }
+          sqldb.query(insertQuery, values, (err, result) => {
+              if (err) {
+                  console.error("Database Insert Error:", err);
+                  return res.status(500).json({ message: 'Error inserting tea sack data into database', error: err });
+              }
+
+              // Success response
+              return res.status(200).json({
+                  status: "Success",
+                  message: "Tea sack data submitted successfully.",
+                  teaSackId: result.insertId
+              });
+          });
+      });
+
+  } catch (error) {
+      console.error("Unexpected Server Error:", error);
+      return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
 };
+
 
 
 //----------------------------------------------------------------------------------------
