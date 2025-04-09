@@ -52,7 +52,7 @@ export const fmrLogin = (req, res) => {
 
             // Generate JWT token
             const token = jwt.sign(
-                { id: user.id, username: user.username },
+                { userId: user.userId, username: user.username },
                 SECRET_KEY,
                 { expiresIn: '1D' }
             );

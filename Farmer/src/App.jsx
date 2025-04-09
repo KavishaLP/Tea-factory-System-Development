@@ -4,6 +4,8 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from './Component/Navbar/Navbar3';
 import Sidebar from './Component/sidebar/sidebar3';
 import Footer from './Component/Footer/Footer';
+// import { react } from 'react';
+
 
 // Import Pages
 import Login from './Pages/AuthPages/LoginRegister/login';
@@ -35,9 +37,6 @@ function App() {
     return !hiddenPaths.includes(location.pathname);
   };
 
-  // Dummy userId, you should fetch it from an API or localStorage
-  const userId = '12345';  // Example: Replace with actual userId
-
   return (
     <div className="container">
       {shouldDisplayNavbar() && <Navbar />}
@@ -55,10 +54,10 @@ function App() {
             
             {/* Protected Routes */}
             <Route 
-              path="/farmer-dashboard" 
+              path="/dashboard-farmer" 
               element={
                 <ProtectedRoute>
-                  <DashboardFarmer userId={userId} />
+                  <DashboardFarmer />
                 </ProtectedRoute>
               } 
             />
@@ -66,18 +65,26 @@ function App() {
               path="/request-advance" 
               element={
                 <ProtectedRoute>
-                  <RequestAdvance userId={userId}/>
+                  <RequestAdvance />
                 </ProtectedRoute>
-              } />
-
+              } 
+            />
             <Route 
               path="/request-fertilizer" 
               element={
                 <ProtectedRoute>
                   <RequestFertilizer />
                 </ProtectedRoute>
-            }/>
-            <Route path="/view-payment" element={<Viewpayment />} />
+              } 
+            />
+            <Route 
+              path="/view-payment" 
+              element={
+                <ProtectedRoute>
+                  <Viewpayment />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </main>
       </div>

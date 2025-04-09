@@ -40,11 +40,11 @@ app.use('/api/manager', managerRoutes);
 app.use('/api/farmer', farmerRoutes);
 app.use('/api/admin', adminRoutes);
 
-app.get('/verify-token', verifyUser, (req, res) => {
-    return res.json({
-      Status: "Success",
-      id: req.id,
-    });
+app.post('/verify-token', verifyUser, (req, res) => {
+  return res.json({
+    Status: "Success",
+    userId: req.userId, // sending userId
+  });
 });
 
 // Start server

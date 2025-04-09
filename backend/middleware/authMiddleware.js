@@ -1,9 +1,7 @@
-// middleware/authMiddleware.js
-
 import jwt from 'jsonwebtoken';
 
-export const verifyUser = (req, res, next) => {
-  const token = req.cookies.token; // Get token from cookies
+const verifyUser = (req, res, next) => {
+  const token = req.cookies.token;
 
   if (!token) {
     return res.status(401).json({ Status: "Error", message: "No token provided" });
@@ -13,11 +11,10 @@ export const verifyUser = (req, res, next) => {
     if (err) {
       return res.status(403).json({ Status: "Error", message: "Invalid token" });
     }
-
-    req.id = decoded.id;
+    console.log("Decoded Token:", decoded);
+    req.userId = decoded.userId; // attach userId to request
     next();
   });
 };
-
 
 export default verifyUser;

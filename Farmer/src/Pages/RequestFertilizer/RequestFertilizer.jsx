@@ -187,7 +187,6 @@ const RequestFertilizer = ({userId} ) => {
       setMessage("Fertilizer request submitted successfully!");
       
       // Reset form
-      setUserId("");
       setPaymentOption("");
       setItems([{
         fertilizer_veriance_id: "",
@@ -221,17 +220,6 @@ const RequestFertilizer = ({userId} ) => {
       <form onSubmit={handleSubmit}>
         <div className="form-section full-width">
           <div className="form-row">
-            <div className="form-group">
-              <label>User ID:</label>
-              <input
-                type="text"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                required
-                placeholder="Enter User ID"
-              />
-            </div>
-
             <div className="form-group">
               <label>Payment Option:</label>
               <select
