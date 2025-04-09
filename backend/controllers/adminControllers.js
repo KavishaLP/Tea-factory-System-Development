@@ -112,6 +112,10 @@ export const deleteAdvance = async (req, res) => {
     }
 };
 
+
+//----------------------------------------------------------------------------------------
+
+
 export const addTeaSack = async (req, res) => {
     console.log("Received Data:", req.body);
 
@@ -187,6 +191,10 @@ export const addTeaSack = async (req, res) => {
     }
 };
 
+
+//----------------------------------------------------------------------------------------
+
+
 // Function to fetch the count of pending advances
 export const fetchRequestAdvance = (req, res) => {
     // Query the database to count pending advances
@@ -219,8 +227,10 @@ export const fetchRequestAdvance = (req, res) => {
 };
 
 
-// Function to fetch the count of pending fertilizer requests
+//----------------------------------------------------------------------------------------
 
+
+// Function to fetch the count of pending fertilizer requests
 // Get fertilizer requests
 export const getTeaPacketsRequests = (req, res) => {
     const query = `
