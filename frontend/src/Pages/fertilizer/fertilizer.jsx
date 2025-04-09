@@ -5,10 +5,12 @@ import "./Fertilizer.css";
 const Fertilizer = () => {
   const [activeTab, setActiveTab] = useState("newRequests");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterDate, setFilterDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [expandedRow, setExpandedRow] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -106,21 +108,37 @@ const Fertilizer = () => {
     }
   };
 
+
+
   const filteredData = requests.filter((request) => {
-    if (!request || !request.userId || !request.userName) return false;
+    if (!request) return false;
 
-    const matchesSearchTerm =
-      request.userId.includes(searchTerm) ||
-      request.userName.toLowerCase().includes(searchTerm.toLowerCase());
+    // Search term matching (userId, userName, fertilizerType, packetType)
+    const matchesSearchTerm = searchTerm
+      ? Object.entries(request).some(([key, value]) => {
+          if (typeof value === "string" && ["userId", "userName", "fertilizerType", "packetType"].includes(key)) {
+            return value.toLowerCase().includes(searchTerm.toLowerCase());
+          }
+          return false;
+        })
+      : true;
 
-    const matchesDate = filterDate ? request.requestDate === filterDate : true;
+    // Date range filtering
+    const requestDate = new Date(request.requestDate);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
+    const matchesDateRange =
+      (!start || requestDate >= start) &&
+      (!end || requestDate <= end);
+
+    // Status filtering
     const matchesStatus =
       activeTab === "newRequests" ? request.status === "Pending" :
       activeTab === "confirmedRequests" ? request.status === "Approved" :
       request.status === "Rejected";
 
-    return matchesSearchTerm && matchesDate && matchesStatus;
+    return matchesSearchTerm && matchesDateRange && matchesStatus;
   });
 
   return (
@@ -153,18 +171,39 @@ const Fertilizer = () => {
             <div className="search-box">
               <input
                 type="text"
-                placeholder="Search by User ID or Name..."
+                placeholder="Search by any field..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <i className="search-icon">🔍</i>
             </div>
-            <div className="date-filter">
-              <input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              />
+            <div className="date-range-filter">
+              <div className="date-input">
+                <label>From:</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </div>
+              <div className="date-input">
+                <label>To:</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  min={startDate}
+                />
+              </div>
+              <button 
+                className="clear-dates"
+                onClick={() => {
+                  setStartDate("");
+                  setEndDate("");
+                }}
+              >
+                Clear
+              </button>
             </div>
           </div>
 
@@ -192,38 +231,80 @@ const Fertilizer = () => {
                 </thead>
                 <tbody>
                   {filteredData.map((request) => (
-                    <tr key={request.request_id}>
-                      <td className="col-date">{request.requestDate}</td>
-                      <td className="col-user-id">{request.userId}</td>
-                      <td className="col-user-name">{request.userName}</td>
-                      <td className="col-fertilizer-type">{request.fertilizerType}</td>
-                      <td className="col-packet-type">{request.packetType}</td>
-                      <td className="col-amount">{request.amount}</td>
-                      <td className="col-payment">{request.paymentOption}</td>
-                      <td className="col-status">
-                        <span className={`status ${request.status.toLowerCase()}`}>
-                          {request.status}
-                        </span>
-                      </td>
-                      {activeTab === "newRequests" && (
-                        <td className="col-actions">
-                          <div className="action-buttons">
-                            <button
-                              className="confirm-button"
-                              onClick={() => handleConfirm(request.request_id)}
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              className="reject-button"
-                              onClick={() => handleReject(request.request_id)}
-                            >
-                              Reject
-                            </button>
-                          </div>
+                    <React.Fragment key={request.request_id}>
+                      <tr  className="clickable-row">
+                        <td className="col-date">{request.requestDate}</td>
+                        <td className="col-user-id">{request.userId}</td>
+                        <td className="col-user-name">{request.userName}</td>
+                        <td className="col-fertilizer-type">{request.fertilizerType}</td>
+                        <td className="col-packet-type">{request.packetType}</td>
+                        <td className="col-amount">{request.amount}</td>
+                        <td className="col-payment">{request.paymentOption}</td>
+                        <td className="col-status">
+                          <span className={`status ${request.status.toLowerCase()}`}>
+                            {request.status}
+                          </span>
                         </td>
+                        {activeTab === "newRequests" && (
+                          <td className="col-actions">
+                            <div className="action-buttons">
+                              <button
+                                className="confirm-button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleConfirm(request.request_id);
+                                }}
+                              >
+                                Confirm
+                              </button>
+                              <button
+                                className="reject-button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleReject(request.request_id);
+                                }}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                      {expandedRow === request.request_id && (
+                        <tr className="expanded-row">
+                          <td colSpan={activeTab === "newRequests" ? 9 : 8}>
+                            <div className="expanded-content">
+                              <div className="detail-row">
+                                <span className="detail-label">Request ID:</span>
+                                <span>{request.request_id}</span>
+                              </div>
+                              <div className="detail-row">
+                                <span className="detail-label">Request Date:</span>
+                                <span>{request.requestDate}</span>
+                              </div>
+                              <div className="detail-row">
+                                <span className="detail-label">User Details:</span>
+                                <span>{request.userName} (ID: {request.userId})</span>
+                              </div>
+                              <div className="detail-row">
+                                <span className="detail-label">Fertilizer Details:</span>
+                                <span>{request.amount} {request.packetType} of {request.fertilizerType}</span>
+                              </div>
+                              <div className="detail-row">
+                                <span className="detail-label">Payment Method:</span>
+                                <span>{request.paymentOption}</span>
+                              </div>
+                              {request.additionalNotes && (
+                                <div className="detail-row">
+                                  <span className="detail-label">Notes:</span>
+                                  <span>{request.additionalNotes}</span>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
                       )}
-                    </tr>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
