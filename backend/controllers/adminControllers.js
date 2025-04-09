@@ -319,3 +319,74 @@ export const deleteTeaPackets = async (req, res) => {
       });
     });
   };
+
+
+
+  export const searchUsers = async (req, res) => {
+      const { term } = req.query;
+  
+      // Validate search term
+      if (!term || term.trim() === '') {
+          return res.status(400).json({
+              status: "Error",
+              message: "Search term is required"
+          });
+      }
+  
+      try {
+          // Search query using promise wrapper
+          const query = `
+              SELECT 
+                  id,
+                  userId,
+                  userName,
+                  firstName,
+                  lastName,
+                  address,
+                  mobile1,
+                  mobile2,
+                  gmail,
+                  tea_delivery_method
+              FROM farmeraccounts
+              WHERE 
+                  userId LIKE ? OR
+                  userName LIKE ? OR
+                  firstName LIKE ? OR
+                  lastName LIKE ? OR
+                  mobile1 LIKE ? OR
+                  mobile2 LIKE ?
+              LIMIT 10`;
+  
+          const searchTerm = `%${term}%`;
+          
+          // Using promise-based query
+          const [results] = await sqldb.promise().query(query, [
+              searchTerm, searchTerm, searchTerm,
+              searchTerm, searchTerm, searchTerm
+          ]);
+  
+          // Format results
+          const users = results.map(user => ({
+              id: user.id,
+              userId: user.userId,
+              userName: user.userName,
+              name: `${user.firstName} ${user.lastName}`,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              address: user.address,
+              mobile: user.mobile1,
+              alternateMobile: user.mobile2,
+              email: user.gmail,
+              teaDeliveryMethod: user.tea_delivery_method
+          }));
+  
+          res.status(200).json(users);
+  
+      } catch (error) {
+          console.error("Search error:", error);
+          res.status(500).json({
+              status: "Error",
+              message: "Internal server error"
+          });
+      }
+  };
