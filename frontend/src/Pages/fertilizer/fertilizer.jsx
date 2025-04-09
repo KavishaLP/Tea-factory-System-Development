@@ -171,7 +171,7 @@ const Fertilizer = () => {
     return matchesSearchTerm && matchesDateRange && matchesStatus;
   });
 
-  
+
   return (
     <div className="cfa-content">
       <h2>Fertilizer Request History</h2>
@@ -215,6 +215,7 @@ const Fertilizer = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
+                  max={endDate || undefined}
                 />
               </div>
               <div className="date-input">
@@ -223,7 +224,7 @@ const Fertilizer = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  min={startDate}
+                  min={startDate || undefined}
                 />
               </div>
               <button 
