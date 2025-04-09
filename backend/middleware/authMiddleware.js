@@ -2,7 +2,7 @@
 
 import jwt from 'jsonwebtoken';
 
-const verifyUser = (req, res, next) => {
+export const verifyUser = (req, res, next) => {
   const token = req.cookies.token; // Get token from cookies
 
   if (!token) {
@@ -18,5 +18,6 @@ const verifyUser = (req, res, next) => {
     next();
   });
 };
+
 
 export default verifyUser;

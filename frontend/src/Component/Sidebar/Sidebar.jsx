@@ -32,7 +32,7 @@ const Sidebar = () => {
                 onClick={() => navigate('/Mng-Create-Employee-Account')}>
                 <img src={assets.g} alt="Logo"/> <p>Create Employee Account</p>
             </div>
-            <div className={`sidebar-item ${isActive('/Mng-AddEmployee-Payment') ? 'active' : ''}`}
+            <div className={`sidebar-item ${isActive('/Mng-Employee-Payment') ? 'active' : ''}`}
                 onClick={() => navigate('/Mng-Employee-Payment')}>
                 <img src={assets.h} alt="Logo"/> <p>Employee Payment Logs</p>
             </div>

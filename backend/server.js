@@ -8,8 +8,7 @@
 
 
 //server.js
-import verifyUser from './middleware/authMiddleware.js';
-
+import verifyUser from './middleware/authMiddleware.js'
 import  authRoutes from './routes/authRoutes.js';
 import managerRoutes from './routes/managerRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
@@ -19,6 +18,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+
 dotenv.config();
 
 const app = express();
@@ -40,7 +40,7 @@ app.use('/api/manager', managerRoutes);
 app.use('/api/farmer', farmerRoutes);
 app.use('/api/admin', adminRoutes);
 
-router.get('/verify-token', verifyUser, (req, res) => {
+app.get('/verify-token', verifyUser, (req, res) => {
     return res.json({
       Status: "Success",
       id: req.id,
