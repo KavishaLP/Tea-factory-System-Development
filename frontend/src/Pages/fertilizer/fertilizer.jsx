@@ -143,7 +143,7 @@ const Fertilizer = () => {
   const filteredData = requests.filter((request) => {
     if (!request) return false;
 
-    // Search term matching (userId, userName, fertilizerType, packetType)
+    // Search term matching
     const matchesSearchTerm = searchTerm
       ? Object.entries(request).some(([key, value]) => {
           if (typeof value === "string" && ["userId", "userName", "fertilizerType", "packetType"].includes(key)) {
@@ -154,13 +154,13 @@ const Fertilizer = () => {
       : true;
 
     // Date range filtering
-    const requestDate = new Date(request.requestDate);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
+    const requestDateStr = getDateOnlyString(request.requestDate);
+    const startDateStr = startDate || "1970-01-01"; // Default to earliest date if not set
+    const endDateStr = endDate || "2100-12-31";     // Default to far future if not set
 
-    const matchesDateRange =
-      (!start || requestDate >= start) &&
-      (!end || requestDate <= end);
+    const matchesDateRange = 
+      requestDateStr >= startDateStr && 
+      requestDateStr <= endDateStr;
 
     // Status filtering
     const matchesStatus =
@@ -171,6 +171,7 @@ const Fertilizer = () => {
     return matchesSearchTerm && matchesDateRange && matchesStatus;
   });
 
+  
   return (
     <div className="cfa-content">
       <h2>Fertilizer Request History</h2>
