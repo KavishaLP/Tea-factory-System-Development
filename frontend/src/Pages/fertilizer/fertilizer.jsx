@@ -12,6 +12,36 @@ const Fertilizer = () => {
   const [error, setError] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
 
+  // Format date from ISO string to readable format
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      console.error("Error formatting date:", e);
+      return "Invalid Date";
+    }
+  };
+
+  // Get date-only string for comparison (YYYY-MM-DD)
+  const getDateOnlyString = (dateString) => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
+    } catch (e) {
+      console.error("Error parsing date:", e);
+      return "";
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
