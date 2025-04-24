@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./CFA.css";
 
 const CreateFarmerAccount = () => {
-  const [activeTab, setActiveTab] = useState("createAccount"); // State for active tab
+  const [activeTab, setActiveTab] = useState("createAccount");
   const [formData, setFormData] = useState({
     userId: "",
     userName: "",
@@ -18,15 +18,20 @@ const CreateFarmerAccount = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [farmerAccounts, setFarmerAccounts] = useState([]); // State for farmer accounts
-  const [historyLoading, setHistoryLoading] = useState(false); // Loading state for farmer accounts
+  const [farmerAccounts, setFarmerAccounts] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({
+    mobile1: "",
+    mobile2: "",
+    gmail: ""
+  });
 
   // Fetch farmer accounts when the "View Farmer Accounts" tab is active
   useEffect(() => {
     if (activeTab === "viewAccounts") {
       const fetchFarmerAccounts = async () => {
         setHistoryLoading(true);
-        setError(""); // Clear any previous errors
+        setError("");
         try {
           const response = await axios.get(
             "http://localhost:8081/api/manager/get-farmer-accounts",
@@ -34,8 +39,7 @@ const CreateFarmerAccount = () => {
           );
           if (response.data.status === "success") {
             setFarmerAccounts(response.data.data);
-          }
-           else {
+          } else {
             setError("Failed to fetch farmer accounts. Please try again later.");
           }
         } catch (error) {
@@ -50,7 +54,19 @@ const CreateFarmerAccount = () => {
     }
   }, [activeTab]);
 
-  // Handle input changes
+  // Validate mobile number format
+  const validateMobile = (number) => {
+    const mobileRegex = /^[0-9]{10}$/;
+    return mobileRegex.test(number);
+  };
+
+  // Validate email format
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  // Handle input changes with validation
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -62,11 +78,45 @@ const CreateFarmerAccount = () => {
         userName: `farmer_${value}`,
       }));
     }
+
+    // Validate fields as user types
+    if (name === "mobile1" || name === "mobile2") {
+      if (value && !validateMobile(value)) {
+        setFieldErrors({
+          ...fieldErrors,
+          [name]: "Please enter a valid 10-digit mobile number"
+        });
+      } else {
+        setFieldErrors({
+          ...fieldErrors,
+          [name]: ""
+        });
+      }
+    }
+
+    if (name === "gmail") {
+      if (value && !validateEmail(value)) {
+        setFieldErrors({
+          ...fieldErrors,
+          [name]: "Please enter a valid email address"
+        });
+      } else {
+        setFieldErrors({
+          ...fieldErrors,
+          [name]: ""
+        });
+      }
+    }
   };
 
-  // Handle form submission
+  // Handle form submission with comprehensive validation
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Clear previous errors
+    setError("");
+    let hasErrors = false;
+    const newFieldErrors = {...fieldErrors};
 
     // Validate required fields
     if (!formData.userId || !formData.firstName || !formData.lastName || !formData.password) {
@@ -74,8 +124,32 @@ const CreateFarmerAccount = () => {
       return;
     }
 
+    // Validate mobile numbers
+    if (!validateMobile(formData.mobile1)) {
+      newFieldErrors.mobile1 = "Please enter a valid 10-digit mobile number";
+      hasErrors = true;
+    }
+
+    if (formData.mobile2 && !validateMobile(formData.mobile2)) {
+      newFieldErrors.mobile2 = "Please enter a valid 10-digit mobile number";
+      hasErrors = true;
+    }
+
+    // Validate email
+    if (!validateEmail(formData.gmail)) {
+      newFieldErrors.gmail = "Please enter a valid email address";
+      hasErrors = true;
+    }
+
+    // Validate password match
     if (formData.password !== formData.reenterPassword) {
       setError("Passwords do not match");
+      return;
+    }
+
+    setFieldErrors(newFieldErrors);
+
+    if (hasErrors) {
       return;
     }
 
@@ -200,8 +274,10 @@ const CreateFarmerAccount = () => {
                 value={formData.mobile1}
                 onChange={handleChange}
                 required
-                placeholder="Enter mobile number 1"
+                placeholder="Enter 10-digit mobile number"
+                maxLength="10"
               />
+              {fieldErrors.mobile1 && <span className="field-error">{fieldErrors.mobile1}</span>}
             </div>
 
             <div className="input-group">
@@ -211,8 +287,10 @@ const CreateFarmerAccount = () => {
                 name="mobile2"
                 value={formData.mobile2}
                 onChange={handleChange}
-                placeholder="Enter mobile number 2"
+                placeholder="Enter 10-digit mobile number"
+                maxLength="10"
               />
+              {fieldErrors.mobile2 && <span className="field-error">{fieldErrors.mobile2}</span>}
             </div>
 
             <div className="input-group full-row">
@@ -223,8 +301,9 @@ const CreateFarmerAccount = () => {
                 value={formData.gmail}
                 onChange={handleChange}
                 required
-                placeholder="Enter Gmail"
+                placeholder="Enter valid email address"
               />
+              {fieldErrors.gmail && <span className="field-error">{fieldErrors.gmail}</span>}
             </div>
 
             <div className="input-group">

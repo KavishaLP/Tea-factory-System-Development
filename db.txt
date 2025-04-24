@@ -105,9 +105,6 @@ CREATE TABLE fertilizer_requests (
     FOREIGN KEY (fertilizer_veriance_id) REFERENCES fertilizer_prices(fertilizer_veriance_id) ON DELETE CASCADE -- Link to fertilizer_prices table
 );
 
-/// ID fetch wen ek blnn
 
-app.js ekee
-protecedroutes
-and middlewae
+
 
