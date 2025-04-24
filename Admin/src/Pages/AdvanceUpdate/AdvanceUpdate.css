@@ -1,117 +1,37 @@
 /* Modern styling for AdvanceUpdate page */
 .advance-update-container {
-  background-color: #f4f4f9; /* Light background for the entire page */
-  padding: 2rem; /* Increased padding for spacious feel */
-  border-radius: 12px; /* Rounded corners */
-  max-width: 1200px; /* Maximum width for the container */
-  margin: 2rem auto; /* Center the container */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  min-height: calc(100vh - 4rem); /* Minimum height to fill the viewport */
-  display: flex;
-  flex-direction: column;
-  /* Center alignment adjustments */
-  align-items: center; /* Center children horizontally */
-}
-
-/* Form container centering - improved */
-.form-container {
-  width: 100%;
-  max-width: 900px; /* Limit width */
-  margin: 0 auto; /* Center horizontally */
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center form elements horizontally */
-  padding: 25px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  border: 1px solid #e9ecef;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Center form elements with stronger rules */
-.form-container > * {
-  width: 100%;
-  max-width: 800px;
+  background-color: #f4f4f9;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: 2rem auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  min-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 15px;
 }
 
-/* Input fields inside form */
-.form-container input,
-.form-container select,
-.form-container textarea {
+.content-wrapper {
   width: 100%;
-  max-width: 800px;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-  font-size: 1rem;
-  text-align: center; /* Center text input */
 }
 
-/* Input groups and form fields */
-.form-container .input-group,
-.form-container .form-group,
-.form-container .form-field {
+.content {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-/* Form labels centered properly */
-.form-container label {
-  width: 100%;
-  text-align: center;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
-}
-
-/* Form text elements */
-.form-container p,
-.form-container h3,
-.form-container h4 {
-  width: 100%;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-/* Form buttons specifically */
-.form-container button,
-.form-container .button,
-.form-container [type="submit"] {
-  width: auto;
-  min-width: 200px;
-  margin: 15px auto;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #00a000, #008000);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: block;
-  text-align: center;
 }
 
 /* Page Header */
 .page-header {
-  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
-  color: white; /* Text color */
-  padding: 1.5rem; /* Padding for header */
-  width: 100%; /* Full width */
-  text-align: center; /* Center text */
-  font-size: 1.75rem; /* Font size */
-  font-weight: 600; /* Bold text */
-  border-radius: 8px; /* Rounded corners */
-  margin-bottom: 2rem; /* Space below header */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  background: linear-gradient(135deg, #00a000, #008000);
+  color: white;
+  padding: 1.5rem;
+  width: 100%;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Tabs Container */
@@ -119,120 +39,169 @@
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
-  gap: 1rem; /* Space between tabs */
-  width: 100%; /* Full width */
+  gap: 1rem;
+  width: 100%;
 }
 
 .tab-button {
-  background: #e0f7e0; /* Light green background */
-  color: #2c3e50; /* Dark text color */
+  background: #e0f7e0;
+  color: #2c3e50;
   border: none;
-  padding: 1rem 2rem; /* Padding for tabs */
+  padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tab-button.active {
-  background: white; /* White background for active tab */
-  color: #00a000; /* Green text color */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Enhanced shadow for active tab */
+  background: white;
+  color: #00a000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tab-button:hover {
-  background: #d0f0d0; /* Lighter green on hover */
-  transform: translateY(-2px); /* Lift effect on hover */
+  background: #d0f0d0;
+  transform: translateY(-2px);
+}
+
+/* Filter Controls */
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  flex-grow: 1;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background-color: white;
+}
+
+.reset-filters {
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.reset-filters:hover {
+  background-color: #e0e0e0;
+}
+
+/* Results Count */
+.results-count {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+  text-align: right;
+  padding: 0 0.5rem;
 }
 
 /* Requests Table Container */
 .requests-table {
-  width: 100%; /* Full width */
-  background-color: white; /* White background for the table */
-  padding: 2rem; /* Padding for table */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-  overflow-x: auto; /* Enable horizontal scrolling for small screens */
-  flex-grow: 1; /* Allow the table to grow and fill remaining space */
-  max-height: 60vh; /* Set a fixed height for the table container */
-  overflow-y: auto; /* Enable vertical scrolling */
+  width: 100%;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  flex-grow: 1;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .requests-table table {
-  width: 100%; /* Full width */
-  border-collapse: collapse; /* Collapse borders */
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .requests-table th,
 .requests-table td {
-  padding: 1rem; /* Padding for cells */
-  border: 1px solid #e2e8f0; /* Light border */
-  text-align: center; /* Center text */
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  word-wrap: break-word;
 }
 
 .requests-table th {
-  background-color: #f8f9fa; /* Light gray for header */
-  font-weight: 600; /* Bold text */
-  color: #4a5568; /* Darker text color */
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #4a5568;
+  position: sticky;
+  top: 0;
 }
 
 .requests-table tr:hover {
-  background-color: #f0f4f8; /* Light hover effect */
+  background-color: #f0f4f8;
 }
 
-/* Buttons Container - centered */
-.buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 1rem; /* Space between buttons */
-  width: 100%; /* Full width */
-  margin-top: 1.5rem;
-}
-
-/* Confirm Button */
+/* Buttons */
 .confirm-button {
-  background: linear-gradient(135deg, #00a000, #008000); /* Gradient green */
-  color: white; /* Text color */
-  border: none; /* No border */
-  padding: 0.75rem 1.5rem; /* Padding for button */
-  border-radius: 8px; /* Rounded corners */
-  font-size: 1rem; /* Font size */
-  font-weight: 600; /* Bold text */
-  cursor: pointer; /* Pointer cursor */
-  transition: all 0.3s ease; /* Smooth transition */
+  background: linear-gradient(135deg, #00a000, #008000);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 0.5rem;
 }
 
 .confirm-button:hover {
-  transform: translateY(-2px); /* Lift effect on hover */
-  box-shadow: 0 5px 15px rgba(0, 160, 0, 0.3); /* Shadow on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 160, 0, 0.3);
 }
 
-.confirm-button:active {
-  transform: translateY(0); /* Reset lift effect */
-}
-
-/* Delete Button */
 .delete-button {
-  background: linear-gradient(135deg, #ff4d4d, #cc0000); /* Gradient red */
-  color: white; /* Text color */
-  border: none; /* No border */
-  padding: 0.75rem 1.5rem; /* Padding for button */
-  border-radius: 8px; /* Rounded corners */
-  font-size: 1rem; /* Font size */
-  font-weight: 600; /* Bold text */
-  cursor: pointer; /* Pointer cursor */
-  transition: all 0.3s ease; /* Smooth transition */
+  background: linear-gradient(135deg, #ff4d4d, #cc0000);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .delete-button:hover {
-  transform: translateY(-2px); /* Lift effect on hover */
-  box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3); /* Shadow on hover */
-}
-
-.delete-button:active {
-  transform: translateY(0); /* Reset lift effect */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
 }
 
 /* Loading and Error Messages */
@@ -247,84 +216,92 @@
 }
 
 .loading {
-  color: #00a000; /* Green text for loading */
+  color: #00a000;
 }
 
 .error {
-  color: #ff4d4d; /* Red text for error */
-  background-color: #ffe6e6; /* Light red background */
+  color: #ff4d4d;
+  background-color: #ffe6e6;
 }
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .advance-update-container {
-    padding: 1.5rem; /* Adjust padding for smaller screens */
-    margin: 1rem; /* Adjust margin for smaller screens */
+    padding: 1.5rem;
+    margin: 1rem;
   }
 
   .page-header {
-    font-size: 1.5rem; /* Adjust font size */
-    padding: 1rem; /* Adjust padding */
+    font-size: 1.5rem;
+    padding: 1rem;
   }
 
   .tabs-container {
-    flex-direction: column; /* Stack tabs vertically */
-    gap: 0.5rem; /* Reduce gap between tabs */
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .tab-button {
-    width: 100%; /* Full width for tabs */
-    padding: 0.75rem; /* Adjust padding */
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .reset-filters {
+    align-self: flex-start;
+    margin-left: 0;
   }
 
   .requests-table {
-    padding: 1rem; /* Adjust padding for table */
-    max-height: 50vh; /* Adjust height for smaller screens */
+    padding: 1rem;
+    max-height: 50vh;
   }
 
   .requests-table th,
   .requests-table td {
-    padding: 0.75rem; /* Adjust padding for cells */
+    padding: 0.75rem;
   }
 
   .confirm-button,
   .delete-button {
-    padding: 0.5rem 1rem; /* Adjust padding for button */
-    font-size: 0.9rem; /* Adjust font size */
-  }
-  
-  /* Adjust form container for mobile */
-  .form-container {
-    max-width: 100%;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
   }
 }
 
 @media screen and (max-width: 480px) {
   .advance-update-container {
-    padding: 1rem; /* Further adjust padding */
-    margin: 0.5rem; /* Further adjust margin */
+    padding: 1rem;
+    margin: 0.5rem;
   }
 
   .page-header {
-    font-size: 1.2rem; /* Adjust font size */
-    padding: 0.75rem; /* Adjust padding */
+    font-size: 1.2rem;
+    padding: 0.75rem;
   }
 
   .requests-table {
-    padding: 0.5rem; /* Adjust padding for table */
-    max-height: 40vh; /* Adjust height for very small screens */
+    padding: 0.5rem;
+    max-height: 40vh;
   }
 
   .requests-table th,
   .requests-table td {
-    padding: 0.5rem; /* Adjust padding for cells */
-    font-size: 0.8rem; /* Adjust font size */
+    padding: 0.5rem;
+    font-size: 0.8rem;
   }
 
   .confirm-button,
   .delete-button {
-    padding: 0.5rem; /* Adjust padding for button */
-    font-size: 0.8rem; /* Adjust font size */
+    padding: 0.5rem;
+    font-size: 0.8rem;
   }
 }

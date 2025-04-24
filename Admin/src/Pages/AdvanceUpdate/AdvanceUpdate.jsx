@@ -3,18 +3,28 @@ import axios from "axios";
 import "./AdvanceUpdate.css";
 
 function AdvanceUpdate() {
-  // State for active tab
   const [activeTab, setActiveTab] = useState("newRequests");
-
-  // State for advance requests
   const [newRequests, setNewRequests] = useState([]);
   const [confirmedRequests, setConfirmedRequests] = useState([]);
+  const [filteredConfirmed, setFilteredConfirmed] = useState([]);
   const [deletedRequests, setDeletedRequests] = useState([]);
-
+  const [filteredDeleted, setFilteredDeleted] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  
+  // Filter states for each tab
+  const [filters, setFilters] = useState({
+    userId: "",
+    year: "",
+    month: ""
+  });
 
-  // Fetch advance requests on component mount and tab change
+  // Get current year and month for default filter values
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+
+  // Fetch advance requests
   useEffect(() => {
     const fetchAdvanceRequests = async () => {
       setIsLoading(true);
@@ -25,12 +35,18 @@ function AdvanceUpdate() {
           "http://localhost:8081/api/admin/get-advance-requests",
           { withCredentials: true }
         );
-        console.log(response)
+        
         if (response.data.status === "Success") {
           const requests = response.data.advanceRequests;
           setNewRequests(requests.filter((req) => req.action === "Pending"));
-          setConfirmedRequests(requests.filter((req) => req.action === "Approved"));
-          setDeletedRequests(requests.filter((req) => req.action === "Rejected"));
+          
+          const confirmed = requests.filter((req) => req.action === "Approved");
+          setConfirmedRequests(confirmed);
+          setFilteredConfirmed(confirmed);
+          
+          const deleted = requests.filter((req) => req.action === "Rejected");
+          setDeletedRequests(deleted);
+          setFilteredDeleted(deleted);
         } else {
           setError(response.data.message || "Failed to fetch advance requests.");
         }
@@ -45,6 +61,69 @@ function AdvanceUpdate() {
     fetchAdvanceRequests();
   }, [activeTab]);
 
+  // Apply filters when they change
+  useEffect(() => {
+    if (activeTab === "confirmedRequests") {
+      applyConfirmedFilters();
+    } else if (activeTab === "deletedRequests") {
+      applyDeletedFilters();
+    }
+  }, [filters, confirmedRequests, deletedRequests, activeTab]);
+
+  const applyConfirmedFilters = () => {
+    let result = [...confirmedRequests];
+    result = applyCommonFilters(result);
+    setFilteredConfirmed(result);
+  };
+
+  const applyDeletedFilters = () => {
+    let result = [...deletedRequests];
+    result = applyCommonFilters(result);
+    setFilteredDeleted(result);
+  };
+
+  const applyCommonFilters = (requests) => {
+    let result = [...requests];
+
+    if (filters.userId) {
+      result = result.filter(request => 
+        request.userId.toString().includes(filters.userId)
+      );
+    }
+
+    if (filters.year) {
+      result = result.filter(request => {
+        const requestDate = new Date(request.date);
+        return requestDate.getFullYear().toString() === filters.year;
+      });
+    }
+
+    if (filters.month) {
+      result = result.filter(request => {
+        const requestDate = new Date(request.date);
+        return (requestDate.getMonth() + 1).toString().padStart(2, '0') === filters.month;
+      });
+    }
+
+    return result;
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      userId: "",
+      year: "",
+      month: ""
+    });
+  };
+
   // Function to confirm an advance request
   const handleConfirm = async (id) => {
     setIsLoading(true);
@@ -58,15 +137,13 @@ function AdvanceUpdate() {
       );
   
       if (response.data.status === "Success") {
-        // Find the confirmed request in newRequests
         const confirmedRequest = newRequests.find((req) => req.advn_id === id);
   
         if (confirmedRequest) {
-          // Remove the confirmed request from newRequests
           setNewRequests(newRequests.filter((req) => req.advn_id !== id));
-  
-          // Add the confirmed request to confirmedRequests
-          setConfirmedRequests([...confirmedRequests, { ...confirmedRequest, action: "Approved" }]);
+          const updatedConfirmed = [...confirmedRequests, { ...confirmedRequest, action: "Approved" }];
+          setConfirmedRequests(updatedConfirmed);
+          setFilteredConfirmed(updatedConfirmed);
         }
   
         alert("Advance request confirmed successfully!");
@@ -94,11 +171,11 @@ function AdvanceUpdate() {
       );
   
       if (response.data.status === "Success") {
-        // Find the request being deleted
         const request = newRequests.find((req) => req.advn_id === id);
         if (request) {
-          // Move to deletedRequests and remove from newRequests
-          setDeletedRequests([...deletedRequests, { ...request, action: "Rejected" }]);
+          const updatedDeleted = [...deletedRequests, { ...request, action: "Rejected" }];
+          setDeletedRequests(updatedDeleted);
+          setFilteredDeleted(updatedDeleted);
           setNewRequests(newRequests.filter((req) => req.advn_id !== id));
         }
         alert("Advance request deleted successfully!");
@@ -112,7 +189,16 @@ function AdvanceUpdate() {
       setIsLoading(false);
     }
   };
-  
+
+  // Generate years for dropdown (last 5 years)
+  const generateYears = () => {
+    const years = [];
+    const currentYear = new Date().getFullYear();
+    for (let i = 0; i < 5; i++) {
+      years.push(currentYear - i);
+    }
+    return years;
+  };
 
   return (
     <div className="advance-update-container">
@@ -167,7 +253,11 @@ function AdvanceUpdate() {
                       <td>{request.userId}</td>
                       <td>{request.firstName +' '+ request.lastName}</td>
                       <td>LKR {request.amount}</td>
-                      <td>{request.date}</td>
+                      <td>{new Date(request.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}</td>
                       <td>
                         <button
                           className="confirm-button"
@@ -192,6 +282,70 @@ function AdvanceUpdate() {
           {/* Confirmed Requests Table */}
           {activeTab === "confirmedRequests" && (
             <div className="requests-table">
+              {/* Filter Controls */}
+              <div className="filter-controls">
+                <div className="filter-group">
+                  <label>Search by User ID:</label>
+                  <input
+                    type="text"
+                    name="userId"
+                    value={filters.userId}
+                    onChange={handleFilterChange}
+                    placeholder="Enter user ID"
+                  />
+                </div>
+                
+                <div className="filter-group">
+                  <label>Filter by Year:</label>
+                  <select
+                    name="year"
+                    value={filters.year}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">All Years</option>
+                    {generateYears().map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="filter-group">
+                  <label>Filter by Month:</label>
+                  <select
+                    name="month"
+                    value={filters.month}
+                    onChange={handleFilterChange}
+                    disabled={!filters.year}
+                  >
+                    <option value="">All Months</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                </div>
+                
+                <button 
+                  type="button" 
+                  onClick={resetFilters}
+                  className="reset-filters"
+                >
+                  Reset Filters
+                </button>
+              </div>
+
+              <div className="results-count">
+                Showing {filteredConfirmed.length} of {confirmedRequests.length} records
+              </div>
+              
               <table>
                 <thead>
                   <tr>
@@ -202,12 +356,16 @@ function AdvanceUpdate() {
                   </tr>
                 </thead>
                 <tbody>
-                  {confirmedRequests.map((request) => (
-                    <tr key={request.id}>
+                  {filteredConfirmed.map((request) => (
+                    <tr key={request.advn_id}>
                       <td>{request.userId}</td>
                       <td>{request.firstName +' '+ request.lastName}</td>
                       <td>LKR {request.amount}</td>
-                      <td>{request.date}</td>
+                      <td>{new Date(request.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -218,6 +376,70 @@ function AdvanceUpdate() {
           {/* Deleted Requests Table */}
           {activeTab === "deletedRequests" && (
             <div className="requests-table">
+              {/* Filter Controls */}
+              <div className="filter-controls">
+                <div className="filter-group">
+                  <label>Search by User ID:</label>
+                  <input
+                    type="text"
+                    name="userId"
+                    value={filters.userId}
+                    onChange={handleFilterChange}
+                    placeholder="Enter user ID"
+                  />
+                </div>
+                
+                <div className="filter-group">
+                  <label>Filter by Year:</label>
+                  <select
+                    name="year"
+                    value={filters.year}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">All Years</option>
+                    {generateYears().map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="filter-group">
+                  <label>Filter by Month:</label>
+                  <select
+                    name="month"
+                    value={filters.month}
+                    onChange={handleFilterChange}
+                    disabled={!filters.year}
+                  >
+                    <option value="">All Months</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                </div>
+                
+                <button 
+                  type="button" 
+                  onClick={resetFilters}
+                  className="reset-filters"
+                >
+                  Reset Filters
+                </button>
+              </div>
+
+              <div className="results-count">
+                Showing {filteredDeleted.length} of {deletedRequests.length} records
+              </div>
+              
               <table>
                 <thead>
                   <tr>
@@ -228,12 +450,16 @@ function AdvanceUpdate() {
                   </tr>
                 </thead>
                 <tbody>
-                  {deletedRequests.map((request) => (
-                    <tr key={request.id}>
+                  {filteredDeleted.map((request) => (
+                    <tr key={request.advn_id}>
                       <td>{request.userId}</td>
                       <td>{request.firstName +' '+ request.lastName}</td>
                       <td>LKR {request.amount}</td>
-                      <td>{request.date}</td>
+                      <td>{new Date(request.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}</td>
                     </tr>
                   ))}
                 </tbody>
