@@ -3,27 +3,35 @@ import axios from "axios";
 import "./TeaPaketDistribution.css";
 
 const TeaPacketDistribution = () => {
-  const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests, confirmedRequests, or deletedRequests
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterDate, setFilterDate] = useState("");
-  const [requests, setRequests] = useState([]); // State to store fetched requests
-  const [isLoading, setIsLoading] = useState(false); // Loading state
-  const [error, setError] = useState(""); // Error state
-
+  const [activeTab, setActiveTab] = useState("newRequests");
+  const [requests, setRequests] = useState([]);
+  const [filteredRequests, setFilteredRequests] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   
+  // Filter states
+  const [filters, setFilters] = useState({
+    searchTerm: "",
+    year: "",
+    month: "",
+    teaPacketType: "",
+    paymentOption: ""
+  });
+
   // Fetch data on component mount or when the active tab changes
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      setError(""); // Clear any previous errors
+      setError("");
       try {
         const data = await fetchTeaPacketRequests();
-        console.log("Fetched Data:", data); // Log the fetched data
-        setRequests(data || []); // Ensure data is an array, default to empty array if undefined
+        setRequests(data || []);
+        setFilteredRequests(data || []);
       } catch (error) {
         setError("Failed to fetch data. Please try again later.");
         console.error("Error fetching data:", error);
-        setRequests([]); // Reset requests to empty array on error
+        setRequests([]);
+        setFilteredRequests([]);
       } finally {
         setIsLoading(false);
       }
@@ -32,6 +40,81 @@ const TeaPacketDistribution = () => {
     fetchData();
   }, [activeTab]);
 
+  // Apply filters when they change
+  useEffect(() => {
+    applyFilters();
+  }, [filters, requests, activeTab]);
+
+  const applyFilters = () => {
+    let result = [...requests];
+
+    // Filter by status based on active tab
+    result = result.filter(request => {
+      if (activeTab === "newRequests") return request.status === "Pending";
+      if (activeTab === "confirmedRequests") return request.status === "Approved";
+      if (activeTab === "deletedRequests") return request.status === "Rejected";
+      return true;
+    });
+
+    // Apply search term filter (ID, first name, last name)
+    if (filters.searchTerm) {
+      const searchTerm = filters.searchTerm.toLowerCase();
+      result = result.filter(request => {
+        return (
+          request.userId.toString().includes(searchTerm) ||
+          (request.userName && request.userName.toLowerCase().includes(searchTerm))
+        );
+      });
+    }
+
+    // Apply other filters
+    if (filters.year) {
+      result = result.filter(request => {
+        const requestDate = new Date(request.requestDate);
+        return requestDate.getFullYear().toString() === filters.year;
+      });
+    }
+
+    if (filters.month) {
+      result = result.filter(request => {
+        const requestDate = new Date(request.requestDate);
+        return (requestDate.getMonth() + 1).toString().padStart(2, '0') === filters.month;
+      });
+    }
+
+    if (filters.teaPacketType) {
+      result = result.filter(request => 
+        request.teaPacketType === filters.teaPacketType
+      );
+    }
+
+    if (filters.paymentOption) {
+      result = result.filter(request => 
+        request.paymentOption === filters.paymentOption
+      );
+    }
+
+    setFilteredRequests(result);
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      searchTerm: "",
+      year: "",
+      month: "",
+      teaPacketType: "",
+      paymentOption: ""
+    });
+  };
+
   // Fetch tea packet requests from the backend
   const fetchTeaPacketRequests = async () => {
     try {
@@ -39,8 +122,6 @@ const TeaPacketDistribution = () => {
         "http://localhost:8081/api/admin/get-tea-packet-requests",
         { withCredentials: true }
       );
-  
-      console.log("Backend Response:", response);
   
       if (response.data.status === "Success") {
         return response.data.teaPacketRequests || [];
@@ -53,15 +134,13 @@ const TeaPacketDistribution = () => {
     }
   };
 
-// ----------------------------------------------------------------------------------
-
   // Handle Confirm action
   const handleConfirm = async (requestId) => {
     setError("");
     try {
       await confirmRequest(requestId);
-      setRequests((prevRequests) =>
-        prevRequests.map((request) =>
+      setRequests(prevRequests =>
+        prevRequests.map(request =>
           request.request_id === requestId ? { ...request, status: "Approved" } : request
         )
       );
@@ -94,8 +173,8 @@ const TeaPacketDistribution = () => {
     setError("");
     try {
       await deleteRequest(requestId);
-      setRequests((prevRequests) =>
-        prevRequests.map((request) =>
+      setRequests(prevRequests =>
+        prevRequests.map(request =>
           request.request_id === requestId ? { ...request, status: "Rejected" } : request
         )
       );
@@ -108,7 +187,6 @@ const TeaPacketDistribution = () => {
 
   // Delete a tea packet request
   const deleteRequest = async (requestId) => {
-    console.log("Deleting request with ID:", requestId); // Log the request ID being deleted
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/delete-tea-packets",
@@ -124,31 +202,29 @@ const TeaPacketDistribution = () => {
     }
   };
 
-// ----------------------------------------------------------------------------------
+  // Generate years for dropdown (last 5 years)
+  const generateYears = () => {
+    const years = [];
+    const currentYear = new Date().getFullYear();
+    for (let i = 0; i < 5; i++) {
+      years.push(currentYear - i);
+    }
+    return years;
+  };
 
-  // Filter data based on search term, date, and status
-  const filteredData = Array.isArray(requests)
-  ? requests.filter((request) => {
-      if (!request || !request.userId || !request.userName) {
-        return false;
-      }
+  // Get unique tea packet types for filter dropdown
+  const getUniqueTeaPacketTypes = () => {
+    const types = new Set();
+    requests.forEach(request => types.add(request.teaPacketType));
+    return Array.from(types);
+  };
 
-      const matchesSearchTerm =
-        request.userId.includes(searchTerm) ||
-        request.userName.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesDate = filterDate ? request.requestDate === filterDate : true;
-
-      const matchesStatus =
-        activeTab === "newRequests"
-          ? request.status === "Pending"
-          : activeTab === "confirmedRequests"
-          ? request.status === "Approved"
-          : request.status === "Rejected";
-
-      return matchesSearchTerm && matchesDate && matchesStatus;
-    })
-  : [];
+  // Get unique payment options for filter dropdown
+  const getUniquePaymentOptions = () => {
+    const options = new Set();
+    requests.forEach(request => options.add(request.paymentOption));
+    return Array.from(options);
+  };
 
   return (
     <div className="tpd-content">
@@ -177,24 +253,100 @@ const TeaPacketDistribution = () => {
             </button>
           </div>
 
-          {/* Search and Filter Controls */}
-          <div className="controls-container">
-            <div className="search-box">
-              <input
-                type="text"
-                placeholder="Search by User ID or Name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <i className="search-icon">🔍</i>
+          {/* Filter Controls */}
+          <div className="filter-controls">
+            <div className="filter-group search-group">
+              <label>Search (ID, Name):</label>
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  name="searchTerm"
+                  value={filters.searchTerm}
+                  onChange={handleFilterChange}
+                  placeholder="Search by ID or name..."
+                />
+                <span className="search-icon">🔍</span>
+              </div>
             </div>
-            <div className="date-filter">
-              <input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              />
+            
+            <div className="filter-group">
+              <label>Filter by Year:</label>
+              <select
+                name="year"
+                value={filters.year}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Years</option>
+                {generateYears().map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
             </div>
+            
+            <div className="filter-group">
+              <label>Filter by Month:</label>
+              <select
+                name="month"
+                value={filters.month}
+                onChange={handleFilterChange}
+                disabled={!filters.year}
+              >
+                <option value="">All Months</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+            
+            <div className="filter-group">
+              <label>Tea Packet Type:</label>
+              <select
+                name="teaPacketType"
+                value={filters.teaPacketType}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Types</option>
+                {getUniqueTeaPacketTypes().map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="filter-group">
+              <label>Payment Option:</label>
+              <select
+                name="paymentOption"
+                value={filters.paymentOption}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Options</option>
+                {getUniquePaymentOptions().map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
+            
+            <button 
+              type="button" 
+              onClick={resetFilters}
+              className="reset-filters"
+            >
+              Reset Filters
+            </button>
+          </div>
+
+          {/* Results Count */}
+          <div className="results-count">
+            Showing {filteredRequests.length} of {requests.length} records
           </div>
 
           {/* Error Message */}
@@ -208,8 +360,8 @@ const TeaPacketDistribution = () => {
           <div className="table-container">
             {isLoading ? (
               <p>Loading...</p>
-            ) : filteredData.length === 0 ? (
-              <p>No tea packet requests found.</p>
+            ) : filteredRequests.length === 0 ? (
+              <p>No tea packet requests found matching your filters.</p>
             ) : (
               <table className="history-table">
                 <thead>
@@ -226,9 +378,13 @@ const TeaPacketDistribution = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((request) => (
+                  {filteredRequests.map((request) => (
                     <tr key={request.request_id}>
-                      <td>{request.requestDate}</td>
+                      <td>{new Date(request.requestDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}</td>
                       <td>{request.userId}</td>
                       <td>{request.userName}</td>
                       <td>{request.teaPacketType}</td>
@@ -241,7 +397,7 @@ const TeaPacketDistribution = () => {
                         </span>
                       </td>
                       {activeTab === "newRequests" && (
-                        <td>
+                        <td className="action-buttons">
                           <button
                             className="confirm-button"
                             onClick={() => handleConfirm(request.request_id)}
