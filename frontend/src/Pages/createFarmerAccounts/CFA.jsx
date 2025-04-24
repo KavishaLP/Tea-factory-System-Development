@@ -214,6 +214,7 @@ const CreateFarmerAccount = () => {
                 onChange={handleChange}
                 required
                 placeholder="Enter user ID"
+                maxLength="20"
               />
             </div>
 
@@ -239,6 +240,7 @@ const CreateFarmerAccount = () => {
                   onChange={handleChange}
                   required
                   placeholder="Enter first name"
+                  maxLength="30"
                 />
               </div>
               <div className="input-field">
@@ -250,6 +252,7 @@ const CreateFarmerAccount = () => {
                   onChange={handleChange}
                   required
                   placeholder="Enter last name"
+                  maxLength="30"
                 />
               </div>
             </div>
@@ -302,6 +305,7 @@ const CreateFarmerAccount = () => {
                 onChange={handleChange}
                 required
                 placeholder="Enter valid email address"
+                maxLength="50"
               />
               {fieldErrors.gmail && <span className="field-error">{fieldErrors.gmail}</span>}
             </div>
