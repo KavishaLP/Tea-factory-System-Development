@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./CEA.css";
 
 const CreateEmployeeAccount = () => {
-  const [activeTab, setActiveTab] = useState("createAccount"); // State for active tab
+  const [activeTab, setActiveTab] = useState("createAccount");
   const [formData, setFormData] = useState({
     userId: "",
     firstName: "",
@@ -13,15 +13,18 @@ const CreateEmployeeAccount = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [employeeAccounts, setEmployeeAccounts] = useState([]); // State for employee accounts
-  const [historyLoading, setHistoryLoading] = useState(false); // Loading state for employee accounts
+  const [employeeAccounts, setEmployeeAccounts] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Fetch employee accounts when the "View Employee Accounts" tab is active
   useEffect(() => {
     if (activeTab === "viewAccounts") {
       const fetchEmployeeAccounts = async () => {
         setHistoryLoading(true);
-        setError(""); // Clear any previous errors
+        setError("");
         try {
           const response = await axios.get(
             "http://localhost:8081/api/manager/get-employee-accounts",
@@ -45,10 +48,34 @@ const CreateEmployeeAccount = () => {
     }
   }, [activeTab]);
 
+  // Handle search functionality
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const results = employeeAccounts.filter(employee =>
+      employee.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.mobile1.includes(searchTerm) ||
+      (employee.mobile2 && employee.mobile2.includes(searchTerm))
+    );
+    setSearchResults(results);
+  }, [searchTerm, employeeAccounts]);
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   // Handle form submission
@@ -182,11 +209,53 @@ const CreateEmployeeAccount = () => {
         {/* View Employee Accounts Table */}
         {activeTab === "viewAccounts" && (
           <div className="employee-accounts-table">
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Search employees..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="search-input"
+              />
+              <span className="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+              </span>
+            </div>
+
             <h3>Employee Accounts</h3>
             {historyLoading ? (
               <p>Loading...</p>
             ) : error ? (
               <p className="error">{error}</p>
+            ) : isSearching ? (
+              searchResults.length > 0 ? (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>User ID</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Mobile 1</th>
+                      <th>Mobile 2</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {searchResults.map((employee, index) => (
+                      <tr key={index}>
+                        <td>{employee.userId}</td>
+                        <td>{employee.firstName}</td>
+                        <td>{employee.lastName}</td>
+                        <td>{employee.mobile1}</td>
+                        <td>{employee.mobile2 || "-"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>No matching employees found.</p>
+              )
             ) : employeeAccounts.length > 0 ? (
               <table>
                 <thead>
