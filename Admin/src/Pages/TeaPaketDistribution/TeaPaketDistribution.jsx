@@ -108,7 +108,7 @@ const TeaPacketDistribution = () => {
     }
   };
 
-  // ---------------------- CONFIRM DELETE REQUEST (New) ---------------------- //
+  // ---------------------- CONFIRM DELETE REQUEST ---------------------- //
 
   const handleConfirmDelete = async (requestId) => {
     setError("");
