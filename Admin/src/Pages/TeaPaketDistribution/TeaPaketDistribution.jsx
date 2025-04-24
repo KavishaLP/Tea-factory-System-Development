@@ -11,17 +11,12 @@ const TeaPacketDistribution = () => {
   
   // Filter states
   const [filters, setFilters] = useState({
-    userId: "",
+    searchTerm: "",
     year: "",
     month: "",
     teaPacketType: "",
     paymentOption: ""
   });
-
-  // Get current year and month for default filter values
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
 
   // Fetch data on component mount or when the active tab changes
   useEffect(() => {
@@ -61,13 +56,18 @@ const TeaPacketDistribution = () => {
       return true;
     });
 
-    // Apply other filters
-    if (filters.userId) {
-      result = result.filter(request => 
-        request.userId.toString().includes(filters.userId)
-      );
+    // Apply search term filter (ID, first name, last name)
+    if (filters.searchTerm) {
+      const searchTerm = filters.searchTerm.toLowerCase();
+      result = result.filter(request => {
+        return (
+          request.userId.toString().includes(searchTerm) ||
+          (request.userName && request.userName.toLowerCase().includes(searchTerm))
+        );
+      });
     }
 
+    // Apply other filters
     if (filters.year) {
       result = result.filter(request => {
         const requestDate = new Date(request.requestDate);
@@ -107,7 +107,7 @@ const TeaPacketDistribution = () => {
 
   const resetFilters = () => {
     setFilters({
-      userId: "",
+      searchTerm: "",
       year: "",
       month: "",
       teaPacketType: "",
@@ -255,15 +255,18 @@ const TeaPacketDistribution = () => {
 
           {/* Filter Controls */}
           <div className="filter-controls">
-            <div className="filter-group">
-              <label>Search by User ID:</label>
-              <input
-                type="text"
-                name="userId"
-                value={filters.userId}
-                onChange={handleFilterChange}
-                placeholder="Enter user ID"
-              />
+            <div className="filter-group search-group">
+              <label>Search (ID, Name):</label>
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  name="searchTerm"
+                  value={filters.searchTerm}
+                  onChange={handleFilterChange}
+                  placeholder="Search by ID or name..."
+                />
+                <span className="search-icon">🔍</span>
+              </div>
             </div>
             
             <div className="filter-group">
