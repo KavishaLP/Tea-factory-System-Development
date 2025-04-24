@@ -14,41 +14,102 @@ function Employeepayment() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [paymentsHistory, setPaymentHistory] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(true);  
+  const [filteredHistory, setFilteredHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    userId: "",
+    year: "",
+    month: ""
+  });
+
+  // Get current year and month for default filter values
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
 
   // Function to fetch payment history
   useEffect(() => {
-    // Check if activeTab is "viewHistory"
     if (activeTab === "viewHistory") {
       const fetchPaymentHistory = async () => {
         try {
-          // Start loading
           setHistoryLoading(true);
+          const response = await axios.post(
+            'http://localhost:8081/api/manager/get-Employee-Payment-History', 
+            {}, 
+            { withCredentials: true }
+          );
           
-          const response = await axios.post('http://localhost:8081/api/manager/get-Employee-Payment-History', {}, { withCredentials: true });
-          console.log(response.data)
           if (response.data.Status === 'Success') {
             setPaymentHistory(response.data.paymentHistory);
+            setFilteredHistory(response.data.paymentHistory);
           } else {
             console.error('Failed to fetch payment history');
           }
         } catch (error) {
           console.error('Error fetching payment history:', error);
         } finally {
-          // Stop loading
           setHistoryLoading(false);
         }
       };
   
       fetchPaymentHistory();
     }
-  }, [activeTab]); // Depend on activeTab state change
+  }, [activeTab]);
+
+  // Apply filters whenever filters or paymentsHistory change
+  useEffect(() => {
+    if (activeTab === "viewHistory") {
+      applyFilters();
+    }
+  }, [filters, paymentsHistory, activeTab]);
+
+  const applyFilters = () => {
+    let result = [...paymentsHistory];
+
+    if (filters.userId) {
+      result = result.filter(payment => 
+        payment.userId.toString().includes(filters.userId)
+      );
+    }
+
+    if (filters.year) {
+      result = result.filter(payment => {
+        const paymentDate = new Date(payment.createdAt);
+        return paymentDate.getFullYear().toString() === filters.year;
+      });
+    }
+
+    if (filters.month) {
+      result = result.filter(payment => {
+        const paymentDate = new Date(payment.createdAt);
+        return (paymentDate.getMonth() + 1).toString().padStart(2, '0') === filters.month;
+      });
+    }
+
+    setFilteredHistory(result);
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      userId: "",
+      year: "",
+      month: ""
+    });
+    setFilteredHistory(paymentsHistory);
+  };
 
   // Handle change for input fields
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Allow empty input or valid numeric values (including decimals)
     if (name !== "userId" && value !== "" && !/^\d*\.?\d*$/.test(value)) {
       setError("Please enter a valid positive number");
       return;
@@ -57,7 +118,6 @@ function Employeepayment() {
     setFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
 
-      // Calculate final payment when salary, additional payments, or deductions change
       const salary = parseFloat(updatedData.salaryAmount) || 0;
       const additional = parseFloat(updatedData.additionalPayments) || 0;
       const deductions = parseFloat(updatedData.deductions) || 0;
@@ -72,7 +132,6 @@ function Employeepayment() {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validate required fields
     if (!formData.userId || !formData.salaryAmount) {
       setError("User ID and Salary Amount are required");
       return;
@@ -83,7 +142,7 @@ function Employeepayment() {
   
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/manager/add-Employee-Payment", // Adjust API endpoint as needed
+        "http://localhost:8081/api/manager/add-Employee-Payment",
         formData,
         { withCredentials: true }
       );
@@ -107,7 +166,16 @@ function Employeepayment() {
       setIsLoading(false);
     }
   };
-  
+
+  // Generate years for dropdown (last 5 years)
+  const generateYears = () => {
+    const years = [];
+    const currentYear = new Date().getFullYear();
+    for (let i = 0; i < 5; i++) {
+      years.push(currentYear - i);
+    }
+    return years;
+  };
 
   return (
     <div className="cfa-content">
@@ -201,40 +269,110 @@ function Employeepayment() {
         {activeTab === "viewHistory" && (
           <div className="payment-history">
             <h3>Payment History</h3>
+            
+            {/* Filter Controls */}
+            <div className="filter-controls">
+              <div className="filter-group">
+                <label>Search by User ID:</label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={filters.userId}
+                  onChange={handleFilterChange}
+                  placeholder="Enter user ID"
+                />
+              </div>
+              
+              <div className="filter-group">
+                <label>Filter by Year:</label>
+                <select
+                  name="year"
+                  value={filters.year}
+                  onChange={handleFilterChange}
+                >
+                  <option value="">All Years</option>
+                  {generateYears().map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="filter-group">
+                <label>Filter by Month:</label>
+                <select
+                  name="month"
+                  value={filters.month}
+                  onChange={handleFilterChange}
+                  disabled={!filters.year}
+                >
+                  <option value="">All Months</option>
+                  <option value="01">January</option>
+                  <option value="02">February</option>
+                  <option value="03">March</option>
+                  <option value="04">April</option>
+                  <option value="05">May</option>
+                  <option value="06">June</option>
+                  <option value="07">July</option>
+                  <option value="08">August</option>
+                  <option value="09">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+              
+              <button 
+                type="button" 
+                onClick={resetFilters}
+                className="reset-filters"
+              >
+                Reset Filters
+              </button>
+            </div>
+
             {historyLoading ? (
               <p>Loading...</p>
-            ) : paymentsHistory.length > 0 ? (
-              <table>
-                <thead>
-                  <tr>
-                    <th>User ID</th>
-                    <th>Salary Amount</th>
-                    <th>Additional Payments</th>
-                    <th>Deductions</th>
-                    <th>Final Payment</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paymentsHistory.map((payment, index) => (
-                    <tr key={index}>
-                      <td>{payment.userId}</td>
-                      <td>{payment.salaryAmount}</td>
-                      <td>{payment.additionalPayments}</td>
-                      <td>{payment.deductions}</td>
-                      <td>{payment.finalPayment}</td>
-                      <td>{new Date(payment.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            ) : filteredHistory.length > 0 ? (
+              <>
+                <div className="results-count">
+                  Showing {filteredHistory.length} of {paymentsHistory.length} records
+                </div>
+                <div className="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>User ID</th>
+                        <th>Salary Amount</th>
+                        <th>Additional Payments</th>
+                        <th>Deductions</th>
+                        <th>Final Payment</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredHistory.map((payment, index) => (
+                        <tr key={index}>
+                          <td>{payment.userId}</td>
+                          <td>{payment.salaryAmount}</td>
+                          <td>{payment.additionalPayments || '0'}</td>
+                          <td>{payment.deductions || '0'}</td>
+                          <td>{payment.finalPayment}</td>
+                          <td>{new Date(payment.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             ) : (
-              <p>No payment history found.</p>
+              <p>No payment history found matching your filters.</p>
             )}
-
           </div>
         )}
-        
       </div>
     </div>
   );
