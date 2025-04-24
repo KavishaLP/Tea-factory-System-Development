@@ -1,7 +1,3 @@
-/* eslint-disable react/no-unknown-property */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import "./addnewpayment.css";
@@ -11,13 +7,22 @@ function AddPayment() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentDate, setCurrentDate] = useState("");
-
   const [paymentsHistory, setPaymentHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);  
-
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   
+  // For month/year navigation
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  
+  // For filters
+  const [filters, setFilters] = useState({
+    userId: "",
+    year: currentYear,
+    month: currentMonth + 1
+  });
+
   const [formData, setFormData] = useState({
     userId:"",
     paymentPerKilo: "",
@@ -33,97 +38,146 @@ function AddPayment() {
     finalPayment: "",
   });
 
+  // Fetch current date on mount
+  useEffect(() => {
+    const date = new Date();
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November", "December"];
+    const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    setCurrentDate(formattedDate);
+  }, []);
 
-{/*-------------------------------------------------------------------------------------------*/}
+  // Fetch payment history when tab or filters change
+  useEffect(() => {
+    if (activeTab === "viewHistory" || activeTab === "toPayment") {
+      fetchPaymentHistory();
+    }
+  }, [activeTab, filters.year, filters.month]);
 
-const fetchUserSuggestions = async (query) => {
-  try {
-    const response = await axios.post(
-      'http://localhost:8081/api/manager/search-farmers-indb',
-      { query },
-      { withCredentials: true }
-    );
-    console.log(response.data);
-    
-    if (response.data.Status === 'Success') {
-      // Only keep the IDs from the response
-      setUserSuggestions(response.data.farmers.map(farmer => farmer.id));
+  const fetchPaymentHistory = async () => {
+    try {
+      setHistoryLoading(true);
+      const response = await axios.post(
+        'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+        { year: filters.year, month: filters.month },
+        { withCredentials: true }
+      );
+      
+      if (response.data.Status === 'Success') {
+        setPaymentHistory(response.data.paymentHistory);
+      } else {
+        console.error('Failed to fetch payment history');
+      }
+    } catch (error) {
+      console.error('Error fetching payment history:', error);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  // Month navigation functions
+  const navigateMonth = (direction) => {
+    if (direction === 'prev') {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(prev => prev - 1);
+      } else {
+        setCurrentMonth(prev => prev - 1);
+      }
     } else {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(prev => prev + 1);
+      } else {
+        setCurrentMonth(prev => prev + 1);
+      }
+    }
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // User suggestion functions (unchanged)
+  const fetchUserSuggestions = async (query) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8081/api/manager/search-farmers-indb',
+        { query },
+        { withCredentials: true }
+      );
+      
+      if (response.data.Status === 'Success') {
+        setUserSuggestions(response.data.farmers.map(farmer => farmer.id));
+      } else {
+        setUserSuggestions([]);
+      }
+    } catch (error) {
+      console.error('Error fetching user suggestions:', error);
       setUserSuggestions([]);
     }
-  } catch (error) {
-    console.error('Error fetching user suggestions:', error);
-    setUserSuggestions([]);
-  }
-};
+  };
 
-const handleUserIdChange = (e) => {
-  const { value } = e.target;
-  
-  // Update the form data
-  setFormData(prev => ({ ...prev, userId: value }));
-  
-  // Fetch suggestions when there's at least 2 characters
-  if (value.length >= 2) {
-    fetchUserSuggestions(value);
-    setShowSuggestions(true);
-  } else {
+  const handleUserIdChange = (e) => {
+    const { value } = e.target;
+    setFormData(prev => ({ ...prev, userId: value }));
+    
+    if (value.length >= 2) {
+      fetchUserSuggestions(value);
+      setShowSuggestions(true);
+    } else {
+      setUserSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const fetchDEtailsRelatedTOUser = async (userId) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8081/api/manager/get-details-related-to-user',
+        { userId },
+        { withCredentials: true }
+      );
+      
+      if (response.data.Status === 'Success') {
+        setFormData(prev => ({
+          ...prev,
+          finalTeaKilos: response.data.finalTeaKilos || "0",
+          transport: response.data.transport || "0",
+          advances: response.data.advances || "0"
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      setError('Failed to fetch details for this user');
+    }
+  };
+
+  const handleSuggestionClick = (userId) => {
+    setFormData(prev => ({ ...prev, userId }));
     setUserSuggestions([]);
     setShowSuggestions(false);
-  }
-};
+    fetchDEtailsRelatedTOUser(userId);
+  };
 
-const fetchDEtailsRelatedTOUser = async (userId) => {
-  try {
-    const response = await axios.post(
-      'http://localhost:8081/api/manager/get-details-related-to-user',
-      { userId },
-      { withCredentials: true }
-    );
-    
-    if (response.data.Status === 'Success') {
-      console.log('User details:', response.data);
-      setFormData(prev => ({
-        ...prev,
-        finalTeaKilos: response.data.finalTeaKilos || "0",
-        transport: response.data.transport || "0",
-        advances: response.data.advances || "0"
-      }));
-    }
-  } catch (error) {
-    console.error('Error fetching user details:', error);
-    setError('Failed to fetch details for this user');
-  }
-};
-
-const handleSuggestionClick = (userId) => {
-  setFormData(prev => ({ ...prev, userId }));
-  setUserSuggestions([]);
-  setShowSuggestions(false);
-  fetchDEtailsRelatedTOUser(userId); // Fetch tea kilos when user is selected
-};
-
-{/*-------------------------------------------------------------------------------------------*/}
-  // Automatically calculate the payment when paymentPerKilo or finalTeaKilos change
+  // Calculation effects (unchanged)
   useEffect(() => {
     const { paymentPerKilo, finalTeaKilos } = formData;
-
-    // Only calculate if both values are not empty
     if (paymentPerKilo && finalTeaKilos) {
-      const paymentForFinalTeaKilos =
-        parseFloat(paymentPerKilo) * parseFloat(finalTeaKilos);
-      setFormData((prevData) => ({
+      const paymentForFinalTeaKilos = parseFloat(paymentPerKilo) * parseFloat(finalTeaKilos);
+      setFormData(prevData => ({
         ...prevData,
         paymentForFinalTeaKilos: paymentForFinalTeaKilos,
       }));
     }
   }, [formData.paymentPerKilo, formData.finalTeaKilos]);
 
-  // Automatically calculate finalAmount when relevant fields change
   useEffect(() => {
     const { paymentForFinalTeaKilos, additionalPayments, transport, directPayments } = formData;
-
-    // Only calculate if paymentForFinalTeaKilos and all other fields are available
     if (paymentForFinalTeaKilos || additionalPayments || transport || directPayments) {
       const finalAmount =
         (parseFloat(paymentForFinalTeaKilos) || 0) +
@@ -131,181 +185,105 @@ const handleSuggestionClick = (userId) => {
         (parseFloat(transport) || 0) +
         (parseFloat(directPayments) || 0);
 
-      setFormData((prevData) => ({
+      setFormData(prevData => ({
         ...prevData,
-        finalAmount: finalAmount.toFixed(2), // Round to two decimal places
+        finalAmount: finalAmount.toFixed(2),
       }));
     }
   }, [formData.paymentForFinalTeaKilos, formData.additionalPayments, formData.transport, formData.directPayments]);
 
-  // Automatically calculate finalPayment after deductions
   useEffect(() => {
     const { finalAmount, advances, teaPackets, fertilizer } = formData;
-
-    // Calculate deductions
     const totalDeductions =
       (parseFloat(advances) || 0) +
       (parseFloat(teaPackets) || 0) +
       (parseFloat(fertilizer) || 0);
 
-    // Deduct from finalAmount
     const finalPayment = (parseFloat(finalAmount) || 0) - totalDeductions;
 
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
-      finalPayment: finalPayment.toFixed(2), // Round to two decimal places
+      finalPayment: finalPayment.toFixed(2),
     }));
   }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);  
 
-  //Fetch Current Year and Month
-  useEffect(() => {
-    // Get current date when component mounts
-    const date = new Date();
-    console.log(date);
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-                       "July", "August", "September", "October", "November", "December"];
-    const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-    setCurrentDate(formattedDate);
-  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const positiveNumberPattern = /^\d*\.?\d*$/;
 
-{/*-------------------------------------------------------------------------------------------*/}
-
-  // Function to fetch payment history
-  useEffect(() => {
-    // Check if activeTab is "viewHistory"
-    if (activeTab === "viewHistory") {
-      const fetchPaymentHistory = async () => {
-        try {
-          // Start loading
-          setHistoryLoading(true);
-          
-          const response = await axios.post('http://localhost:8081/api/manager/get-Farmer-Payment-History', {}, { withCredentials: true });
-          console.log(response.data)
-          if (response.data.Status === 'Success') {
-            setPaymentHistory(response.data.paymentHistory);
-          } else {
-            console.error('Failed to fetch payment history');
-          }
-        } catch (error) {
-          console.error('Error fetching payment history:', error);
-        } finally {
-          // Stop loading
-          setHistoryLoading(false);
-        }
-      };
-  
-      fetchPaymentHistory();
-    }
-  }, [activeTab]); // Depend on activeTab state change
-
-{/*-------------------------------------------------------------------------------------------*/}
-
-// Handle changes in form fields
-const handleChange = (e) => {
-  const { name, value } = e.target;
-
-  // Regular expression to allow only positive numbers (including decimals)
-  const positiveNumberPattern = /^\d*\.?\d*$/;
-
-  if (name !== "userId" && value !== "" && !positiveNumberPattern.test(value)) {
-    setError("Please enter a valid positive number");
-    return;
-  } else {
-    setError(""); // Clear error if input is valid
-  }
-
-  setFormData((prevData) => {
-    const updatedData = { ...prevData, [name]: value };
-
-    // Convert salary, additionalPayments, and deductions to numbers
-    const salary = parseFloat(updatedData.salaryAmount) || 0;
-    const additional = parseFloat(updatedData.additionalPayments) || 0;
-    const deductions = parseFloat(updatedData.deductions) || 0;
-
-    // Calculate final payment
-    updatedData.finalPayment = (salary + additional - deductions).toFixed(2);
-
-    return updatedData;
-  });
-};
-
-
-{/*-------------------------------------------------------------------------------------------*/}
-// Handle form submission
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  // Validation for positive numbers
-  const positiveNumberPattern = /^\d+(\.\d+)?$/;
-
-  // Check if all required fields are filled with positive numbers
-  if (
-    !positiveNumberPattern.test(formData.finalTeaKilos) ||
-    !positiveNumberPattern.test(formData.paymentPerKilo) ||
-    !positiveNumberPattern.test(formData.additionalPayments) ||
-    !positiveNumberPattern.test(formData.transport) ||
-    !positiveNumberPattern.test(formData.directPayments) ||
-    !positiveNumberPattern.test(formData.advances) ||
-    !positiveNumberPattern.test(formData.teaPackets) ||
-    !positiveNumberPattern.test(formData.fertilizer)
-  ) {
-    setError("Please enter valid positive numbers for all payment fields.");
-    return;
-  }
-
-  // Continue if validation passes
-  setError("");
-  setIsLoading(true);
-
-  try {
-    // Sending data to the backend (similar to the login request)
-    const response = await axios.post(
-      'http://localhost:8081/api/manager/add-Farmer-Payment', // Your backend API endpoint
-      formData,
-      { withCredentials: true }
-    );
-
-    if (response.data && response.data.Status === "Success") {
-      console.log("Payment Details Submitted Successfully:", response.data);
-      alert("Payment added successfully!");
-
-      // Optionally reset form after submission
-      setFormData({
-        userId: "",
-        finalTeaKilos: "",
-        paymentPerKilo: "",
-        paymentForFinalTeaKilos: "",
-        additionalPayments: "",
-        directPayments: "",
-        finalPayment: "",
-        advances: "",
-        teaPackets: "",
-        fertilizer: "",
-        transport: "",
-        finalAmount: "",
-      });
+    if (name !== "userId" && value !== "" && !positiveNumberPattern.test(value)) {
+      setError("Please enter a valid positive number");
+      return;
     } else {
-      setError(response.data.Error || 'Failed to add payment. Please try again.');
+      setError("");
     }
-  } catch (error) {
-    if (error.response) {
-      console.error('Server Error:', error.response.data);
-      setError(error.response.data.message || 'Server error. Please try again.');
-    } else if (error.inner) {
-      // Handling validation errors
-      const validationErrors = {};
-      error.inner.forEach(err => {
-        validationErrors[err.path] = err.message;
-      });
-      setError(Object.values(validationErrors).join(', ')); // Show validation errors
-    } else {
-      console.error('Payment submission error:', error);
-      setError('An error occurred. Please try again.');
+
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const positiveNumberPattern = /^\d+(\.\d+)?$/;
+
+    if (
+      !positiveNumberPattern.test(formData.finalTeaKilos) ||
+      !positiveNumberPattern.test(formData.paymentPerKilo) ||
+      !positiveNumberPattern.test(formData.additionalPayments) ||
+      !positiveNumberPattern.test(formData.transport) ||
+      !positiveNumberPattern.test(formData.directPayments) ||
+      !positiveNumberPattern.test(formData.advances) ||
+      !positiveNumberPattern.test(formData.teaPackets) ||
+      !positiveNumberPattern.test(formData.fertilizer)
+    ) {
+      setError("Please enter valid positive numbers for all payment fields.");
+      return;
     }
-  } finally {
-    setIsLoading(false); // Ensure loading state is cleared
-  }
-};
+
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8081/api/manager/add-Farmer-Payment',
+        formData,
+        { withCredentials: true }
+      );
+
+      if (response.data && response.data.Status === "Success") {
+        alert("Payment added successfully!");
+        setFormData({
+          userId: "",
+          finalTeaKilos: "",
+          paymentPerKilo: "",
+          paymentForFinalTeaKilos: "",
+          additionalPayments: "",
+          directPayments: "",
+          finalPayment: "",
+          advances: "",
+          teaPackets: "",
+          fertilizer: "",
+          transport: "",
+          finalAmount: "",
+        });
+      } else {
+        setError(response.data.Error || 'Failed to add payment. Please try again.');
+      }
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.message || 'Server error. Please try again.');
+      } else {
+        setError('An error occurred. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+                     "July", "August", "September", "October", "November", "December"];
 
   return (
     <div className="cfa-content">
@@ -336,10 +314,15 @@ const handleSubmit = async (e) => {
           </button>
         </div>
 
-        {/* Farmer Payment Logs */}
+        {/* To Payments Page */}
         {activeTab === "toPayment" && (
           <div className="payment-history">
-            <button>To Load Logs Click Here</button>
+            <div className="month-navigation">
+              <button onClick={() => navigateMonth('prev')}>&lt; Previous</button>
+              <h3>{monthNames[currentMonth]} {currentYear}</h3>
+              <button onClick={() => navigateMonth('next')}>Next &gt;</button>
+            </div>
+            
             {historyLoading ? (
               <p>Loading...</p>
             ) : paymentsHistory.length > 0 ? (
@@ -370,9 +353,8 @@ const handleSubmit = async (e) => {
                 </tbody>
               </table>
             ) : (
-              <p>No payment history found.</p>
+              <p>No payment records found for {monthNames[currentMonth]} {currentYear}.</p>
             )}
-
           </div>
         )}
 
@@ -393,10 +375,7 @@ const handleSubmit = async (e) => {
               {showSuggestions && userSuggestions.length > 0 && (
                 <ul className="suggestions-dropdown">
                   {userSuggestions.map((userId, index) => (
-                    <li 
-                      key={index} 
-                      onClick={() => handleSuggestionClick(userId)}
-                    >
+                    <li key={index} onClick={() => handleSuggestionClick(userId)}>
                       {userId}
                     </li>
                   ))}
@@ -404,7 +383,6 @@ const handleSubmit = async (e) => {
               )}
             </div>
 
-{/*-------------------------------------------------------------------------------------------*/}
             <div className="input-group">
               <label>Final Tea Kilos</label>
               <input
@@ -442,7 +420,6 @@ const handleSubmit = async (e) => {
               />
             </div>
 
-{/*----------------------------------------------------*/}
             <div className="input-group">
               <label>Additional Payments</label>
               <div className="deduction-fields">
@@ -486,8 +463,6 @@ const handleSubmit = async (e) => {
               />
             </div>
 
-{/*----------------------------------------------------*/}
-
             <div className="input-group">
               <label>Deductions</label>
               <div className="deduction-fields">
@@ -526,7 +501,6 @@ const handleSubmit = async (e) => {
                 readOnly
               />
             </div>
-{/*----------------------------------------------------*/}
 
             {error && <p className="error">{error}</p>}
 
@@ -539,7 +513,49 @@ const handleSubmit = async (e) => {
         {/* View Payment History Tab */}
         {activeTab === "viewHistory" && (
           <div className="payment-history">
-            <h3>Payment History</h3>
+            <div className="filter-controls">
+              <div className="filter-group">
+                <label>Search User ID:</label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={filters.userId}
+                  onChange={handleFilterChange}
+                  placeholder="Enter user ID"
+                />
+              </div>
+              
+              <div className="filter-group">
+                <label>Year:</label>
+                <select
+                  name="year"
+                  value={filters.year}
+                  onChange={handleFilterChange}
+                >
+                  {Array.from({length: 5}, (_, i) => currentYear - i).map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="filter-group">
+                <label>Month:</label>
+                <select
+                  name="month"
+                  value={filters.month}
+                  onChange={handleFilterChange}
+                >
+                  {monthNames.map((month, index) => (
+                    <option key={month} value={index + 1}>{month}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="results-count">
+              Showing {paymentsHistory.length} records
+            </div>
+
             {historyLoading ? (
               <p>Loading...</p>
             ) : paymentsHistory.length > 0 ? (
@@ -572,11 +588,8 @@ const handleSubmit = async (e) => {
             ) : (
               <p>No payment history found.</p>
             )}
-
           </div>
         )}
-
-
       </div>
     </div>
   );
