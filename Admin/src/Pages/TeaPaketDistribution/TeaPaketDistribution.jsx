@@ -108,6 +108,7 @@ const TeaPacketDistribution = () => {
 
   // Delete a tea packet request
   const deleteRequest = async (requestId) => {
+    console.log("Deleting request with ID:", requestId); // Log the request ID being deleted
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/delete-tea-packet",
