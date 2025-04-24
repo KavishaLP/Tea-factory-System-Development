@@ -3,25 +3,27 @@ import axios from "axios";
 import "./TeaPaketDistribution.css";
 
 const TeaPacketDistribution = () => {
-  const [activeTab, setActiveTab] = useState("newRequests");
+  const [activeTab, setActiveTab] = useState("newRequests"); // Tabs: newRequests, confirmedRequests, or deletedRequests
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
-  const [requests, setRequests] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [requests, setRequests] = useState([]); // State to store fetched requests
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [error, setError] = useState(""); // Error state
 
+  
+  // Fetch data on component mount or when the active tab changes
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      setError("");
+      setError(""); // Clear any previous errors
       try {
         const data = await fetchTeaPacketRequests();
-        console.log("Fetched Data:", data);
-        setRequests(data || []);
+        console.log("Fetched Data:", data); // Log the fetched data
+        setRequests(data || []); // Ensure data is an array, default to empty array if undefined
       } catch (error) {
         setError("Failed to fetch data. Please try again later.");
         console.error("Error fetching data:", error);
-        setRequests([]);
+        setRequests([]); // Reset requests to empty array on error
       } finally {
         setIsLoading(false);
       }
@@ -30,15 +32,16 @@ const TeaPacketDistribution = () => {
     fetchData();
   }, [activeTab]);
 
+  // Fetch tea packet requests from the backend
   const fetchTeaPacketRequests = async () => {
     try {
       const response = await axios.get(
         "http://localhost:8081/api/admin/get-tea-packet-requests",
         { withCredentials: true }
       );
-
+  
       console.log("Backend Response:", response);
-
+  
       if (response.data.status === "Success") {
         return response.data.teaPacketRequests || [];
       } else {
@@ -50,13 +53,18 @@ const TeaPacketDistribution = () => {
     }
   };
 
-  // ---------------------- CONFIRM ---------------------- //
+// ----------------------------------------------------------------------------------
 
+  // Handle Confirm action
   const handleConfirm = async (requestId) => {
     setError("");
     try {
       await confirmRequest(requestId);
-      updateRequestStatus(requestId, "Approved");
+      setRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request.request_id === requestId ? { ...request, status: "Approved" } : request
+        )
+      );
       alert("Request confirmed successfully!");
     } catch (error) {
       setError("Failed to confirm request. Please try again.");
@@ -64,28 +72,33 @@ const TeaPacketDistribution = () => {
     }
   };
 
+  // Confirm a tea packet request
   const confirmRequest = async (requestId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/admin/confirm-tea-packet",
-        { requestId },
+        "http://localhost:8081/api/admin/confirm-tea-packets",
+        { requestId: requestId },
         { withCredentials: true }
       );
       if (response.data.status !== "Success") {
         throw new Error(response.data.message || "Failed to confirm request.");
       }
     } catch (error) {
+      console.error("Error confirming request:", error);
       throw error;
     }
   };
 
-  // ---------------------- DELETE ---------------------- //
-
+  // Handle Delete action
   const handleDelete = async (requestId) => {
     setError("");
     try {
       await deleteRequest(requestId);
-      updateRequestStatus(requestId, "Rejected");
+      setRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request.request_id === requestId ? { ...request, status: "Rejected" } : request
+        )
+      );
       alert("Request deleted successfully!");
     } catch (error) {
       setError("Failed to delete request. Please try again.");
@@ -93,86 +106,56 @@ const TeaPacketDistribution = () => {
     }
   };
 
+  // Delete a tea packet request
   const deleteRequest = async (requestId) => {
+    console.log("Deleting request with ID:", requestId); // Log the request ID being deleted
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/admin/delete-tea-packet",
-        { requestId },
+        "http://localhost:8081/api/admin/delete-tea-packets",
+        { requestId: requestId },
         { withCredentials: true }
       );
       if (response.data.status !== "Success") {
         throw new Error(response.data.message || "Failed to delete request.");
       }
     } catch (error) {
+      console.error("Error deleting request:", error);
       throw error;
     }
   };
 
-  // ---------------------- CONFIRM DELETE REQUEST ---------------------- //
+// ----------------------------------------------------------------------------------
 
-  const handleConfirmDelete = async (requestId) => {
-    setError("");
-    try {
-      await confirmDeleteRequest(requestId);
-      updateRequestStatus(requestId, "Deleted");
-      alert("Request confirm-deleted successfully!");
-    } catch (error) {
-      setError("Failed to confirm delete request. Please try again.");
-      console.error("Error confirming delete request:", error);
-    }
-  };
-
-  const confirmDeleteRequest = async (requestId) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/api/admin/confirm-delete-tea-packet",
-        { requestId },
-        { withCredentials: true }
-      );
-      if (response.data.status !== "Success") {
-        throw new Error(response.data.message || "Failed to confirm delete request.");
-      }
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  // ---------------------- UTIL ---------------------- //
-
-  const updateRequestStatus = (requestId, newStatus) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request.request_id === requestId ? { ...request, status: newStatus } : request
-      )
-    );
-  };
-
+  // Filter data based on search term, date, and status
   const filteredData = Array.isArray(requests)
-    ? requests.filter((request) => {
-        if (!request || !request.userId || !request.userName) return false;
+  ? requests.filter((request) => {
+      if (!request || !request.userId || !request.userName) {
+        return false;
+      }
 
-        const matchesSearchTerm =
-          request.userId.includes(searchTerm) ||
-          request.userName.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearchTerm =
+        request.userId.includes(searchTerm) ||
+        request.userName.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesDate = filterDate ? request.requestDate === filterDate : true;
+      const matchesDate = filterDate ? request.requestDate === filterDate : true;
 
-        const matchesStatus =
-          activeTab === "newRequests"
-            ? request.status === "Pending"
-            : activeTab === "confirmedRequests"
-            ? request.status === "Approved"
-            : request.status === "Rejected" || request.status === "Deleted";
+      const matchesStatus =
+        activeTab === "newRequests"
+          ? request.status === "Pending"
+          : activeTab === "confirmedRequests"
+          ? request.status === "Approved"
+          : request.status === "Rejected";
 
-        return matchesSearchTerm && matchesDate && matchesStatus;
-      })
-    : [];
+      return matchesSearchTerm && matchesDate && matchesStatus;
+    })
+  : [];
 
   return (
     <div className="tpd-content">
       <div className="tpd-grid">
         <h2>Tea Packet Request History</h2>
         <div className="history-section">
+          {/* Tabs */}
           <div className="tabs-container">
             <button
               className={`tab-button ${activeTab === "newRequests" ? "active" : ""}`}
@@ -194,6 +177,7 @@ const TeaPacketDistribution = () => {
             </button>
           </div>
 
+          {/* Search and Filter Controls */}
           <div className="controls-container">
             <div className="search-box">
               <input
@@ -213,8 +197,14 @@ const TeaPacketDistribution = () => {
             </div>
           </div>
 
-          {error && <div className="error-message"><p>{error}</p></div>}
+          {/* Error Message */}
+          {error && (
+            <div className="error-message">
+              <p>{error}</p>
+            </div>
+          )}
 
+          {/* History Table */}
           <div className="table-container">
             {isLoading ? (
               <p>Loading...</p>
@@ -233,7 +223,6 @@ const TeaPacketDistribution = () => {
                     <th>Payment Option</th>
                     <th>Status</th>
                     {activeTab === "newRequests" && <th>Action</th>}
-                    {activeTab === "deletedRequests" && <th>Confirm Delete</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -267,16 +256,6 @@ const TeaPacketDistribution = () => {
                           </button>
                         </td>
                       )}
-                      {activeTab === "deletedRequests" && (
-                        <td>
-                          <button
-                            className="confirm-delete-button"
-                            onClick={() => handleConfirmDelete(request.request_id)}
-                          >
-                            Confirm Delete
-                          </button>
-                        </td>
-                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -284,6 +263,7 @@ const TeaPacketDistribution = () => {
             )}
           </div>
 
+          {/* Pagination */}
           <div className="pagination">
             <button>&laquo;</button>
             <button className="active">1</button>
