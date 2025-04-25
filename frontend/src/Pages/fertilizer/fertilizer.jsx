@@ -4,13 +4,18 @@ import "./Fertilizer.css";
 
 const Fertilizer = () => {
   const [activeTab, setActiveTab] = useState("newRequests");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [requests, setRequests] = useState([]);
+  const [filteredRequests, setFilteredRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    searchTerm: "",
+    startDate: "",
+    endDate: ""
+  });
 
   // Format date from ISO string to readable format
   const formatDate = (dateString) => {
@@ -60,6 +65,11 @@ const Fertilizer = () => {
     fetchData();
   }, [activeTab]);
 
+  // Apply filters whenever filters or requests change
+  useEffect(() => {
+    applyFilters();
+  }, [filters, requests, activeTab]);
+
   const fetchFertilizerRequests = async () => {
     try {
       const response = await axios.get(
@@ -74,6 +84,59 @@ const Fertilizer = () => {
       console.error("Error fetching fertilizer requests:", error);
       throw error;
     }
+  };
+
+  const applyFilters = () => {
+    let result = [...requests];
+
+    // Search term filtering
+    if (filters.searchTerm) {
+      const searchTermLower = filters.searchTerm.toLowerCase();
+      result = result.filter(request => 
+        Object.entries(request).some(([key, value]) => {
+          if (typeof value === "string" && ["userId", "userName", "fertilizerType", "packetType"].includes(key)) {
+            return value.toLowerCase().includes(searchTermLower);
+          }
+          return false;
+        })
+      );
+    }
+
+    // Date range filtering
+    if (filters.startDate || filters.endDate) {
+      const startDateStr = filters.startDate || "1970-01-01";
+      const endDateStr = filters.endDate || "2100-12-31";
+      
+      result = result.filter(request => {
+        const requestDateStr = getDateOnlyString(request.requestDate);
+        return requestDateStr >= startDateStr && requestDateStr <= endDateStr;
+      });
+    }
+
+    // Status filtering based on active tab
+    result = result.filter(request => {
+      return activeTab === "newRequests" ? request.status === "Pending" :
+             activeTab === "confirmedRequests" ? request.status === "Approved" :
+             request.status === "Rejected";
+    });
+
+    setFilteredRequests(result);
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      searchTerm: "",
+      startDate: "",
+      endDate: ""
+    });
   };
 
   const handleConfirm = async (requestId) => {
@@ -138,40 +201,6 @@ const Fertilizer = () => {
     }
   };
 
-
-
-  const filteredData = requests.filter((request) => {
-    if (!request) return false;
-
-    // Search term matching
-    const matchesSearchTerm = searchTerm
-      ? Object.entries(request).some(([key, value]) => {
-          if (typeof value === "string" && ["userId", "userName", "fertilizerType", "packetType"].includes(key)) {
-            return value.toLowerCase().includes(searchTerm.toLowerCase());
-          }
-          return false;
-        })
-      : true;
-
-    // Date range filtering
-    const requestDateStr = getDateOnlyString(request.requestDate);
-    const startDateStr = startDate || "1970-01-01"; // Default to earliest date if not set
-    const endDateStr = endDate || "2100-12-31";     // Default to far future if not set
-
-    const matchesDateRange = 
-      requestDateStr >= startDateStr && 
-      requestDateStr <= endDateStr;
-
-    // Status filtering
-    const matchesStatus =
-      activeTab === "newRequests" ? request.status === "Pending" :
-      activeTab === "confirmedRequests" ? request.status === "Approved" :
-      request.status === "Rejected";
-
-    return matchesSearchTerm && matchesDateRange && matchesStatus;
-  });
-
-
   return (
     <div className="cfa-content">
       <h2>Fertilizer Request History</h2>
@@ -202,9 +231,10 @@ const Fertilizer = () => {
             <div className="search-box">
               <input
                 type="text"
+                name="searchTerm"
                 placeholder="Search by any field..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={filters.searchTerm}
+                onChange={handleFilterChange}
               />
               <i className="search-icon">🔍</i>
             </div>
@@ -213,26 +243,25 @@ const Fertilizer = () => {
                 <label>From:</label>
                 <input
                   type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  max={endDate || undefined}
+                  name="startDate"
+                  value={filters.startDate}
+                  onChange={handleFilterChange}
+                  max={filters.endDate || undefined}
                 />
               </div>
               <div className="date-input">
                 <label>To:</label>
                 <input
                   type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  min={startDate || undefined}
+                  name="endDate"
+                  value={filters.endDate}
+                  onChange={handleFilterChange}
+                  min={filters.startDate || undefined}
                 />
               </div>
               <button 
                 className="clear-dates"
-                onClick={() => {
-                  setStartDate("");
-                  setEndDate("");
-                }}
+                onClick={resetFilters}
               >
                 Clear
               </button>
@@ -244,7 +273,7 @@ const Fertilizer = () => {
           <div className="table-container">
             {isLoading ? (
               <p className="loading-message">Loading...</p>
-            ) : filteredData.length === 0 ? (
+            ) : filteredRequests.length === 0 ? (
               <p className="no-data-message">No requests found.</p>
             ) : (
               <table className="history-table">
@@ -262,10 +291,10 @@ const Fertilizer = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((request) => (
+                  {filteredRequests.map((request) => (
                     <React.Fragment key={request.request_id}>
-                      <tr  className="clickable-row">
-                        <td className="col-date">{request.requestDate}</td>
+                      <tr className="clickable-row">
+                        <td className="col-date">{formatDate(request.requestDate)}</td>
                         <td className="col-user-id">{request.userId}</td>
                         <td className="col-user-name">{request.userName}</td>
                         <td className="col-fertilizer-type">{request.fertilizerType}</td>
@@ -302,40 +331,6 @@ const Fertilizer = () => {
                           </td>
                         )}
                       </tr>
-                      {expandedRow === request.request_id && (
-                        <tr className="expanded-row">
-                          <td colSpan={activeTab === "newRequests" ? 9 : 8}>
-                            <div className="expanded-content">
-                              <div className="detail-row">
-                                <span className="detail-label">Request ID:</span>
-                                <span>{request.request_id}</span>
-                              </div>
-                              <div className="detail-row">
-                                <span className="detail-label">Request Date:</span>
-                                <span>{request.requestDate}</span>
-                              </div>
-                              <div className="detail-row">
-                                <span className="detail-label">User Details:</span>
-                                <span>{request.userName} (ID: {request.userId})</span>
-                              </div>
-                              <div className="detail-row">
-                                <span className="detail-label">Fertilizer Details:</span>
-                                <span>{request.amount} {request.packetType} of {request.fertilizerType}</span>
-                              </div>
-                              <div className="detail-row">
-                                <span className="detail-label">Payment Method:</span>
-                                <span>{request.paymentOption}</span>
-                              </div>
-                              {request.additionalNotes && (
-                                <div className="detail-row">
-                                  <span className="detail-label">Notes:</span>
-                                  <span>{request.additionalNotes}</span>
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      )}
                     </React.Fragment>
                   ))}
                 </tbody>
