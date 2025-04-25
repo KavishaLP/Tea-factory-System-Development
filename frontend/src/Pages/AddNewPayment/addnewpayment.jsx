@@ -131,7 +131,68 @@ function AddPayment() {
 
     // Separate month navigation for "To Payments"
     const navigateToPaymentsMonth = (direction) => {
-        setToPaymentsFilters((prevFilters) => {
+        // Month navigation for "To Payments"
+        const navigateToPaymentsMonth = (direction) => {
+            setToPaymentsFilters((prevFilters) => {
+                let newMonth = prevFilters.month ? parseInt(prevFilters.month) : currentMonth + 1;
+                let newYear = prevFilters.year ? parseInt(prevFilters.year) : currentYear;
+        
+                if (direction === "prev") {
+                    if (newMonth === 1) {
+                        newMonth = 12;
+                        newYear -= 1;
+                    } else {
+                        newMonth -= 1;
+                    }
+                } else if (direction === "next") {
+                    if (newMonth === 12) {
+                        newMonth = 1;
+                        newYear += 1;
+                    } else {
+                        newMonth += 1;
+                    }
+                }
+        
+                return {
+                    year: newYear.toString(),
+                    month: newMonth.toString(),
+                };
+            });
+        };
+        
+        // Fetch payment history for "To Payments"
+        const fetchToPaymentsHistory = async () => {
+            try {
+                setHistoryLoading(true);
+                const requestData = {};
+                if (toPaymentsFilters.year) requestData.year = toPaymentsFilters.year;
+                if (toPaymentsFilters.month) requestData.month = toPaymentsFilters.month;
+        
+                const response = await axios.post(
+                    "http://localhost:8081/api/manager/get-Farmer-Payment-History",
+                    requestData,
+                    { withCredentials: true }
+                );
+        
+                if (response.data.Status === "Success") {
+                    setPaymentHistory(response.data.paymentHistory);
+                } else {
+                    setPaymentHistory([]);
+                }
+            } catch (error) {
+                console.error("Error fetching payment history:", error);
+                setPaymentHistory([]);
+            } finally {
+                setHistoryLoading(false);
+            }
+        };
+        
+        // Trigger fetch when "toPaymentsFilters" changes
+        useEffect(() => {
+            if (activeTab === "toPayment") {
+                fetchToPaymentsHistory();
+            }
+        }, [toPaymentsFilters, activeTab]);        setToPaymentsFilters((prevFilters) => {
             let newMonth = prevFilters.month ? parseInt(prevFilters.month) : currentMonth + 1;
             let newYear = prevFilters.year ? parseInt(prevFilters.year) : currentYear;
 
