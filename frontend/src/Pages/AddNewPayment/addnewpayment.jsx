@@ -11,6 +11,8 @@ function AddPayment() {
   const [historyLoading, setHistoryLoading] = useState(true);  
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [filteredHistory, setFilteredHistory] = useState([]);
+  
   
   // For month/year navigation
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -37,6 +39,15 @@ function AddPayment() {
     fertilizer: "",
     finalPayment: "",
   });
+
+  const resetFilters = () => {
+    setFilters({
+      userId: "",
+      year: "",
+      month: ""
+    });
+    setFilteredHistory(paymentsHistory);
+  };
 
   // Fetch current date on mount
   useEffect(() => {
@@ -551,6 +562,14 @@ function AddPayment() {
                 </select>
               </div>
             </div>
+
+            <button 
+                type="button" 
+                onClick={resetFilters}
+                className="reset-filters"
+              >
+                Reset Filters
+              </button>
 
             <div className="results-count">
               Showing {paymentsHistory.length} records
