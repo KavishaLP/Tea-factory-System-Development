@@ -131,27 +131,32 @@ function AddPayment() {
 
     // Separate month navigation for "To Payments"
     const navigateToPaymentsMonth = (direction) => {
-        if (direction === 'prev') {
-            if (currentMonth === 0) {
-                setCurrentMonth(11);
-                setCurrentYear(prev => prev - 1);
-            } else {
-                setCurrentMonth(prev => prev - 1);
-            }
-        } else {
-            if (currentMonth === 11) {
-                setCurrentMonth(0);
-                setCurrentYear(prev => prev + 1);
-            } else {
-                setCurrentMonth(prev => prev + 1);
-            }
-        }
+        setToPaymentsFilters((prevFilters) => {
+            let newMonth = prevFilters.month ? parseInt(prevFilters.month) : currentMonth + 1;
+            let newYear = prevFilters.year ? parseInt(prevFilters.year) : currentYear;
 
-        setToPaymentsFilters(prev => ({
-            ...prev,
-            year: currentYear,
-            month: currentMonth + 1,
-        }));
+            if (direction === "prev") {
+                if (newMonth === 1) {
+                    newMonth = 12;
+                    newYear -= 1;
+                } else {
+                    newMonth -= 1;
+                }
+            } else if (direction === "next") {
+                if (newMonth === 12) {
+                    newMonth = 1;
+                    newYear += 1;
+                } else {
+                    newMonth += 1;
+                }
+            }
+
+            return {
+                ...prevFilters,
+                year: newYear.toString(),
+                month: newMonth.toString(),
+            };
+        });
     };
 
     useEffect(() => {
@@ -394,18 +399,18 @@ function AddPayment() {
             if (toPaymentsFilters.month) requestData.month = toPaymentsFilters.month;
 
             const response = await axios.post(
-                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+                "http://localhost:8081/api/manager/get-Farmer-Payment-History",
                 requestData,
                 { withCredentials: true }
             );
 
-            if (response.data.Status === 'Success') {
+            if (response.data.Status === "Success") {
                 setPaymentHistory(response.data.paymentHistory);
             } else {
                 setPaymentHistory([]);
             }
         } catch (error) {
-            console.error('Error fetching payment history:', error);
+            console.error("Error fetching payment history:", error);
             setPaymentHistory([]);
         } finally {
             setHistoryLoading(false);
@@ -480,9 +485,12 @@ function AddPayment() {
                 {activeTab === "toPayment" && (
                     <div className="payment-history">
                         <div className="month-navigation">
-                            <button onClick={() => navigateToPaymentsMonth('prev')}>&lt; Previous</button>
-                            <h3>{monthNames[currentMonth]} {currentYear}</h3>
-                            <button onClick={() => navigateToPaymentsMonth('next')}>Next &gt;</button>
+                            <button onClick={() => navigateToPaymentsMonth("prev")}>&lt; Previous</button>
+                            <h3>
+                                {monthNames[toPaymentsFilters.month ? parseInt(toPaymentsFilters.month) - 1 : currentMonth]}{" "}
+                                {toPaymentsFilters.year || currentYear}
+                            </h3>
+                            <button onClick={() => navigateToPaymentsMonth("next")}>Next &gt;</button>
                         </div>
 
                         {historyLoading ? (
@@ -509,7 +517,7 @@ function AddPayment() {
                                             <td>{payment.finalAmount}</td>
                                             <td>{payment.advances}</td>
                                             <td>{payment.finalPayment}</td>
-                                            <td>{new Date(payment.created_at).toLocaleDateString('en-US')}</td>
+                                            <td>{new Date(payment.created_at).toLocaleDateString("en-US")}</td>
                                         </tr>
                                     ))}
                                 </tbody>
