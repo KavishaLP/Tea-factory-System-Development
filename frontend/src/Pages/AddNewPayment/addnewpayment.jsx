@@ -24,6 +24,17 @@ function AddPayment() {
         year: "",  // Empty string for no filter
         month: ""  // Empty string for no filter
     });
+
+    const [toPaymentsFilters, setToPaymentsFilters] = useState({
+        year: "",
+        month: "",
+    });
+
+    const [viewHistoryFilters, setViewHistoryFilters] = useState({
+        year: "",
+        month: "",
+    });
+
     const [formData, setFormData] = useState({
         userId: "",
         paymentPerKilo: "",
@@ -112,6 +123,31 @@ function AddPayment() {
 
         // Update filters based on the new month and year
         setFilters(prev => ({
+            ...prev,
+            year: currentYear,
+            month: currentMonth + 1,
+        }));
+    };
+
+    // Separate month navigation for "To Payments"
+    const navigateToPaymentsMonth = (direction) => {
+        if (direction === 'prev') {
+            if (currentMonth === 0) {
+                setCurrentMonth(11);
+                setCurrentYear(prev => prev - 1);
+            } else {
+                setCurrentMonth(prev => prev - 1);
+            }
+        } else {
+            if (currentMonth === 11) {
+                setCurrentMonth(0);
+                setCurrentYear(prev => prev + 1);
+            } else {
+                setCurrentMonth(prev => prev + 1);
+            }
+        }
+
+        setToPaymentsFilters(prev => ({
             ...prev,
             year: currentYear,
             month: currentMonth + 1,
@@ -349,6 +385,68 @@ function AddPayment() {
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
 
+    // Fetch payment history for "To Payments"
+    const fetchToPaymentsHistory = async () => {
+        try {
+            setHistoryLoading(true);
+            const requestData = {};
+            if (toPaymentsFilters.year) requestData.year = toPaymentsFilters.year;
+            if (toPaymentsFilters.month) requestData.month = toPaymentsFilters.month;
+
+            const response = await axios.post(
+                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+                requestData,
+                { withCredentials: true }
+            );
+
+            if (response.data.Status === 'Success') {
+                setPaymentHistory(response.data.paymentHistory);
+            } else {
+                setPaymentHistory([]);
+            }
+        } catch (error) {
+            console.error('Error fetching payment history:', error);
+            setPaymentHistory([]);
+        } finally {
+            setHistoryLoading(false);
+        }
+    };
+
+    // Fetch payment history for "View Payments History"
+    const fetchViewHistory = async () => {
+        try {
+            setHistoryLoading(true);
+            const requestData = {};
+            if (viewHistoryFilters.year) requestData.year = viewHistoryFilters.year;
+            if (viewHistoryFilters.month) requestData.month = viewHistoryFilters.month;
+
+            const response = await axios.post(
+                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+                requestData,
+                { withCredentials: true }
+            );
+
+            if (response.data.Status === 'Success') {
+                setFilteredHistory(response.data.paymentHistory);
+            } else {
+                setFilteredHistory([]);
+            }
+        } catch (error) {
+            console.error('Error fetching payment history:', error);
+            setFilteredHistory([]);
+        } finally {
+            setHistoryLoading(false);
+        }
+    };
+
+    // Call the respective fetch functions based on the active tab
+    useEffect(() => {
+        if (activeTab === "toPayment") {
+            fetchToPaymentsHistory();
+        } else if (activeTab === "viewHistory") {
+            fetchViewHistory();
+        }
+    }, [activeTab, toPaymentsFilters, viewHistoryFilters]);
 
     return (
         <div className="cfa-content">
@@ -382,9 +480,9 @@ function AddPayment() {
                 {activeTab === "toPayment" && (
                     <div className="payment-history">
                         <div className="month-navigation">
-                            <button onClick={() => navigateMonth('prev')}>&lt; Previous</button>
+                            <button onClick={() => navigateToPaymentsMonth('prev')}>&lt; Previous</button>
                             <h3>{monthNames[currentMonth]} {currentYear}</h3>
-                            <button onClick={() => navigateMonth('next')}>Next &gt;</button>
+                            <button onClick={() => navigateToPaymentsMonth('next')}>Next &gt;</button>
                         </div>
 
                         {historyLoading ? (
