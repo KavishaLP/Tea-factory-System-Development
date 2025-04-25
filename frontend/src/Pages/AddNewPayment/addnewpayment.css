@@ -198,7 +198,7 @@ button.loading::after {
 
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+      transform: rotate(360deg);
   }
 }
 
@@ -257,35 +257,91 @@ button.loading::after {
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .cfa-content {
-    margin-left: 80px;
-    padding: 1rem;
+      margin-left: 80px;
+      padding: 1rem;
   }
 
   .cfa-grid {
-    padding: 1.25rem;
+      padding: 1.25rem;
   }
 
   .deduction-fields {
-    grid-template-columns: 1fr;
+      grid-template-columns: 1fr;
   }
 }
 
 @media screen and (max-width: 480px) {
   .cfa-content {
-    margin-left: 0;
-    padding: 0.75rem;
+      margin-left: 0;
+      padding: 0.75rem;
   }
 
   .cfa-grid {
-    padding: 1rem;
-    border-radius: 8px;
+      padding: 1rem;
+      border-radius: 8px;
   }
 
   .input-group input {
-    padding: 0.625rem;
+      padding: 0.625rem;
   }
 
   button {
-    padding: 0.875rem;
+      padding: 0.875rem;
   }
+}
+
+/* Month Navigation */
+.month-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.month-nav-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.month-nav-button:hover {
+  background-color: #3e8e41;
+}
+
+/* Filter Section */
+.filter-section {
+  display: flex;
+  justify-content: flex-start; /* Align items to the start of the container */
+  align-items: center;
+  gap: 1rem; /* Space between items */
+  margin-bottom: 1rem;
+}
+
+.filter-section input[type="text"],
+.filter-section select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.filter-section button {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.filter-section button:hover {
+  background-color: #3e8e41;
 }
