@@ -206,16 +206,28 @@ export const FetchFertilizerPrices = async (req, res) => {
     });
 };
 
-export const getAllPayments = (req, res) => {
-    const sql = "SELECT userId, userName, date, amount FROM farmer_payments ORDER BY date DESC";
+export const getPaymentsByUserId = (req, res) => {
+    const { userId } = req.params;
 
-    sqldb.query(sql, (err, results) => {
+    const sql = `
+        SELECT userId, userName, date, amount
+        FROM farmer_payments
+        WHERE userId = ?
+        ORDER BY date DESC
+    `;
+
+    sqldb.query(sql, [userId], (err, results) => {
         if (err) {
-            console.error("Error fetching payments:", err);
+            console.error("Error fetching payments by userId:", err);
             return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'No payments found for this user.' });
         }
 
         return res.status(200).json(results);
     });
 };
+
 
