@@ -21,8 +21,8 @@ function AddPayment() {
     // For filters
     const [filters, setFilters] = useState({
         userId: "",
-        year: currentYear,
-        month: currentMonth + 1
+        year: "",  // Empty string for no filter
+        month: ""  // Empty string for no filter
     });
     const [formData, setFormData] = useState({
         userId: "",
@@ -40,14 +40,13 @@ function AddPayment() {
     });
 
     const resetFilters = () => {
-      setFilters({
-        userId: "",
-        year: "",  // Empty string for no filter
-        month: ""  // Empty string for no filter
-      });
-      setFilteredHistory(paymentsHistory);
+        setFilters({
+            userId: "",
+            year: "",  // Empty string for no filter
+            month: ""  // Empty string for no filter
+        });
+        setSearchTerm(""); // Also clear the search term
     };
-    
 
     // Fetch current date on mount
     useEffect(() => {
@@ -66,32 +65,32 @@ function AddPayment() {
     }, [activeTab, filters.year, filters.month, currentMonth, currentYear]);
 
     const fetchPaymentHistory = async () => {
-      try {
-        setHistoryLoading(true);
-        // Only include year and month in the request if they have values
-        const requestData = {};
-        if (filters.year) requestData.year = filters.year;
-        if (filters.month) requestData.month = filters.month;
-        
-        const response = await axios.post(
-          'http://localhost:8081/api/manager/get-Farmer-Payment-History',
-          requestData,
-          { withCredentials: true }
-        );
-        
-        if (response.data.Status === 'Success') {
-          setPaymentHistory(response.data.paymentHistory);
-          setFilteredHistory(response.data.paymentHistory); // Set filtered history here too
-        } else {
-          console.error('Failed to fetch payment history');
+        try {
+            setHistoryLoading(true);
+            // Only include year and month in the request if they have values
+            const requestData = {};
+            if (filters.year) requestData.year = filters.year;
+            if (filters.month) requestData.month = filters.month;
+
+            const response = await axios.post(
+                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+                requestData,
+                { withCredentials: true }
+            );
+
+            if (response.data.Status === 'Success') {
+                setPaymentHistory(response.data.paymentHistory);
+            } else {
+                console.error('Failed to fetch payment history');
+                setPaymentHistory([]); // Ensure paymentsHistory is empty in case of failure
+            }
+        } catch (error) {
+            console.error('Error fetching payment history:', error);
+            setPaymentHistory([]); // Ensure paymentsHistory is empty in case of error
+        } finally {
+            setHistoryLoading(false);
         }
-      } catch (error) {
-        console.error('Error fetching payment history:', error);
-      } finally {
-        setHistoryLoading(false);
-      }
     };
-    
 
     // Month navigation functions
     const navigateMonth = (direction) => {
@@ -99,55 +98,25 @@ function AddPayment() {
             if (currentMonth === 0) {
                 setCurrentMonth(11);
                 setCurrentYear(prev => prev - 1);
-                setFilters(prev => ({ ...prev, month: 12, year: prev.year - 1 }));
             } else {
                 setCurrentMonth(prev => prev - 1);
-                setFilters(prev => ({ ...prev, month: currentMonth, year: currentYear }));
             }
-
-
         } else {
             if (currentMonth === 11) {
                 setCurrentMonth(0);
                 setCurrentYear(prev => prev + 1);
-                setFilters(prev => ({ ...prev, month: 1, year: prev.year + 1 }));
             } else {
                 setCurrentMonth(prev => prev + 1);
-                setFilters(prev => ({ ...prev, month: currentMonth + 2, year: currentYear }));
             }
         }
-    };
 
-    useEffect(() => {
-      // Apply filters to the payment history
-      if (paymentsHistory.length > 0) {
-        let filtered = [...paymentsHistory];
-        
-        // Apply userId filter if it exists
-        if (filters.userId) {
-          filtered = filtered.filter(payment => 
-            payment.userId.toLowerCase().includes(filters.userId.toLowerCase())
-          );
-        }
-        
-        // Apply year filter if it exists
-        if (filters.year) {
-          filtered = filtered.filter(payment => 
-            new Date(payment.created_at).getFullYear() === parseInt(filters.year)
-          );
-        }
-        
-        // Apply month filter if it exists
-        if (filters.month) {
-          filtered = filtered.filter(payment => 
-            new Date(payment.created_at).getMonth() + 1 === parseInt(filters.month)
-          );
-        }
-        
-        setFilteredHistory(filtered);
-      }
-    }, [filters, paymentsHistory]);
-    
+        // Update filters based on the new month and year
+        setFilters(prev => ({
+            ...prev,
+            year: currentYear,
+            month: currentMonth + 1,
+        }));
+    };
 
     useEffect(() => {
         applyFilters();
@@ -171,7 +140,6 @@ function AddPayment() {
         if (filters.month) {
             filtered = filtered.filter(payment => new Date(payment.created_at).getMonth() + 1 === parseInt(filters.month));
         }
-
 
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
