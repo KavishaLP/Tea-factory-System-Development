@@ -288,6 +288,20 @@ button.loading::after {
   button {
       padding: 0.875rem;
   }
+
+  .month-navigation {
+    gap: 0.5rem;
+  }
+  
+  .month-navigation h3 {
+    font-size: 1rem;
+    min-width: 140px;
+  }
+  
+  .month-navigation button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
 }
 
 /* Month Navigation */
@@ -295,26 +309,43 @@ button.loading::after {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin: 1rem 0 1.5rem;
+  gap: 1rem;
 }
 
-.month-nav-button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.25rem; /* Increased padding for better touch area */
+.month-navigation h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  font-weight: 600;
+  min-width: 180px;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 1.1rem; /* Increased font size */
-  cursor: pointer;
-  border-radius: 6px; /* Rounded corners */
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
-.month-nav-button:hover {
-  background-color: #3e8e41;
+.month-navigation button {
+  background: #f0f7f0;
+  color: #2c3e50;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
+
+.month-navigation button:hover {
+  background: #e0f0e0;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.month-navigation button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
 
 /* Filter Section */
 .filter-section {
