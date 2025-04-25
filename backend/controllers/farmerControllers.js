@@ -207,27 +207,42 @@ export const FetchFertilizerPrices = async (req, res) => {
 };
 
 export const getPaymentsByUserId = (req, res) => {
-    const { userId } = req.params;
+  const { userId } = req.params;
 
-    const sql = `
-        SELECT userId, userName, date, amount
-        FROM farmer_payments
-        WHERE userId = ?
-        ORDER BY date DESC
-    `;
+  const sql = `
+    SELECT
+      id,
+      userId,
+      paymentPerKilo,
+      finalTeaKilos,
+      paymentForFinalTeaKilos,
+      additionalPayments,
+      transport,
+      directPayments,
+      finalAmount,
+      advances,
+      teaPackets,
+      fertilizer,
+      finalPayment,
+      created_at
+    FROM farmer_payments
+    WHERE userId = ?
+    ORDER BY created_at DESC
+  `;
 
-    sqldb.query(sql, [userId], (err, results) => {
-        if (err) {
-            console.error("Error fetching payments by userId:", err);
-            return res.status(500).json({ message: 'Database error', error: err });
-        }
+  sqldb.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("Error fetching payments by userId:", err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
 
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'No payments found for this user.' });
-        }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No payments found for this user.' });
+    }
 
-        return res.status(200).json(results);
-    });
+    return res.status(200).json(results);
+  });
 };
+
 
 
