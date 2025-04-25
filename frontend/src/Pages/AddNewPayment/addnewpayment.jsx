@@ -40,13 +40,14 @@ function AddPayment() {
     });
 
     const resetFilters = () => {
-        setFilters({
-            userId: "",
-            year: currentYear,
-            month: currentMonth + 1
-        });
-        setSearchTerm("");
+      setFilters({
+        userId: "",
+        year: "",  // Empty string for no filter
+        month: ""  // Empty string for no filter
+      });
+      setFilteredHistory(paymentsHistory);
     };
+    
 
     // Fetch current date on mount
     useEffect(() => {
