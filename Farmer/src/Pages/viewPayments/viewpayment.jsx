@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const PaymentsPage = ({ userId }) => {
+const Payments = ({ userId }) => {
   const [payments, setPayments] = useState([]);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedPayment, setSelectedPayment] = useState(null);  // State for selected payment details
-  const [showModal, setShowModal] = useState(false); // Control modal visibility
+  const [selectedPayment, setSelectedPayment] = useState(null);
 
+  // Fetch payments from the backend
   useEffect(() => {
     const fetchPayments = async () => {
       try {
@@ -26,60 +26,64 @@ const PaymentsPage = ({ userId }) => {
     fetchPayments();
   }, [userId]);
 
-  const handleSeeMore = (payment) => {
+  // Handle modal open
+  const handleSeeMoreClick = (payment) => {
     setSelectedPayment(payment);
-    setShowModal(true);
   };
 
+  // Handle modal close
   const closeModal = () => {
-    setShowModal(false);
     setSelectedPayment(null);
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
-    <div>
-      <h1>Farmer Payments</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Payment Per Kilo</th>
-            <th>Final Tea Kilos</th>
-            <th>Payment for Final Tea Kilos</th>
-            <th>Final Payment</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.map(payment => (
-            <tr key={payment.id}>
-              <td>{payment.paymentPerKilo}</td>
-              <td>{payment.finalTeaKilos}</td>
-              <td>{payment.paymentForFinalTeaKilos}</td>
-              <td>{payment.finalPayment}</td>
-              <td>
-                <button onClick={() => handleSeeMore(payment)}>See More</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="payments-container">
+      <h2>Payments</h2>
 
-      {/* Modal for displaying selected payment details */}
-      {showModal && selectedPayment && (
-        <div className="modal">
+      {error && <div className="error-message">{error}</div>}
+
+      {isLoading ? (
+        <p>Loading payments...</p>
+      ) : (
+        <table className="payments-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Payment Per Kilo</th>
+              <th>Final Tea Kilos</th>
+              <th>Final Payment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.map((payment) => (
+              <tr key={payment.id}>
+                <td>{payment.id}</td>
+                <td>{payment.paymentPerKilo}</td>
+                <td>{payment.finalTeaKilos}</td>
+                <td>{payment.finalPayment}</td>
+                <td>
+                  <button
+                    className="see-more-btn"
+                    onClick={() => handleSeeMoreClick(payment)}
+                  >
+                    See More
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {/* Modal for detailed view */}
+      {selectedPayment && (
+        <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Payment Details</h2>
+            <h3>Payment Details</h3>
             <p><strong>Payment Per Kilo:</strong> {selectedPayment.paymentPerKilo}</p>
             <p><strong>Final Tea Kilos:</strong> {selectedPayment.finalTeaKilos}</p>
-            <p><strong>Payment for Final Tea Kilos:</strong> {selectedPayment.paymentForFinalTeaKilos}</p>
+            <p><strong>Payment For Final Tea Kilos:</strong> {selectedPayment.paymentForFinalTeaKilos}</p>
             <p><strong>Additional Payments:</strong> {selectedPayment.additionalPayments}</p>
             <p><strong>Transport:</strong> {selectedPayment.transport}</p>
             <p><strong>Direct Payments:</strong> {selectedPayment.directPayments}</p>
@@ -89,7 +93,10 @@ const PaymentsPage = ({ userId }) => {
             <p><strong>Fertilizer:</strong> {selectedPayment.fertilizer}</p>
             <p><strong>Final Payment:</strong> {selectedPayment.finalPayment}</p>
             <p><strong>Created At:</strong> {selectedPayment.created_at}</p>
-            <button onClick={closeModal}>Close</button>
+
+            <button className="close-modal-btn" onClick={closeModal}>
+              Close
+            </button>
           </div>
         </div>
       )}
@@ -97,4 +104,4 @@ const PaymentsPage = ({ userId }) => {
   );
 };
 
-export default PaymentsPage;
+export default Payments;
