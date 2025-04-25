@@ -1,4 +1,4 @@
-/* Reuse the same styles as CFA.css */
+/* Main Content Styles */
 .cfa-content {
   flex: 1;
   padding: 2rem;
@@ -7,6 +7,7 @@
   overflow-y: auto;
   background-color: #f5f5f5;
   min-height: calc(100vh - 70px);
+  transition: margin-left 0.3s ease;
 }
 
 .current-date {
@@ -19,6 +20,7 @@
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   font-weight: 500;
+  margin-bottom: 1.5rem;
 }
 
 .cfa-grid {
@@ -43,6 +45,8 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .tab-button {
@@ -54,48 +58,25 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 8px 8px 0 0;
-  margin: 0 0.25rem;
-}
-
-.suggestions-dropdown {
-  position: absolute;
-  z-index: 1000;
-  width: 100%;
-  max-height: 200px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-top: 5px;
-  list-style: none;
-  padding: 0;
-}
-
-.suggestions-dropdown li {
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.suggestions-dropdown li:hover {
-  background-color: #f5f5f5;
+  border-radius: 8px;
 }
 
 .tab-button.active {
-  background: white;
-  color: #00a000;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  background: #4caf50;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.tab-button:hover {
+.tab-button:hover:not(.active) {
   background: #d0f0d0;
 }
 
-/* Input Styles */
+/* Form Input Styles */
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .input-group label {
@@ -104,7 +85,8 @@
   font-weight: 500;
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
   width: 100%;
   padding: 0.75rem;
   border: 1.5px solid #e2e8f0;
@@ -114,7 +96,8 @@
   background-color: #f8fafc;
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.input-group select:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
   outline: none;
@@ -129,7 +112,8 @@
 .deduction-fields {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Error Message */
@@ -144,9 +128,19 @@
   border-radius: 6px;
 }
 
-/* Submit Button */
-button {
+.success {
+  color: #15803d;
+  text-align: center;
+  margin: 1rem 0;
   grid-column: 1 / -1;
+  font-size: 0.9rem;
+  background-color: #dcfce7;
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+/* Button Styles */
+.btn {
   padding: 1rem;
   background-color: #4caf50;
   color: white;
@@ -156,33 +150,32 @@ button {
   font-size: 1rem;
   font-weight: 600;
   transition: all 0.3s ease;
-  margin-top: 1rem;
-  position: relative;
-  overflow: hidden;
+  text-align: center;
 }
 
-button:hover:not(:disabled) {
+.btn:hover:not(:disabled) {
   background-color: #45a049;
   transform: translateY(-1px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-button:active:not(:disabled) {
+.btn:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: none;
 }
 
-button:disabled {
+.btn:disabled {
   background-color: #a5d6a7;
   cursor: not-allowed;
   opacity: 0.7;
 }
 
-button.loading {
+.btn.loading {
   padding-left: 2.5rem;
+  position: relative;
 }
 
-button.loading::after {
+.btn.loading::after {
   content: "";
   position: absolute;
   width: 1.25rem;
@@ -196,96 +189,199 @@ button.loading::after {
   animation: spin 0.8s linear infinite;
 }
 
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+/* Table Styles */
+.payment-history {
+  width: 100%;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
+}
+
+.payment-history h3 {
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.payment-table th,
+.payment-table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.payment-table th {
+  background-color: #f1f1f1;
+  font-weight: 600;
+  color: #333;
+}
+
+.payment-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.payment-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Filter and Navigation Styles */
+.filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.month-navigation {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.month-nav-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.month-nav-button:hover {
+  background-color: #3e8e41;
+}
+
+.month-display {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Autocomplete Dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 5px;
+  list-style: none;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-dropdown li {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.suggestions-dropdown li:hover {
+  background-color: #f5f5f5;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 992px) {
+  .cfa-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  
+  .deduction-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .month-navigation {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .cfa-grid {
+    padding: 1rem;
+  }
+  
+  .tab-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .input-group input,
+  .input-group select {
+    padding: 0.625rem;
+  }
+  
+  .btn {
+    padding: 0.875rem;
+  }
+}
+
+/* Animations */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* Payments History Table */
-.payments-history {
-  width: 100%;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.payments-history h2 {
-  font-size: 1.5rem;
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-}
-
-.payment-history {
-  width: 100%;
-  background-color: white;
-  padding: 1rem;
-  border: 1px solid #ccc; /* Solid border for the table container */
-}
-
-.payment-history h3 {
-  font-size: 1.25rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  text-align: center; /* Center the heading */
-}
-
-.payment-history table {
-  width: 100%;
-  border-collapse: collapse; /* Ensure borders are solid and consistent */
-}
-
-.payment-history th,
-.payment-history td {
-  padding: 0.75rem;
-  border: 1px solid #ddd; /* Solid borders for table cells */
-  text-align: center;
-  font-size: 0.9rem; /* Slightly smaller font size for a classic look */
-}
-
-.payment-history th {
-  background-color: #f1f1f1; /* Light gray background for headers */
-  font-weight: 600;
-  color: #333;
-}
-
-.payment-history tr:nth-child(even) {
-  background-color: #f9f9f9; /* Alternate row coloring */
-}
-
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-  .cfa-content {
-    margin-left: 80px;
-    padding: 1rem;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  .cfa-grid {
-    padding: 1.25rem;
-  }
-
-  .deduction-fields {
-    grid-template-columns: 1fr;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media screen and (max-width: 480px) {
-  .cfa-content {
-    margin-left: 0;
-    padding: 0.75rem;
-  }
-
-  .cfa-grid {
-    padding: 1rem;
-    border-radius: 8px;
-  }
-
-  .input-group input {
-    padding: 0.625rem;
-  }
-
-  button {
-    padding: 0.875rem;
-  }
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
 }
