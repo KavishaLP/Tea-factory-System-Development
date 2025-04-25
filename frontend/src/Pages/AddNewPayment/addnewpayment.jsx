@@ -119,6 +119,37 @@ function AddPayment() {
     };
 
     useEffect(() => {
+      // Apply filters to the payment history
+      if (paymentsHistory.length > 0) {
+        let filtered = [...paymentsHistory];
+        
+        // Apply userId filter if it exists
+        if (filters.userId) {
+          filtered = filtered.filter(payment => 
+            payment.userId.toLowerCase().includes(filters.userId.toLowerCase())
+          );
+        }
+        
+        // Apply year filter if it exists
+        if (filters.year) {
+          filtered = filtered.filter(payment => 
+            new Date(payment.created_at).getFullYear() === parseInt(filters.year)
+          );
+        }
+        
+        // Apply month filter if it exists
+        if (filters.month) {
+          filtered = filtered.filter(payment => 
+            new Date(payment.created_at).getMonth() + 1 === parseInt(filters.month)
+          );
+        }
+        
+        setFilteredHistory(filtered);
+      }
+    }, [filters, paymentsHistory]);
+    
+
+    useEffect(() => {
         applyFilters();
     }, [paymentsHistory, filters, searchTerm]);
 
