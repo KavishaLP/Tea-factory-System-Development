@@ -426,7 +426,6 @@ function AddPayment() {
                 {/* Add New Payment Form */}
                 {activeTab === "addPayment" && (
                     <form onSubmit={handleSubmit}>
-                        <h2>Add New Payment</h2>
                         {error && <p className="error-message">{error}</p>}
 
                         <div className="input-group">
