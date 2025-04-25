@@ -10,12 +10,15 @@ const Fertilizer = () => {
   const [error, setError] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
   
-  // Filter state
+  // New filter state
+  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
-    searchTerm: "",
-    startDate: "",
-    endDate: ""
+    year: "",
+    month: ""
   });
+
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
 
   // Format date from ISO string to readable format
   const formatDate = (dateString) => {
@@ -32,18 +35,6 @@ const Fertilizer = () => {
     } catch (e) {
       console.error("Error formatting date:", e);
       return "Invalid Date";
-    }
-  };
-
-  // Get date-only string for comparison (YYYY-MM-DD)
-  const getDateOnlyString = (dateString) => {
-    if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      return date.toISOString().split('T')[0];
-    } catch (e) {
-      console.error("Error parsing date:", e);
-      return "";
     }
   };
 
@@ -68,7 +59,7 @@ const Fertilizer = () => {
   // Apply filters whenever filters or requests change
   useEffect(() => {
     applyFilters();
-  }, [filters, requests, activeTab]);
+  }, [filters, requests, activeTab, searchTerm]);
 
   const fetchFertilizerRequests = async () => {
     try {
@@ -89,9 +80,23 @@ const Fertilizer = () => {
   const applyFilters = () => {
     let result = [...requests];
 
+    // Filter by year if selected
+    if (filters.year) {
+      result = result.filter(request => 
+        new Date(request.requestDate).getFullYear() === parseInt(filters.year)
+      );
+    }
+
+    // Filter by month if selected
+    if (filters.month) {
+      result = result.filter(request => 
+        new Date(request.requestDate).getMonth() + 1 === parseInt(filters.month)
+      );
+    }
+
     // Search term filtering
-    if (filters.searchTerm) {
-      const searchTermLower = filters.searchTerm.toLowerCase();
+    if (searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase();
       result = result.filter(request => 
         Object.entries(request).some(([key, value]) => {
           if (typeof value === "string" && ["userId", "userName", "fertilizerType", "packetType"].includes(key)) {
@@ -100,17 +105,6 @@ const Fertilizer = () => {
           return false;
         })
       );
-    }
-
-    // Date range filtering
-    if (filters.startDate || filters.endDate) {
-      const startDateStr = filters.startDate || "1970-01-01";
-      const endDateStr = filters.endDate || "2100-12-31";
-      
-      result = result.filter(request => {
-        const requestDateStr = getDateOnlyString(request.requestDate);
-        return requestDateStr >= startDateStr && requestDateStr <= endDateStr;
-      });
     }
 
     // Status filtering based on active tab
@@ -133,10 +127,10 @@ const Fertilizer = () => {
 
   const resetFilters = () => {
     setFilters({
-      searchTerm: "",
-      startDate: "",
-      endDate: ""
+      year: "",
+      month: ""
     });
+    setSearchTerm("");
   };
 
   const handleConfirm = async (requestId) => {
@@ -201,6 +195,18 @@ const Fertilizer = () => {
     }
   };
 
+  // Get unique years from requests for year dropdown
+  const getUniqueYears = () => {
+    const years = new Set();
+    requests.forEach(request => {
+      const year = new Date(request.requestDate).getFullYear();
+      if (!isNaN(year)) {
+        years.add(year);
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  };
+
   return (
     <div className="cfa-content">
       <h2>Fertilizer Request History</h2>
@@ -227,45 +233,36 @@ const Fertilizer = () => {
             </button>
           </div>
 
-          <div className="controls-container">
-            <div className="search-box">
-              <input
-                type="text"
-                name="searchTerm"
-                placeholder="Search by any field..."
-                value={filters.searchTerm}
-                onChange={handleFilterChange}
-              />
-              <i className="search-icon">🔍</i>
-            </div>
-            <div className="date-range-filter">
-              <div className="date-input">
-                <label>From:</label>
-                <input
-                  type="date"
-                  name="startDate"
-                  value={filters.startDate}
-                  onChange={handleFilterChange}
-                  max={filters.endDate || undefined}
-                />
-              </div>
-              <div className="date-input">
-                <label>To:</label>
-                <input
-                  type="date"
-                  name="endDate"
-                  value={filters.endDate}
-                  onChange={handleFilterChange}
-                  min={filters.startDate || undefined}
-                />
-              </div>
-              <button 
-                className="clear-dates"
-                onClick={resetFilters}
-              >
-                Clear
-              </button>
-            </div>
+          {/* Updated Filter Section */}
+          <div className="filter-section">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <select
+              name="year"
+              value={filters.year}
+              onChange={handleFilterChange}
+            >
+              <option value="">Select Year</option>
+              {getUniqueYears().map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+
+            <select
+              name="month"
+              value={filters.month}
+              onChange={handleFilterChange}
+            >
+              <option value="">Select Month</option>
+              {monthNames.map((month, index) => (
+                <option key={index + 1} value={index + 1}>{month}</option>
+              ))}
+            </select>
+            <button onClick={resetFilters}>Reset Filters</button>
           </div>
 
           {error && <div className="error-message"><p>{error}</p></div>}

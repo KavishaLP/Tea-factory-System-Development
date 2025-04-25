@@ -19,12 +19,14 @@ const CreateFarmerAccount = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [farmerAccounts, setFarmerAccounts] = useState([]);
+  const [filteredAccounts, setFilteredAccounts] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
     mobile1: "",
     mobile2: "",
     gmail: ""
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch farmer accounts when the "View Farmer Accounts" tab is active
   useEffect(() => {
@@ -39,6 +41,7 @@ const CreateFarmerAccount = () => {
           );
           if (response.data.status === "success") {
             setFarmerAccounts(response.data.data);
+            setFilteredAccounts(response.data.data); // Initialize filtered accounts
           } else {
             setError("Failed to fetch farmer accounts. Please try again later.");
           }
@@ -53,6 +56,36 @@ const CreateFarmerAccount = () => {
       fetchFarmerAccounts();
     }
   }, [activeTab]);
+
+  // Apply search filter whenever searchTerm or farmerAccounts changes
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredAccounts(farmerAccounts);
+    } else {
+      const term = searchTerm.toLowerCase();
+      const filtered = farmerAccounts.filter(farmer => 
+        Object.entries(farmer).some(([key, value]) => {
+          // Only search in these specific fields
+          const searchableFields = [
+            "userId", 
+            "userName", 
+            "firstName", 
+            "lastName", 
+            "address", 
+            "mobile1", 
+            "mobile2", 
+            "gmail"
+          ];
+          
+          if (searchableFields.includes(key) && typeof value === "string") {
+            return value.toLowerCase().includes(term);
+          }
+          return false;
+        })
+      );
+      setFilteredAccounts(filtered);
+    }
+  }, [searchTerm, farmerAccounts]);
 
   // Validate mobile number format
   const validateMobile = (number) => {
@@ -345,12 +378,21 @@ const CreateFarmerAccount = () => {
         {/* View Farmer Accounts Table */}
         {activeTab === "viewAccounts" && (
           <div className="farmer-accounts-table">
-            <h3>Farmer Accounts</h3>
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Search farmer accounts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            
             {historyLoading ? (
               <p>Loading...</p>
             ) : error ? (
               <p className="error">{error}</p>
-            ) : farmerAccounts.length > 0 ? (
+            ) : filteredAccounts.length > 0 ? (
               <table>
                 <thead>
                   <tr>
@@ -365,7 +407,7 @@ const CreateFarmerAccount = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {farmerAccounts.map((farmer, index) => (
+                  {filteredAccounts.map((farmer, index) => (
                     <tr key={index}>
                       <td>{farmer.userId}</td>
                       <td>{farmer.userName}</td>
@@ -380,7 +422,7 @@ const CreateFarmerAccount = () => {
                 </tbody>
               </table>
             ) : (
-              <p>No farmer accounts found.</p>
+              <p>No farmer accounts found{searchTerm ? " matching your search" : ""}.</p>
             )}
           </div>
         )}
