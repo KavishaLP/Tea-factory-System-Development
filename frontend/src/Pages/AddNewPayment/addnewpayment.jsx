@@ -66,26 +66,32 @@ function AddPayment() {
     }, [activeTab, filters.year, filters.month, currentMonth, currentYear]);
 
     const fetchPaymentHistory = async () => {
-        try {
-            setHistoryLoading(true);
-            const response = await axios.post(
-                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
-                { year: filters.year, month: filters.month },
-                { withCredentials: true }
-            );
-
-            if (response.data.Status === 'Success') {
-                setPaymentHistory(response.data.paymentHistory);
-                setFilteredHistory(response.data.paymentHistory); // Also set filtered history here
-            } else {
-                console.error('Failed to fetch payment history');
-            }
-        } catch (error) {
-            console.error('Error fetching payment history:', error);
-        } finally {
-            setHistoryLoading(false);
+      try {
+        setHistoryLoading(true);
+        // Only include year and month in the request if they have values
+        const requestData = {};
+        if (filters.year) requestData.year = filters.year;
+        if (filters.month) requestData.month = filters.month;
+        
+        const response = await axios.post(
+          'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+          requestData,
+          { withCredentials: true }
+        );
+        
+        if (response.data.Status === 'Success') {
+          setPaymentHistory(response.data.paymentHistory);
+          setFilteredHistory(response.data.paymentHistory); // Set filtered history here too
+        } else {
+          console.error('Failed to fetch payment history');
         }
+      } catch (error) {
+        console.error('Error fetching payment history:', error);
+      } finally {
+        setHistoryLoading(false);
+      }
     };
+    
 
     // Month navigation functions
     const navigateMonth = (direction) => {
