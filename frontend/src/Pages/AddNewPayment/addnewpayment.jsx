@@ -42,10 +42,10 @@ function AddPayment() {
     const resetFilters = () => {
         setFilters({
             userId: "",
-            year: "",  // Empty string for no filter
-            month: ""  // Empty string for no filter
+            year: "",
+            month: ""
         });
-        setSearchTerm(""); // Also clear the search term
+        setSearchTerm("");
     };
 
     // Fetch current date on mount
@@ -67,10 +67,19 @@ function AddPayment() {
     const fetchPaymentHistory = async () => {
         try {
             setHistoryLoading(true);
-            // Only include year and month in the request if they have values
-            const requestData = {};
-            if (filters.year) requestData.year = filters.year;
-            if (filters.month) requestData.month = filters.month;
+            let requestData = {};
+            
+            if (activeTab === "toPayment") {
+                // For "To Payments" tab, use currentMonth and currentYear
+                requestData = {
+                    year: currentYear,
+                    month: currentMonth + 1
+                };
+            } else {
+                // For "View History" tab, use filters
+                if (filters.year) requestData.year = filters.year;
+                if (filters.month) requestData.month = filters.month;
+            }
 
             const response = await axios.post(
                 'http://localhost:8081/api/manager/get-Farmer-Payment-History',
@@ -80,13 +89,16 @@ function AddPayment() {
 
             if (response.data.Status === 'Success') {
                 setPaymentHistory(response.data.paymentHistory);
+                setFilteredHistory(response.data.paymentHistory); // Initialize filtered history
             } else {
                 console.error('Failed to fetch payment history');
-                setPaymentHistory([]); // Ensure paymentsHistory is empty in case of failure
+                setPaymentHistory([]);
+                setFilteredHistory([]);
             }
         } catch (error) {
             console.error('Error fetching payment history:', error);
-            setPaymentHistory([]); // Ensure paymentsHistory is empty in case of error
+            setPaymentHistory([]);
+            setFilteredHistory([]);
         } finally {
             setHistoryLoading(false);
         }
@@ -94,28 +106,27 @@ function AddPayment() {
 
     // Month navigation functions
     const navigateMonth = (direction) => {
+        let newMonth = currentMonth;
+        let newYear = currentYear;
+
         if (direction === 'prev') {
             if (currentMonth === 0) {
-                setCurrentMonth(11);
-                setCurrentYear(prev => prev - 1);
+                newMonth = 11;
+                newYear = currentYear - 1;
             } else {
-                setCurrentMonth(prev => prev - 1);
+                newMonth = currentMonth - 1;
             }
         } else {
             if (currentMonth === 11) {
-                setCurrentMonth(0);
-                setCurrentYear(prev => prev + 1);
+                newMonth = 0;
+                newYear = currentYear + 1;
             } else {
-                setCurrentMonth(prev => prev + 1);
+                newMonth = currentMonth + 1;
             }
         }
 
-        // Update filters based on the new month and year
-        setFilters(prev => ({
-            ...prev,
-            year: currentYear,
-            month: currentMonth + 1,
-        }));
+        setCurrentMonth(newMonth);
+        setCurrentYear(newYear);
     };
 
     useEffect(() => {
@@ -134,11 +145,15 @@ function AddPayment() {
         let filtered = [...paymentsHistory];
 
         if (filters.year) {
-            filtered = filtered.filter(payment => new Date(payment.created_at).getFullYear() === parseInt(filters.year));
+            filtered = filtered.filter(payment => 
+                new Date(payment.created_at).getFullYear() === parseInt(filters.year)
+            );
         }
 
         if (filters.month) {
-            filtered = filtered.filter(payment => new Date(payment.created_at).getMonth() + 1 === parseInt(filters.month));
+            filtered = filtered.filter(payment => 
+                new Date(payment.created_at).getMonth() + 1 === parseInt(filters.month)
+            );
         }
 
         if (searchTerm) {
@@ -166,7 +181,6 @@ function AddPayment() {
         setFilteredHistory(filtered);
     };
 
-    // User suggestion functions (unchanged)
     const fetchUserSuggestions = async (query) => {
         try {
             const response = await axios.post(
@@ -228,7 +242,7 @@ function AddPayment() {
         fetchDEtailsRelatedTOUser(userId);
     };
 
-    // Calculation effects (unchanged)
+    // Calculation effects
     useEffect(() => {
         const { paymentPerKilo, finalTeaKilos } = formData;
         if (paymentPerKilo && finalTeaKilos) {
@@ -349,11 +363,11 @@ function AddPayment() {
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
 
-
     return (
         <div className="cfa-content">
             <div className="header-section">
                 <h2>Payment Management</h2>
+                <p className="current-date">{currentDate}</p>
             </div>
             <div className="cfa-grid">
                 {/* Tabs */}
@@ -388,34 +402,36 @@ function AddPayment() {
                         </div>
 
                         {historyLoading ? (
-                            <p>Loading...</p>
-                        ) : paymentsHistory.length > 0 ? (
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User ID</th>
-                                        <th>Final Tea Kilos</th>
-                                        <th>Payment Per Kilo</th>
-                                        <th>Final Amount</th>
-                                        <th>Advances</th>
-                                        <th>Final Payment</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {paymentsHistory.map((payment, index) => (
-                                        <tr key={index}>
-                                            <td>{payment.userId}</td>
-                                            <td>{payment.finalTeaKilos}</td>
-                                            <td>{payment.paymentPerKilo}</td>
-                                            <td>{payment.finalAmount}</td>
-                                            <td>{payment.advances}</td>
-                                            <td>{payment.finalPayment}</td>
-                                            <td>{new Date(payment.created_at).toLocaleDateString('en-US')}</td>
+                            <p>Loading payment records...</p>
+                        ) : filteredHistory.length > 0 ? (
+                            <div className="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Final Tea Kilos</th>
+                                            <th>Payment Per Kilo</th>
+                                            <th>Final Amount</th>
+                                            <th>Advances</th>
+                                            <th>Final Payment</th>
+                                            <th>Date</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {filteredHistory.map((payment, index) => (
+                                            <tr key={index}>
+                                                <td>{payment.userId}</td>
+                                                <td>{payment.finalTeaKilos}</td>
+                                                <td>{payment.paymentPerKilo}</td>
+                                                <td>{payment.finalAmount}</td>
+                                                <td>{payment.advances}</td>
+                                                <td>{payment.finalPayment}</td>
+                                                <td>{new Date(payment.created_at).toLocaleDateString('en-US')}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         ) : (
                             <p>No payment records found for {monthNames[currentMonth]} {currentYear}.</p>
                         )}
@@ -580,67 +596,79 @@ function AddPayment() {
                         <div className="filter-section">
                             <input
                                 type="text"
-                                placeholder="Search..."
+                                placeholder="Search by user ID, amount, date..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                className="search-input"
                             />
-                            <select
-                                name="year"
-                                value={filters.year}
-                                onChange={handleFilterChange}
-                            >
-                                <option value="">Select Year</option>
-                                {Array.from(new Set(paymentsHistory.map(payment => new Date(payment.created_at).getFullYear())))
-                                    .sort((a, b) => b - a)
-                                    .map(year => (
-                                        <option key={year} value={year}>{year}</option>
-                                    ))}
-                            </select>
+                            <div className="filter-controls">
+                                <select
+                                    name="year"
+                                    value={filters.year}
+                                    onChange={handleFilterChange}
+                                    className="filter-select"
+                                >
+                                    <option value="">All Years</option>
+                                    {Array.from(new Set(paymentsHistory.map(payment => new Date(payment.created_at).getFullYear())))
+                                        .sort((a, b) => b - a)
+                                        .map(year => (
+                                            <option key={year} value={year}>{year}</option>
+                                        ))}
+                                </select>
 
-                            <select
-                                name="month"
-                                value={filters.month}
-                                onChange={handleFilterChange}
-                            >
-                                <option value="">Select Month</option>
-                                {monthNames.map((month, index) => (
-                                    <option key={index + 1} value={index + 1}>{month}</option>
-                                ))}
-                            </select>
-                            <button onClick={resetFilters}>Reset Filters</button>
+                                <select
+                                    name="month"
+                                    value={filters.month}
+                                    onChange={handleFilterChange}
+                                    className="filter-select"
+                                >
+                                    <option value="">All Months</option>
+                                    {monthNames.map((month, index) => (
+                                        <option key={index + 1} value={index + 1}>{month}</option>
+                                    ))}
+                                </select>
+                                <button 
+                                    onClick={resetFilters}
+                                    className="reset-button"
+                                >
+                                    Reset Filters
+                                </button>
+                            </div>
                         </div>
 
                         {historyLoading ? (
-                            <p>Loading...</p>
+                            <p>Loading payment history...</p>
                         ) : filteredHistory.length > 0 ? (
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User ID</th>
-                                        <th>Final Tea Kilos</th>
-                                        <th>Payment Per Kilo</th>
-                                        <th>Final Amount</th>
-                                        <th>Advances</th>
-                                        <th>Final Payment</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredHistory.map((payment, index) => (
-                                        <tr key={index}>
-                                            <td>{payment.userId}</td>
-                                            <td>{payment.finalTeaKilos}</td>
-                                            <td>{payment.paymentPerKilo}</td>
-                                            <td>{payment.finalAmount}</td>
-                                            <td>{payment.advances}</td>
-                                            <td>{payment.finalPayment}</td>
-                                            <td>{new Date(payment.created_at).toLocaleDateString('en-US')}</td>
+                            <div className="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Final Tea Kilos</th>
+                                            <th>Payment Per Kilo</th>
+                                            <th>Final Amount</th>
+                                            <th>Advances</th>
+                                            <th>Final Payment</th>
+                                            <th>Date</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {filteredHistory.map((payment, index) => (
+                                            <tr key={index}>
+                                                <td>{payment.userId}</td>
+                                                <td>{payment.finalTeaKilos}</td>
+                                                <td>{payment.paymentPerKilo}</td>
+                                                <td>{payment.finalAmount}</td>
+                                                <td>{payment.advances}</td>
+                                                <td>{payment.finalPayment}</td>
+                                                <td>{new Date(payment.created_at).toLocaleDateString('en-US')}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         ) : (
-                            <p>No payment records found.</p>
+                            <p className="no-records">No payment records found matching your criteria.</p>
                         )}
                     </div>
                 )}
