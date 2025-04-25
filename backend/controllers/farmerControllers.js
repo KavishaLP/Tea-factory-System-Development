@@ -206,3 +206,16 @@ export const FetchFertilizerPrices = async (req, res) => {
     });
 };
 
+export const getAllPayments = (req, res) => {
+    const sql = "SELECT userId, userName, date, amount FROM farmer_payments ORDER BY date DESC";
+
+    sqldb.query(sql, (err, results) => {
+        if (err) {
+            console.error("Error fetching payments:", err);
+            return res.status(500).json({ message: 'Database error', error: err });
+        }
+
+        return res.status(200).json(results);
+    });
+};
+
