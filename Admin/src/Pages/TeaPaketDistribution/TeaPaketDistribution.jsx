@@ -229,7 +229,7 @@ const TeaPacketDistribution = () => {
   return (
     <div className="tpd-content">
       <div className="tpd-grid">
-        <h2>Tea Packet Request History</h2>
+        <h2>Tea Packet Production & Distribution</h2>
         <div className="history-section">
           {/* Tabs */}
           <div className="tabs-container">
@@ -237,13 +237,13 @@ const TeaPacketDistribution = () => {
               className={`tab-button ${activeTab === "newRequests" ? "active" : ""}`}
               onClick={() => setActiveTab("newRequests")}
             >
-              New Requests
+              Add Tea Packets
             </button>
             <button
               className={`tab-button ${activeTab === "confirmedRequests" ? "active" : ""}`}
               onClick={() => setActiveTab("confirmedRequests")}
             >
-              Confirmed Requests
+              Di
             </button>
             <button
               className={`tab-button ${activeTab === "deletedRequests" ? "active" : ""}`}
