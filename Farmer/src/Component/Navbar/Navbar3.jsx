@@ -1,5 +1,4 @@
 import './Navbar.css';
-import '.../Pages/'
 // import assets from '../../assets/assets.js';
 
 const Navbar = ({userId}) => {

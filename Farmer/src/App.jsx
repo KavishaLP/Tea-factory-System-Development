@@ -39,7 +39,13 @@ function App() {
 
   return (
     <div className="container">
-      {shouldDisplayNavbar() &&  <Navbar />}
+      {/* Wrap Navbar in ProtectedRoute */}
+      {shouldDisplayNavbar() && (
+        <ProtectedRoute>
+          <Navbar />
+        </ProtectedRoute>
+      )}
+
       <div className="content-wrapper">
         {shouldDisplaySidebar() && <Sidebar />}
         
