@@ -354,7 +354,6 @@ function AddPayment() {
         <div className="cfa-content">
             <div className="header-section">
                 <h2>Payment Management</h2>
-                <p className="current-date">{currentDate}</p>
             </div>
             <div className="cfa-grid">
                 {/* Tabs */}
