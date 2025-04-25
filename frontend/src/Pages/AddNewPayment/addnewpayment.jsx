@@ -8,25 +8,25 @@ function AddPayment() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentDate, setCurrentDate] = useState("");
   const [paymentsHistory, setPaymentHistory] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(true);  
+  const [historyLoading, setHistoryLoading] = useState(true);
   const [userSuggestions, setUserSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredHistory, setFilteredHistory] = useState([]);
-  
-  
+  const [searchTerm, setSearchTerm] = useState("");
+
+
   // For month/year navigation
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  
+
   // For filters
   const [filters, setFilters] = useState({
     userId: "",
     year: currentYear,
     month: currentMonth + 1
   });
-
   const [formData, setFormData] = useState({
-    userId:"",
+    userId: "",
     paymentPerKilo: "",
     finalTeaKilos: "",
     paymentForFinalTeaKilos: "",
@@ -43,8 +43,8 @@ function AddPayment() {
   const resetFilters = () => {
     setFilters({
       userId: "",
-      year: "",
-      month: ""
+      year: currentYear,
+      month: currentMonth + 1
     });
     setFilteredHistory(paymentsHistory);
   };
@@ -53,7 +53,7 @@ function AddPayment() {
   useEffect(() => {
     const date = new Date();
     const monthNames = ["January", "February", "March", "April", "May", "June",
-                       "July", "August", "September", "October", "November", "December"];
+      "July", "August", "September", "October", "November", "December"];
     const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
     setCurrentDate(formattedDate);
   }, []);
@@ -63,7 +63,7 @@ function AddPayment() {
     if (activeTab === "viewHistory" || activeTab === "toPayment") {
       fetchPaymentHistory();
     }
-  }, [activeTab, filters.year, filters.month]);
+  }, [activeTab, filters.year, filters.month, currentMonth, currentYear]);
 
   const fetchPaymentHistory = async () => {
     try {
@@ -73,9 +73,10 @@ function AddPayment() {
         { year: filters.year, month: filters.month },
         { withCredentials: true }
       );
-      
+
       if (response.data.Status === 'Success') {
         setPaymentHistory(response.data.paymentHistory);
+        setFilteredHistory(response.data.paymentHistory); // Also set filtered history here
       } else {
         console.error('Failed to fetch payment history');
       }
@@ -95,6 +96,9 @@ function AddPayment() {
       } else {
         setCurrentMonth(prev => prev - 1);
       }
+      setFilters(prev => ({ ...prev, month: currentMonth, year: currentYear }));
+
+
     } else {
       if (currentMonth === 11) {
         setCurrentMonth(0);
@@ -102,6 +106,7 @@ function AddPayment() {
       } else {
         setCurrentMonth(prev => prev + 1);
       }
+      setFilters(prev => ({ ...prev, month: currentMonth, year: currentYear }));
     }
   };
 
@@ -121,7 +126,7 @@ function AddPayment() {
         { query },
         { withCredentials: true }
       );
-      
+
       if (response.data.Status === 'Success') {
         setUserSuggestions(response.data.farmers.map(farmer => farmer.id));
       } else {
@@ -136,7 +141,7 @@ function AddPayment() {
   const handleUserIdChange = (e) => {
     const { value } = e.target;
     setFormData(prev => ({ ...prev, userId: value }));
-    
+
     if (value.length >= 2) {
       fetchUserSuggestions(value);
       setShowSuggestions(true);
@@ -153,7 +158,7 @@ function AddPayment() {
         { userId },
         { withCredentials: true }
       );
-      
+
       if (response.data.Status === 'Success') {
         setFormData(prev => ({
           ...prev,
@@ -216,7 +221,7 @@ function AddPayment() {
       ...prevData,
       finalPayment: finalPayment.toFixed(2),
     }));
-  }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);  
+  }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -294,7 +299,31 @@ function AddPayment() {
   };
 
   const monthNames = ["January", "February", "March", "April", "May", "June",
-                     "July", "August", "September", "October", "November", "December"];
+    "July", "August", "September", "October", "November", "December"];
+
+
+  // Filter the payment history based on the search term
+  const filteredPaymentsHistory = paymentsHistory.filter((payment) => {
+    // Convert all values to strings and then to lowercase for case-insensitive search
+    const userId = String(payment.userId).toLowerCase();
+    const finalTeaKilos = String(payment.finalTeaKilos).toLowerCase();
+    const paymentPerKilo = String(payment.paymentPerKilo).toLowerCase();
+    const finalAmount = String(payment.finalAmount).toLowerCase();
+    const advances = String(payment.advances).toLowerCase();
+    const finalPayment = String(payment.finalPayment).toLowerCase();
+    const date = new Date(payment.created_at).toLocaleDateString().toLowerCase();
+    const searchTermLower = searchTerm.toLowerCase();
+
+    return (
+      userId.includes(searchTermLower) ||
+      finalTeaKilos.includes(searchTermLower) ||
+      paymentPerKilo.includes(searchTermLower) ||
+      finalAmount.includes(searchTermLower) ||
+      advances.includes(searchTermLower) ||
+      finalPayment.includes(searchTermLower) ||
+      date.includes(searchTermLower)
+    );
+  });
 
   return (
     <div className="cfa-content">
@@ -333,7 +362,7 @@ function AddPayment() {
               <h3>{monthNames[currentMonth]} {currentYear}</h3>
               <button onClick={() => navigateMonth('next')}>Next &gt;</button>
             </div>
-            
+
             {historyLoading ? (
               <p>Loading...</p>
             ) : paymentsHistory.length > 0 ? (
@@ -372,6 +401,9 @@ function AddPayment() {
         {/* Add New Payment Form */}
         {activeTab === "addPayment" && (
           <form onSubmit={handleSubmit}>
+            <h2>Add New Payment</h2>
+            {error && <p className="error-message">{error}</p>}
+
             <div className="input-group">
               <label>User ID</label>
               <input
@@ -508,76 +540,56 @@ function AddPayment() {
                 name="finalPayment"
                 value={formData.finalPayment}
                 onChange={handleChange}
-                placeholder="Calculated final payment"
+                placeholder="Final Payment"
                 readOnly
               />
             </div>
 
-            {error && <p className="error">{error}</p>}
-
-            <button type="submit" disabled={isLoading} className={isLoading ? "loading" : ""}>
-              {isLoading ? "Submitting..." : "Submit"}
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Adding Payment..." : "Add Payment"}
             </button>
           </form>
         )}
 
-        {/* View Payment History Tab */}
+        {/* View Payments History */}
         {activeTab === "viewHistory" && (
           <div className="payment-history">
-            <div className="filter-controls">
-              <div className="filter-group">
-                <label>Search User ID:</label>
-                <input
-                  type="text"
-                  name="userId"
-                  value={filters.userId}
-                  onChange={handleFilterChange}
-                  placeholder="Enter user ID"
-                />
-              </div>
-              
-              <div className="filter-group">
-                <label>Year:</label>
-                <select
-                  name="year"
-                  value={filters.year}
-                  onChange={handleFilterChange}
-                >
-                  {Array.from({length: 5}, (_, i) => currentYear - i).map(year => (
+            <div className="filter-section">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <select
+                name="year"
+                value={filters.year}
+                onChange={handleFilterChange}
+              >
+                <option value="">Select Year</option>
+                {Array.from(new Set(paymentsHistory.map(payment => new Date(payment.created_at).getFullYear())))
+                  .sort((a, b) => b - a)
+                  .map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
-                </select>
-              </div>
-              
-              <div className="filter-group">
-                <label>Month:</label>
-                <select
-                  name="month"
-                  value={filters.month}
-                  onChange={handleFilterChange}
-                >
-                  {monthNames.map((month, index) => (
-                    <option key={month} value={index + 1}>{month}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+              </select>
 
-            <button 
-                type="button" 
-                onClick={resetFilters}
-                className="reset-filters"
+              <select
+                name="month"
+                value={filters.month}
+                onChange={handleFilterChange}
               >
-                Reset Filters
-              </button>
-
-            <div className="results-count">
-              Showing {paymentsHistory.length} records
+                <option value="">Select Month</option>
+                {monthNames.map((month, index) => (
+                  <option key={index + 1} value={index + 1}>{month}</option>
+                ))}
+              </select>
+              <button onClick={resetFilters}>Reset Filters</button>
             </div>
 
             {historyLoading ? (
               <p>Loading...</p>
-            ) : paymentsHistory.length > 0 ? (
+            ) : filteredPaymentsHistory.length > 0 ? (
               <table>
                 <thead>
                   <tr>
@@ -591,7 +603,7 @@ function AddPayment() {
                   </tr>
                 </thead>
                 <tbody>
-                  {paymentsHistory.map((payment, index) => (
+                  {filteredPaymentsHistory.map((payment, index) => (
                     <tr key={index}>
                       <td>{payment.userId}</td>
                       <td>{payment.finalTeaKilos}</td>
@@ -605,7 +617,7 @@ function AddPayment() {
                 </tbody>
               </table>
             ) : (
-              <p>No payment history found.</p>
+              <p>No payment records found.</p>
             )}
           </div>
         )}
