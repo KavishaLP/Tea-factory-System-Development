@@ -18,10 +18,12 @@ const TeaPacketDistribution = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Fetch inventory on component mount
+  // Fetch inventory on component mount and when activeTab changes to "addProduction"
   useEffect(() => {
-    fetchInventory();
-  }, []);
+    if (activeTab === "addProduction") {
+      fetchInventory();
+    }
+  }, [activeTab]);
 
   const fetchInventory = async () => {
     setIsLoading(true);
