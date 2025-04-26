@@ -2,8 +2,8 @@
 
 import express from 'express';
 import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack, fetchRequestAdvance, fetchTotalUsers, getTeaPacketsRequests, confirmTeaPackets, deleteTeaPackets, searchUsers,
-    fetchTeaInventory
- } from '../controllers/adminControllers.js'
+    fetchTeaInventory, addTeaProduction } from '../controllers/adminControllers.js'
+
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.get('/search', searchUsers);
 
 
 router.get('/tea-inventory', fetchTeaInventory);
-router.post('/add-tea-production', deleteTeaPackets);
+router.post('/add-tea-production', addTeaProduction);
 
 
 

@@ -59,28 +59,32 @@ const TeaPacketDistribution = () => {
     }));
   };
 
+
   const handleAddProduction = async (id, teaType, packetSize) => {
     const count = newProduction[`${teaType}_${packetSize}`];
-  
+    
     if (!count || count <= 0) {
       setError(`Please enter a valid count for ${teaType} ${packetSize}`);
       return;
     }
-  
+
     setIsLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/add-tea-production",
         {
-          id, // Send id
+          id, // Include the id in the request
+          teaType, // For reference (not used in update)
+          packetSize, // For reference (not used in update)
           packetCount: count,
           productionDate: new Date().toISOString().split('T')[0]
         },
         { withCredentials: true }
       );
-  
+      
       if (response.data.status === "Success") {
         setSuccess(`Added ${count} ${packetSize} ${teaType} packets successfully!`);
+        // Clear the input field
         setNewProduction(prev => ({
           ...prev,
           [`${teaType}_${packetSize}`]: ""
@@ -96,7 +100,7 @@ const TeaPacketDistribution = () => {
       setIsLoading(false);
     }
   };
-  
+
 
   // Distribution functions
   const handleDistributionInputChange = (e, index) => {
@@ -251,40 +255,7 @@ const TeaPacketDistribution = () => {
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {inventory.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.teaType}</td>
-                      <td>{item.packetSize}</td>
-                      <td>{item.packetCount}</td>
-                      <td>
-                        <input
-                          type="number"
-                          min="1"
-                          value={newProduction[`${item.teaType}_${item.packetSize}`] || ""}
-                          onChange={(e) => handleProductionChange(
-                            item.teaType, 
-                            item.packetSize, 
-                            e.target.value
-                          )}
-                          placeholder="Enter quantity"
-                        />
-                      </td>
-                      <td>
-                        <button
-                          className="add-btn"
-                          onClick={() => handleAddProduction(
-                            item.teaType, 
-                            item.packetSize
-                          )}
-                          disabled={isLoading}
-                        >
-                          Add
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+
               </table>
             </div>
           )}
