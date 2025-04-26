@@ -255,7 +255,41 @@ const TeaPacketDistribution = () => {
                     <th>Action</th>
                   </tr>
                 </thead>
-
+                <tbody>
+                  {inventory.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.teaType}</td>
+                      <td>{item.packetSize}</td>
+                      <td>{item.packetCount}</td>
+                      <td>
+                        <input
+                          type="number"
+                          min="1"
+                          value={newProduction[`${item.teaType}_${item.packetSize}`] || ""}
+                          onChange={(e) => handleProductionChange(
+                            item.teaType, 
+                            item.packetSize, 
+                            e.target.value
+                          )}
+                          placeholder="Enter quantity"
+                        />
+                      </td>
+                      <td>
+                        <button
+                          className="add-btn"
+                          onClick={() => handleAddProduction(
+                            item.id, // Pass the id here
+                            item.teaType, 
+                            item.packetSize
+                          )}
+                          disabled={isLoading}
+                        >
+                          Add
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
           )}
