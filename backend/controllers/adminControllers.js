@@ -424,22 +424,28 @@ export const fetchTeaInventory = (req, res) => {
     });
 };
 
-export const addTeaProduction = async (req, res) => {
-  try {
-    const { id, packetCount } = req.body;
+export const addTeaProduction = (req, res) => {
+  const { id, packetCount } = req.body;
 
-    if (!id || !packetCount || packetCount <= 0) {
-      return res.status(400).json({ 
+  if (!id || !packetCount || packetCount <= 0) {
+    return res.status(400).json({ 
+      status: "Error", 
+      message: "Invalid input data" 
+    });
+  }
+
+  // First check if the item exists
+  const checkQuery = 'SELECT id FROM tea_inventory WHERE id = ?';
+  sqldb.query(checkQuery, [id], (err, checkResult) => {
+    if (err) {
+      console.error("Error checking tea inventory:", err);
+      return res.status(500).json({ 
         status: "Error", 
-        message: "Invalid input data" 
+        message: "Server error while checking inventory" 
       });
     }
 
-    // First check if the item exists
-    const checkQuery = 'SELECT id FROM tea_inventory WHERE id = ?';
-    const checkResult = await sqldb.query(checkQuery, [id]);
-
-    if (checkResult[0].length === 0) {
+    if (checkResult.length === 0) {
       return res.status(404).json({ 
         status: "Error", 
         message: "Tea inventory item not found" 
@@ -453,25 +459,26 @@ export const addTeaProduction = async (req, res) => {
           last_updated = CURRENT_TIMESTAMP 
       WHERE id = ?
     `;
-    const updateResult = await sqldb.query(updateQuery, [packetCount, id]);
+    sqldb.query(updateQuery, [packetCount, id], (updateErr, updateResult) => {
+      if (updateErr) {
+        console.error("Error updating tea inventory:", updateErr);
+        return res.status(500).json({ 
+          status: "Error", 
+          message: "Server error while updating inventory" 
+        });
+      }
 
-    if (updateResult[0].affectedRows === 1) {
-      return res.status(200).json({ 
-        status: "Success", 
-        message: "Production added successfully" 
-      });
-    } else {
-      return res.status(500).json({ 
-        status: "Error", 
-        message: "Failed to update inventory" 
-      });
-    }
-
-  } catch (error) {
-    console.error("Error adding tea production:", error);
-    return res.status(500).json({ 
-      status: "Error", 
-      message: "Server error while adding production" 
+      if (updateResult.affectedRows === 1) {
+        return res.status(200).json({ 
+          status: "Success", 
+          message: "Production added successfully" 
+        });
+      } else {
+        return res.status(500).json({ 
+          status: "Error", 
+          message: "Failed to update inventory" 
+        });
+      }
     });
-  }
+  });
 };
