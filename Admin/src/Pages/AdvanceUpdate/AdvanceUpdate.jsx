@@ -12,6 +12,18 @@ function AdvanceUpdate() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   
+  // For add advance modal
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newAdvance, setNewAdvance] = useState({
+    userId: "",
+    amount: "",
+    date: new Date().toISOString().split('T')[0] // Default to today's date
+  });
+  
+  // For farmer suggestions
+  const [farmerSuggestions, setFarmerSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   // Filter states for each tab
   const [filters, setFilters] = useState({
     userId: "",
@@ -23,6 +35,50 @@ function AdvanceUpdate() {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+
+  // Fetch farmer suggestions
+  const fetchFarmerSuggestions = async (query) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8081/api/admin/search-farmers-indb',
+        { query },
+        { withCredentials: true }
+      );
+
+      if (response.data.Status === 'Success') {
+        setFarmerSuggestions(response.data.farmers);
+      } else {
+        setFarmerSuggestions([]);
+      }
+    } catch (error) {
+      console.error('Error fetching farmer suggestions:', error);
+      setFarmerSuggestions([]);
+    }
+  };
+
+  // Handle user ID input change with suggestions
+  const handleUserIdChange = (e) => {
+    const { value } = e.target;
+    setNewAdvance(prev => ({ ...prev, userId: value }));
+
+    if (value.length >= 2) {
+      fetchFarmerSuggestions(value);
+      setShowSuggestions(true);
+    } else {
+      setFarmerSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (farmer) => {
+    setNewAdvance(prev => ({ 
+      ...prev, 
+      userId: farmer.userId 
+    }));
+    setFarmerSuggestions([]);
+    setShowSuggestions(false);
+  };
 
   // Fetch advance requests
   useEffect(() => {
@@ -59,7 +115,7 @@ function AdvanceUpdate() {
     };
 
     fetchAdvanceRequests();
-  }, [activeTab]);
+  }, [activeTab, showAddModal]); // Refresh when modal closes
 
   // Apply filters when they change
   useEffect(() => {
@@ -122,6 +178,57 @@ function AdvanceUpdate() {
       year: "",
       month: ""
     });
+  };
+
+  // Handle add advance form changes
+  const handleAdvanceChange = (e) => {
+    const { name, value } = e.target;
+    setNewAdvance(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Submit new advance
+  const handleAddAdvance = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    if (!newAdvance.userId || !newAdvance.amount) {
+      setError("User ID and Amount are required");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/admin/add-advance",
+        {
+          userId: newAdvance.userId,
+          amount: parseFloat(newAdvance.amount),
+          date: newAdvance.date
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.status === "Success") {
+        alert("Advance added successfully!");
+        setShowAddModal(false);
+        setNewAdvance({
+          userId: "",
+          amount: "",
+          date: new Date().toISOString().split('T')[0]
+        });
+      } else {
+        setError(response.data.message || "Failed to add advance.");
+      }
+    } catch (error) {
+      console.error("Error adding advance:", error);
+      setError(error.response?.data?.message || "An error occurred while adding advance.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Function to confirm an advance request
@@ -206,6 +313,12 @@ function AdvanceUpdate() {
         <div className="content">
           <div className="page-header">
             <h1>Advance Requests</h1>
+            <button 
+              className="add-advance-button"
+              onClick={() => setShowAddModal(true)}
+            >
+              Add Advance
+            </button>
           </div>
 
           {/* Tabs */}
@@ -468,6 +581,97 @@ function AdvanceUpdate() {
           )}
         </div>
       </div>
+
+      {/* Add Advance Modal */}
+      {showAddModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Add New Advance</h2>
+              <button 
+                className="close-button"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setError("");
+                }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddAdvance}>
+              <div className="input-group">
+                <label>Farmer ID</label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={newAdvance.userId}
+                  onChange={handleUserIdChange}
+                  required
+                  placeholder="Start typing to search farmer IDs"
+                  autoComplete="off"
+                />
+                {showSuggestions && farmerSuggestions.length > 0 && (
+                  <ul className="suggestions-dropdown">
+                    {farmerSuggestions.map((farmer, index) => (
+                      <li key={index} onClick={() => handleSuggestionClick(farmer)}>
+                        {farmer.userId} - {farmer.firstName} {farmer.lastName}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className="input-group">
+                <label>Amount (LKR)</label>
+                <input
+                  type="number"
+                  name="amount"
+                  value={newAdvance.amount}
+                  onChange={handleAdvanceChange}
+                  required
+                  min="0"
+                  step="0.01"
+                  placeholder="Enter advance amount"
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Date</label>
+                <input
+                  type="date"
+                  name="date"
+                  value={newAdvance.date}
+                  onChange={handleAdvanceChange}
+                  required
+                />
+              </div>
+
+              {error && <p className="error-message">{error}</p>}
+
+              <div className="modal-actions">
+                <button 
+                  type="button"
+                  className="cancel-button"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setError("");
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="submit-button"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Adding..." : "Add Advance"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
