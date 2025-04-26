@@ -59,30 +59,28 @@ const TeaPacketDistribution = () => {
     }));
   };
 
-  const handleAddProduction = async (teaType, packetSize) => {
+  const handleAddProduction = async (id, teaType, packetSize) => {
     const count = newProduction[`${teaType}_${packetSize}`];
-    
+  
     if (!count || count <= 0) {
       setError(`Please enter a valid count for ${teaType} ${packetSize}`);
       return;
     }
-
+  
     setIsLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/add-tea-production",
         {
-          teaType,
-          packetSize,
+          id, // Send id
           packetCount: count,
           productionDate: new Date().toISOString().split('T')[0]
         },
         { withCredentials: true }
       );
-      
+  
       if (response.data.status === "Success") {
         setSuccess(`Added ${count} ${packetSize} ${teaType} packets successfully!`);
-        // Clear the input field
         setNewProduction(prev => ({
           ...prev,
           [`${teaType}_${packetSize}`]: ""
@@ -98,6 +96,7 @@ const TeaPacketDistribution = () => {
       setIsLoading(false);
     }
   };
+  
 
   // Distribution functions
   const handleDistributionInputChange = (e, index) => {
