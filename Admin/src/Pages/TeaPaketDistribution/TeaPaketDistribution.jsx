@@ -18,7 +18,7 @@ const TeaPacketDistribution = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Fetch inventory when tab changes to addProduction
+  // Fetch inventory when tab changes or after updates
   useEffect(() => {
     if (activeTab === "addProduction") {
       fetchInventory();
@@ -35,7 +35,7 @@ const TeaPacketDistribution = () => {
       
       if (response.data.status === "Success") {
         setInventory(response.data.inventory || []);
-        // Initialize newProduction state
+        // Initialize newProduction with all inventory items
         const initialProduction = {};
         response.data.inventory.forEach(item => {
           initialProduction[`${item.teaType}_${item.packetSize}`] = "";
@@ -67,6 +67,7 @@ const TeaPacketDistribution = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/add-tea-production",
@@ -93,6 +94,122 @@ const TeaPacketDistribution = () => {
     } catch (error) {
       setError(error.message || `Failed to add ${teaType} ${packetSize} production`);
       console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Distribution functions
+  const handleDistributionInputChange = (e, index) => {
+    const { name, value } = e.target;
+    setDistributionData(prev => {
+      const updatedDistributions = [...prev.distributions];
+      updatedDistributions[index] = {
+        ...updatedDistributions[index],
+        [name]: value
+      };
+      return {
+        ...prev,
+        distributions: updatedDistributions
+      };
+    });
+  };
+
+  const handleFarmerIdChange = (e) => {
+    setDistributionData(prev => ({
+      ...prev,
+      farmerId: e.target.value
+    }));
+  };
+
+  const addDistributionRow = () => {
+    setDistributionData(prev => ({
+      ...prev,
+      distributions: [
+        ...prev.distributions,
+        { teaType: "", packetSize: "", packetCount: "" }
+      ]
+    }));
+  };
+
+  const removeDistributionRow = (index) => {
+    if (distributionData.distributions.length > 1) {
+      setDistributionData(prev => ({
+        ...prev,
+        distributions: prev.distributions.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const getAvailableSizesForType = (teaType) => {
+    if (!teaType) return [];
+    return inventory
+      .filter(item => item.teaType === teaType)
+      .map(item => item.packetSize)
+      .filter((value, index, self) => self.indexOf(value) === index);
+  };
+
+  const handleDistributeTea = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    
+    if (!distributionData.farmerId) {
+      setError("Please enter Farmer ID");
+      return;
+    }
+
+    // Validate all distribution rows
+    for (const [index, dist] of distributionData.distributions.entries()) {
+      if (!dist.teaType || !dist.packetSize || !dist.packetCount) {
+        setError(`Please fill all fields in distribution row ${index + 1}`);
+        return;
+      }
+
+      if (dist.packetCount <= 0) {
+        setError(`Packet count must be greater than 0 in row ${index + 1}`);
+        return;
+      }
+
+      // Check inventory availability
+      const availableItem = inventory.find(
+        item => item.teaType === dist.teaType && 
+               item.packetSize === dist.packetSize
+      );
+
+      if (!availableItem || availableItem.packetCount < dist.packetCount) {
+        setError(`Not enough inventory for ${dist.teaType} ${dist.packetSize} in row ${index + 1}`);
+        return;
+      }
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/admin/distribute-tea",
+        distributionData,
+        { withCredentials: true }
+      );
+      
+      if (response.data.status === "Success") {
+        setSuccess("Tea distributed successfully!");
+        setDistributionData({
+          farmerId: "",
+          distributions: [{
+            teaType: "",
+            packetSize: "",
+            packetCount: ""
+          }]
+        });
+        fetchInventory();
+      } else {
+        throw new Error(response.data.message || "Failed to distribute tea");
+      }
+    } catch (error) {
+      setError(error.message || "Failed to distribute tea");
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -178,7 +295,93 @@ const TeaPacketDistribution = () => {
       {activeTab === "distribution" && (
         <div className="section">
           <h3>Distribute Tea Packets</h3>
-          {/* Distribution form implementation would go here */}
+          <form onSubmit={handleDistributeTea}>
+            <div className="form-group">
+              <label>Farmer ID:</label>
+              <input
+                type="text"
+                name="farmerId"
+                value={distributionData.farmerId}
+                onChange={handleFarmerIdChange}
+                required
+              />
+            </div>
+
+            <h4>Tea Distributions</h4>
+            {distributionData.distributions.map((dist, index) => (
+              <div key={index} className="distribution-row">
+                <div className="form-group">
+                  <label>Tea Type:</label>
+                  <select
+                    name="teaType"
+                    value={dist.teaType}
+                    onChange={(e) => handleDistributionInputChange(e, index)}
+                    required
+                  >
+                    <option value="">Select Tea Type</option>
+                    {inventory
+                      .map(item => item.teaType)
+                      .filter((value, index, self) => self.indexOf(value) === index)
+                      .map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                  </select>
+                </div>
+                
+                <div className="form-group">
+                  <label>Packet Size:</label>
+                  <select
+                    name="packetSize"
+                    value={dist.packetSize}
+                    onChange={(e) => handleDistributionInputChange(e, index)}
+                    required
+                    disabled={!dist.teaType}
+                  >
+                    <option value="">Select Packet Size</option>
+                    {dist.teaType && getAvailableSizesForType(dist.teaType).map(size => (
+                      <option key={size} value={size}>{size}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="form-group">
+                  <label>Packet Count:</label>
+                  <input
+                    type="number"
+                    name="packetCount"
+                    value={dist.packetCount}
+                    onChange={(e) => handleDistributionInputChange(e, index)}
+                    min="1"
+                    required
+                  />
+                </div>
+
+                {distributionData.distributions.length > 1 && (
+                  <button
+                    type="button"
+                    className="remove-btn"
+                    onClick={() => removeDistributionRow(index)}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <div className="form-actions">
+              <button
+                type="button"
+                className="add-btn"
+                onClick={addDistributionRow}
+              >
+                Add Another Distribution
+              </button>
+              
+              <button type="submit" className="submit-btn" disabled={isLoading}>
+                {isLoading ? "Distributing..." : "Distribute Tea"}
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>
