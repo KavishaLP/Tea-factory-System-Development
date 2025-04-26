@@ -1,4 +1,4 @@
-/* TeaPaketDistribution.css - Updated for new structure */
+/* TeaPaketDistribution.css - Complete Updated Styles */
 
 /* Base Layout with Sidebar Consideration */
 .tea-distribution-container {
@@ -8,6 +8,21 @@
   min-height: calc(100vh - 70px);
   background-color: #f5f7fa;
   transition: margin-left 0.3s ease;
+}
+
+/* Header */
+.tea-distribution-container h2 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.tea-distribution-container h3 {
+  color: #334155;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
 }
 
 /* Tabs */
@@ -65,17 +80,73 @@
   margin-bottom: 30px;
 }
 
-.distribution-section {
-  margin-bottom: 30px;
+/* Inventory Table */
+.inventory-table {
+  overflow-x: auto;
 }
 
-.distribution-history {
-  margin-top: 30px;
+.inventory-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
 }
 
-/* Forms */
+.inventory-table th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.inventory-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+.inventory-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.inventory-table tr:hover {
+  background-color: #f1f5f9;
+}
+
+.inventory-table input[type="number"] {
+  width: 100px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Distribution Form */
+.distribution-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+}
+
 .form-group {
-  margin-bottom: 15px;
+  flex: 1;
+  min-width: 150px;
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -104,6 +175,38 @@
   background-size: 1rem;
 }
 
+/* Buttons */
+.add-btn {
+  padding: 0.5rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+}
+
+.add-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.remove-btn {
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+  background-color: #dc2626;
+}
+
 .submit-btn {
   padding: 0.5rem 1rem;
   background-color: #16a34a;
@@ -119,43 +222,12 @@
   background-color: #15803d;
 }
 
-/* Tables */
-table {
-  width: 100%;
-  border-collapse: collapse;
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
   margin-top: 20px;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-}
-
-table th {
-  background-color: #f8fafc;
-  font-weight: 600;
-  color: #334155;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #f1f5f9;
-  vertical-align: middle;
-  font-size: 0.9rem;
-}
-
-table tr:nth-child(even) {
-  background-color: #f8f9fa;
-}
-
-table tr:hover {
-  background-color: #f1f5f9;
 }
 
 /* Messages */
@@ -177,6 +249,14 @@ table tr:hover {
   font-size: 0.9rem;
 }
 
+/* Loading State */
+.loading-message {
+  color: #64748b;
+  font-style: italic;
+  padding: 1rem;
+  text-align: center;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 1024px) {
   .tea-distribution-container {
@@ -190,14 +270,23 @@ table tr:hover {
     padding: 15px;
   }
   
-  .form-group {
-    margin-bottom: 12px;
+  .distribution-row {
+    flex-direction: column;
+    align-items: stretch;
   }
   
-  table th,
-  table td {
-    padding: 0.5rem;
-    font-size: 0.85rem;
+  .form-group {
+    min-width: 100%;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .add-btn, .remove-btn, .submit-btn {
+    width: 100%;
+    margin-bottom: 10px;
+    margin-right: 0;
   }
 }
 
@@ -213,13 +302,13 @@ table tr:hover {
     font-size: 0.85rem;
   }
   
-  table th,
-  table td {
+  .inventory-table th,
+  .inventory-table td {
     padding: 0.5rem;
     font-size: 0.8rem;
   }
   
-  .submit-btn {
-    width: 100%;
+  .inventory-table input[type="number"] {
+    width: 80px;
   }
 }
