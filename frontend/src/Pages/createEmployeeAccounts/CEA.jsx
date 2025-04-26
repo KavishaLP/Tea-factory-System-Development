@@ -18,6 +18,10 @@ const CreateEmployeeAccount = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [mobileErrors, setMobileErrors] = useState({
+    mobile1: "",
+    mobile2: ""
+  });
 
   // Fetch employee accounts when the "View Employee Accounts" tab is active
   useEffect(() => {
@@ -67,9 +71,32 @@ const CreateEmployeeAccount = () => {
     setSearchResults(results);
   }, [searchTerm, employeeAccounts]);
 
-  // Handle input changes
+  // Validate mobile number format
+  const validateMobileNumber = (number, fieldName) => {
+    if (!number) return ""; // Empty is valid (only required for mobile1)
+    
+    // Sri Lankan mobile number regex (starts with 0 or +94 followed by 9 digits)
+    const regex = /^(?:\+94|0)(7[0-9]|71|72|75|76|77|78|21|23|24|25|26|27|28|31|32|33|34|35|36|37|38|41|45|47|51|52|54|55|57|63|65|66|67|81|91|11|70|60|40)([0-9]{6})$/;
+    
+    if (!regex.test(number)) {
+      return "Please enter a valid Sri Lankan mobile number";
+    }
+    return "";
+  };
+
+  // Handle input changes with validation
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // For mobile fields, validate on change
+    if (name === "mobile1" || name === "mobile2") {
+      const errorMessage = validateMobileNumber(value, name);
+      setMobileErrors(prev => ({
+        ...prev,
+        [name]: errorMessage
+      }));
+    }
+    
     setFormData({ ...formData, [name]: value });
   };
 
@@ -88,6 +115,20 @@ const CreateEmployeeAccount = () => {
       return;
     }
 
+    // Validate mobile numbers before submission
+    const mobile1Error = validateMobileNumber(formData.mobile1, "mobile1");
+    const mobile2Error = formData.mobile2 ? validateMobileNumber(formData.mobile2, "mobile2") : "";
+    
+    setMobileErrors({
+      mobile1: mobile1Error,
+      mobile2: mobile2Error
+    });
+
+    if (mobile1Error || mobile2Error) {
+      setError("Please correct the mobile number errors");
+      return;
+    }
+
     setError("");
     setIsLoading(true);
 
@@ -103,6 +144,10 @@ const CreateEmployeeAccount = () => {
           lastName: "",
           mobile1: "",
           mobile2: "",
+        });
+        setMobileErrors({
+          mobile1: "",
+          mobile2: ""
         });
       })
       .catch((error) => {
@@ -183,8 +228,11 @@ const CreateEmployeeAccount = () => {
                   value={formData.mobile1}
                   onChange={handleChange}
                   required
-                  placeholder="Enter mobile number 1"
+                  placeholder="Enter mobile number 1 (e.g., 0771234567)"
                 />
+                {mobileErrors.mobile1 && (
+                  <span className="error-message">{mobileErrors.mobile1}</span>
+                )}
               </div>
               <div className="input-field">
                 <label>Mobile Number 2 (Optional)</label>
@@ -193,14 +241,17 @@ const CreateEmployeeAccount = () => {
                   name="mobile2"
                   value={formData.mobile2}
                   onChange={handleChange}
-                  placeholder="Enter mobile number 2"
+                  placeholder="Enter mobile number 2 (e.g., 0771234567)"
                 />
+                {mobileErrors.mobile2 && (
+                  <span className="error-message">{mobileErrors.mobile2}</span>
+                )}
               </div>
             </div>
 
             {error && <p className="error">{error}</p>}
 
-            <button type="submit" disabled={isLoading} className={isLoading ? "loading" : ""}>
+            <button type="submit" disabled={isLoading || mobileErrors.mobile1 || mobileErrors.mobile2} className={isLoading ? "loading" : ""}>
               {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
