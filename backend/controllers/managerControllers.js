@@ -93,7 +93,6 @@ export const addFarmer = async (req, res) => {
     });
 };
 
-
 // Add payment function
 export const addFarmerPayment = (req, res) => {
     const {
