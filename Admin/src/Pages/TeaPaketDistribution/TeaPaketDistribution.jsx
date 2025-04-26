@@ -18,7 +18,7 @@ const TeaPacketDistribution = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Fetch inventory on component mount and when activeTab changes to "addProduction"
+  // Fetch inventory when tab changes to addProduction
   useEffect(() => {
     if (activeTab === "addProduction") {
       fetchInventory();
@@ -32,13 +32,18 @@ const TeaPacketDistribution = () => {
         "http://localhost:8081/api/admin/tea-inventory",
         { withCredentials: true }
       );
-      setInventory(response.data.inventory || []);
-      // Initialize newProduction with all inventory items
-      const initialProduction = {};
-      response.data.inventory.forEach(item => {
-        initialProduction[`${item.tea_type}_${item.packet_size}`] = "";
-      });
-      setNewProduction(initialProduction);
+      
+      if (response.data.status === "Success") {
+        setInventory(response.data.inventory || []);
+        // Initialize newProduction state
+        const initialProduction = {};
+        response.data.inventory.forEach(item => {
+          initialProduction[`${item.teaType}_${item.packetSize}`] = "";
+        });
+        setNewProduction(initialProduction);
+      } else {
+        throw new Error(response.data.message || "Failed to fetch inventory");
+      }
     } catch (error) {
       setError("Failed to fetch inventory data.");
       console.error("Error:", error);
@@ -91,13 +96,10 @@ const TeaPacketDistribution = () => {
     }
   };
 
-  // ... [Keep all the distribution related code from previous example] ...
-
   return (
     <div className="tea-distribution-container">
       <h2>Tea Packet Management</h2>
       
-      {/* Tabs */}
       <div className="tabs">
         <button
           className={`tab-btn ${activeTab === "addProduction" ? "active" : ""}`}
@@ -113,68 +115,70 @@ const TeaPacketDistribution = () => {
         </button>
       </div>
 
-      {/* Error and Success Messages */}
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">{success}</div>}
 
-      {/* Add Production Section */}
       {activeTab === "addProduction" && (
         <div className="section">
           <h3>Add Tea Production</h3>
-          <div className="inventory-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tea Type</th>
-                  <th>Packet Size</th>
-                  <th>Current Stock</th>
-                  <th>Add Quantity</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {inventory.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.tea_type}</td>
-                    <td>{item.packet_size}</td>
-                    <td>{item.packet_count}</td>
-                    <td>
-                      <input
-                        type="number"
-                        min="1"
-                        value={newProduction[`${item.tea_type}_${item.packet_size}`] || ""}
-                        onChange={(e) => handleProductionChange(
-                          item.tea_type, 
-                          item.packet_size, 
-                          e.target.value
-                        )}
-                        placeholder="Enter quantity"
-                      />
-                    </td>
-                    <td>
-                      <button
-                        className="add-btn"
-                        onClick={() => handleAddProduction(
-                          item.tea_type, 
-                          item.packet_size
-                        )}
-                        disabled={isLoading}
-                      >
-                        Add
-                      </button>
-                    </td>
+          {isLoading ? (
+            <p>Loading inventory...</p>
+          ) : (
+            <div className="inventory-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tea Type</th>
+                    <th>Packet Size</th>
+                    <th>Current Stock</th>
+                    <th>Add Quantity</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {inventory.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.teaType}</td>
+                      <td>{item.packetSize}</td>
+                      <td>{item.packetCount}</td>
+                      <td>
+                        <input
+                          type="number"
+                          min="1"
+                          value={newProduction[`${item.teaType}_${item.packetSize}`] || ""}
+                          onChange={(e) => handleProductionChange(
+                            item.teaType, 
+                            item.packetSize, 
+                            e.target.value
+                          )}
+                          placeholder="Enter quantity"
+                        />
+                      </td>
+                      <td>
+                        <button
+                          className="add-btn"
+                          onClick={() => handleAddProduction(
+                            item.teaType, 
+                            item.packetSize
+                          )}
+                          disabled={isLoading}
+                        >
+                          Add
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Distribute Tea Section */}
       {activeTab === "distribution" && (
         <div className="section">
-          {/* ... [Keep the distribution section from previous example] ... */}
+          <h3>Distribute Tea Packets</h3>
+          {/* Distribution form implementation would go here */}
         </div>
       )}
     </div>
