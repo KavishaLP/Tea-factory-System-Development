@@ -45,9 +45,10 @@ const fetchFarmerSuggestions = async (query) => {
       { query },
       { withCredentials: true }
     );
-
+    console.log("Farmer suggestions response:", response.data);
     if (response.data.Status === 'Success' && Array.isArray(response.data.farmers)) {
       setFarmerSuggestions(response.data.farmers);
+      console.log(response.data.farmers);
     } else {
       setFarmerSuggestions([]);
     }
