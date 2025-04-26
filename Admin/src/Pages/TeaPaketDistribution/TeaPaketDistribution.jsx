@@ -3,432 +3,377 @@ import axios from "axios";
 import "./TeaPaketDistribution.css";
 
 const TeaPacketDistribution = () => {
-  const [activeTab, setActiveTab] = useState("newRequests");
-  const [requests, setRequests] = useState([]);
-  const [filteredRequests, setFilteredRequests] = useState([]);
+  const [activeTab, setActiveTab] = useState("addProduction");
+  const [productionData, setProductionData] = useState({
+    teaType: "",
+    packetSize: "",
+    packetCount: "",
+    productionDate: new Date().toISOString().split('T')[0]
+  });
+  const [distributionData, setDistributionData] = useState({
+    farmerId: "",
+    teaType: "",
+    packetSize: "",
+    packetCount: ""
+  });
+  const [inventory, setInventory] = useState([]);
+  const [distributionHistory, setDistributionHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  
-  // Filter states
-  const [filters, setFilters] = useState({
-    searchTerm: "",
-    year: "",
-    month: "",
-    teaPacketType: "",
-    paymentOption: ""
-  });
+  const [success, setSuccess] = useState("");
 
-  // Fetch data on component mount or when the active tab changes
+  // Fetch inventory and distribution history on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError("");
-      try {
-        const data = await fetchTeaPacketRequests();
-        setRequests(data || []);
-        setFilteredRequests(data || []);
-      } catch (error) {
-        setError("Failed to fetch data. Please try again later.");
-        console.error("Error fetching data:", error);
-        setRequests([]);
-        setFilteredRequests([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    fetchInventory();
+    fetchDistributionHistory();
+  }, []);
 
-    fetchData();
-  }, [activeTab]);
-
-  // Apply filters when they change
-  useEffect(() => {
-    applyFilters();
-  }, [filters, requests, activeTab]);
-
-  const applyFilters = () => {
-    let result = [...requests];
-
-    // Filter by status based on active tab
-    result = result.filter(request => {
-      if (activeTab === "newRequests") return request.status === "Pending";
-      if (activeTab === "confirmedRequests") return request.status === "Approved";
-      if (activeTab === "deletedRequests") return request.status === "Rejected";
-      return true;
-    });
-
-    // Apply search term filter (ID, first name, last name)
-    if (filters.searchTerm) {
-      const searchTerm = filters.searchTerm.toLowerCase();
-      result = result.filter(request => {
-        return (
-          request.userId.toString().includes(searchTerm) ||
-          (request.userName && request.userName.toLowerCase().includes(searchTerm))
-        );
-      });
-    }
-
-    // Apply other filters
-    if (filters.year) {
-      result = result.filter(request => {
-        const requestDate = new Date(request.requestDate);
-        return requestDate.getFullYear().toString() === filters.year;
-      });
-    }
-
-    if (filters.month) {
-      result = result.filter(request => {
-        const requestDate = new Date(request.requestDate);
-        return (requestDate.getMonth() + 1).toString().padStart(2, '0') === filters.month;
-      });
-    }
-
-    if (filters.teaPacketType) {
-      result = result.filter(request => 
-        request.teaPacketType === filters.teaPacketType
+  const fetchInventory = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        "http://localhost:8081/api/admin/tea-inventory",
+        { withCredentials: true }
       );
+      setInventory(response.data.inventory || []);
+    } catch (error) {
+      setError("Failed to fetch inventory data.");
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (filters.paymentOption) {
-      result = result.filter(request => 
-        request.paymentOption === filters.paymentOption
-      );
-    }
-
-    setFilteredRequests(result);
   };
 
-  const handleFilterChange = (e) => {
+  const fetchDistributionHistory = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        "http://localhost:8081/api/admin/tea-distribution",
+        { withCredentials: true }
+      );
+      setDistributionHistory(response.data.distributionHistory || []);
+    } catch (error) {
+      setError("Failed to fetch distribution history.");
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleProductionInputChange = (e) => {
     const { name, value } = e.target;
-    setFilters(prev => ({
+    setProductionData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const resetFilters = () => {
-    setFilters({
-      searchTerm: "",
-      year: "",
-      month: "",
-      teaPacketType: "",
-      paymentOption: ""
-    });
+  const handleDistributionInputChange = (e) => {
+    const { name, value } = e.target;
+    setDistributionData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  // Fetch tea packet requests from the backend
-  const fetchTeaPacketRequests = async () => {
+  const handleAddProduction = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    
+    if (!productionData.teaType || !productionData.packetSize || !productionData.packetCount) {
+      setError("Please fill all fields");
+      return;
+    }
+
     try {
-      const response = await axios.get(
-        "http://localhost:8081/api/admin/get-tea-packet-requests",
+      const response = await axios.post(
+        "http://localhost:8081/api/admin/add-tea-production",
+        productionData,
         { withCredentials: true }
       );
-  
+      
       if (response.data.status === "Success") {
-        return response.data.teaPacketRequests || [];
+        setSuccess("Tea production added successfully!");
+        setProductionData({
+          teaType: "",
+          packetSize: "",
+          packetCount: "",
+          productionDate: new Date().toISOString().split('T')[0]
+        });
+        fetchInventory();
       } else {
-        throw new Error(response.data.message || "Failed to fetch tea packet requests.");
+        throw new Error(response.data.message || "Failed to add production");
       }
     } catch (error) {
-      console.error("Error fetching tea packet requests:", error);
-      throw error;
+      setError(error.message || "Failed to add tea production");
+      console.error("Error:", error);
     }
   };
 
-  // Handle Confirm action
-  const handleConfirm = async (requestId) => {
+  const handleDistributeTea = async (e) => {
+    e.preventDefault();
     setError("");
-    try {
-      await confirmRequest(requestId);
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
-          request.request_id === requestId ? { ...request, status: "Approved" } : request
-        )
-      );
-      alert("Request confirmed successfully!");
-    } catch (error) {
-      setError("Failed to confirm request. Please try again.");
-      console.error("Error confirming request:", error);
+    setSuccess("");
+    
+    if (!distributionData.farmerId || !distributionData.teaType || 
+        !distributionData.packetSize || !distributionData.packetCount) {
+      setError("Please fill all fields");
+      return;
     }
-  };
 
-  // Confirm a tea packet request
-  const confirmRequest = async (requestId) => {
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/admin/confirm-tea-packets",
-        { requestId: requestId },
+        "http://localhost:8081/api/admin/distribute-tea",
+        distributionData,
         { withCredentials: true }
       );
-      if (response.data.status !== "Success") {
-        throw new Error(response.data.message || "Failed to confirm request.");
+      
+      if (response.data.status === "Success") {
+        setSuccess("Tea distributed successfully!");
+        setDistributionData({
+          farmerId: "",
+          teaType: "",
+          packetSize: "",
+          packetCount: ""
+        });
+        fetchInventory();
+        fetchDistributionHistory();
+      } else {
+        throw new Error(response.data.message || "Failed to distribute tea");
       }
     } catch (error) {
-      console.error("Error confirming request:", error);
-      throw error;
+      setError(error.message || "Failed to distribute tea");
+      console.error("Error:", error);
     }
-  };
-
-  // Handle Delete action
-  const handleDelete = async (requestId) => {
-    setError("");
-    try {
-      await deleteRequest(requestId);
-      setRequests(prevRequests =>
-        prevRequests.map(request =>
-          request.request_id === requestId ? { ...request, status: "Rejected" } : request
-        )
-      );
-      alert("Request deleted successfully!");
-    } catch (error) {
-      setError("Failed to delete request. Please try again.");
-      console.error("Error deleting request:", error);
-    }
-  };
-
-  // Delete a tea packet request
-  const deleteRequest = async (requestId) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/api/admin/delete-tea-packets",
-        { requestId: requestId },
-        { withCredentials: true }
-      );
-      if (response.data.status !== "Success") {
-        throw new Error(response.data.message || "Failed to delete request.");
-      }
-    } catch (error) {
-      console.error("Error deleting request:", error);
-      throw error;
-    }
-  };
-
-  // Generate years for dropdown (last 5 years)
-  const generateYears = () => {
-    const years = [];
-    const currentYear = new Date().getFullYear();
-    for (let i = 0; i < 5; i++) {
-      years.push(currentYear - i);
-    }
-    return years;
-  };
-
-  // Get unique tea packet types for filter dropdown
-  const getUniqueTeaPacketTypes = () => {
-    const types = new Set();
-    requests.forEach(request => types.add(request.teaPacketType));
-    return Array.from(types);
-  };
-
-  // Get unique payment options for filter dropdown
-  const getUniquePaymentOptions = () => {
-    const options = new Set();
-    requests.forEach(request => options.add(request.paymentOption));
-    return Array.from(options);
   };
 
   return (
-    <div className="tpd-content">
-      <div className="tpd-grid">
-        <h2>Tea Packet Production & Distribution</h2>
-        <div className="history-section">
-          {/* Tabs */}
-          <div className="tabs-container">
-            <button
-              className={`tab-button ${activeTab === "newRequests" ? "active" : ""}`}
-              onClick={() => setActiveTab("newRequests")}
-            >
-              Add Tea Packets
-            </button>
-            <button
-              className={`tab-button ${activeTab === "confirmedRequests" ? "active" : ""}`}
-              onClick={() => setActiveTab("confirmedRequests")}
-            >
-              Di
-            </button>
-            <button
-              className={`tab-button ${activeTab === "deletedRequests" ? "active" : ""}`}
-              onClick={() => setActiveTab("deletedRequests")}
-            >
-              Deleted Requests
-            </button>
-          </div>
+    <div className="tea-distribution-container">
+      <h2>Tea Packet Management</h2>
+      
+      {/* Tabs */}
+      <div className="tabs">
+        <button
+          className={`tab-btn ${activeTab === "addProduction" ? "active" : ""}`}
+          onClick={() => setActiveTab("addProduction")}
+        >
+          Add Production
+        </button>
+        <button
+          className={`tab-btn ${activeTab === "distribution" ? "active" : ""}`}
+          onClick={() => setActiveTab("distribution")}
+        >
+          Distribute Tea
+        </button>
+        <button
+          className={`tab-btn ${activeTab === "inventory" ? "active" : ""}`}
+          onClick={() => setActiveTab("inventory")}
+        >
+          Current Inventory
+        </button>
+      </div>
 
-          {/* Filter Controls */}
-          <div className="filter-controls">
-            <div className="filter-group search-group">
-              <label>Search (ID, Name):</label>
-              <div className="search-input-container">
+      {/* Error and Success Messages */}
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">{success}</div>}
+
+      {/* Add Production Section */}
+      {activeTab === "addProduction" && (
+        <div className="section">
+          <h3>Add Daily Tea Production</h3>
+          <form onSubmit={handleAddProduction}>
+            <div className="form-group">
+              <label>Tea Type:</label>
+              <select
+                name="teaType"
+                value={productionData.teaType}
+                onChange={handleProductionInputChange}
+                required
+              >
+                <option value="">Select Tea Type</option>
+                <option value="Type 1">Type 1</option>
+                <option value="Type 2">Type 2</option>
+                <option value="Type 3">Type 3</option>
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label>Packet Size:</label>
+              <select
+                name="packetSize"
+                value={productionData.packetSize}
+                onChange={handleProductionInputChange}
+                required
+              >
+                <option value="">Select Packet Size</option>
+                <option value="40g">40g</option>
+                <option value="100g">100g</option>
+                <option value="1kg">1kg</option>
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label>Packet Count:</label>
+              <input
+                type="number"
+                name="packetCount"
+                value={productionData.packetCount}
+                onChange={handleProductionInputChange}
+                min="1"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Production Date:</label>
+              <input
+                type="date"
+                name="productionDate"
+                value={productionData.productionDate}
+                onChange={handleProductionInputChange}
+                required
+              />
+            </div>
+            
+            <button type="submit" className="submit-btn">
+              Add Production
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Distribute Tea Section */}
+      {activeTab === "distribution" && (
+        <div className="section">
+          <div className="distribution-section">
+            <h3>Distribute Tea Packets</h3>
+            <form onSubmit={handleDistributeTea}>
+              <div className="form-group">
+                <label>Farmer ID:</label>
                 <input
                   type="text"
-                  name="searchTerm"
-                  value={filters.searchTerm}
-                  onChange={handleFilterChange}
-                  placeholder="Search by ID or name..."
+                  name="farmerId"
+                  value={distributionData.farmerId}
+                  onChange={handleDistributionInputChange}
+                  required
                 />
-                <span className="search-icon">🔍</span>
               </div>
-            </div>
-            
-            <div className="filter-group">
-              <label>Filter by Year:</label>
-              <select
-                name="year"
-                value={filters.year}
-                onChange={handleFilterChange}
-              >
-                <option value="">All Years</option>
-                {generateYears().map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label>Filter by Month:</label>
-              <select
-                name="month"
-                value={filters.month}
-                onChange={handleFilterChange}
-                disabled={!filters.year}
-              >
-                <option value="">All Months</option>
-                <option value="01">January</option>
-                <option value="02">February</option>
-                <option value="03">March</option>
-                <option value="04">April</option>
-                <option value="05">May</option>
-                <option value="06">June</option>
-                <option value="07">July</option>
-                <option value="08">August</option>
-                <option value="09">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label>Tea Packet Type:</label>
-              <select
-                name="teaPacketType"
-                value={filters.teaPacketType}
-                onChange={handleFilterChange}
-              >
-                <option value="">All Types</option>
-                {getUniqueTeaPacketTypes().map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="filter-group">
-              <label>Payment Option:</label>
-              <select
-                name="paymentOption"
-                value={filters.paymentOption}
-                onChange={handleFilterChange}
-              >
-                <option value="">All Options</option>
-                {getUniquePaymentOptions().map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-            </div>
-            
-            <button 
-              type="button" 
-              onClick={resetFilters}
-              className="reset-filters"
-            >
-              Reset Filters
-            </button>
+              
+              <div className="form-group">
+                <label>Tea Type:</label>
+                <select
+                  name="teaType"
+                  value={distributionData.teaType}
+                  onChange={handleDistributionInputChange}
+                  required
+                >
+                  <option value="">Select Tea Type</option>
+                  {Array.from(new Set(inventory.map(item => item.teaType))).map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label>Packet Size:</label>
+                <select
+                  name="packetSize"
+                  value={distributionData.packetSize}
+                  onChange={handleDistributionInputChange}
+                  required
+                >
+                  <option value="">Select Packet Size</option>
+                  <option value="40g">40g</option>
+                  <option value="100g">100g</option>
+                  <option value="1kg">1kg</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label>Packet Count:</label>
+                <input
+                  type="number"
+                  name="packetCount"
+                  value={distributionData.packetCount}
+                  onChange={handleDistributionInputChange}
+                  min="1"
+                  required
+                />
+              </div>
+              
+              <button type="submit" className="submit-btn">
+                Distribute Tea
+              </button>
+            </form>
           </div>
-
-          {/* Results Count */}
-          <div className="results-count">
-            Showing {filteredRequests.length} of {requests.length} records
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="error-message">
-              <p>{error}</p>
-            </div>
-          )}
-
-          {/* History Table */}
-          <div className="table-container">
+          
+          <div className="distribution-history">
+            <h3>Distribution History</h3>
             {isLoading ? (
               <p>Loading...</p>
-            ) : filteredRequests.length === 0 ? (
-              <p>No tea packet requests found matching your filters.</p>
+            ) : distributionHistory.length === 0 ? (
+              <p>No distribution records found</p>
             ) : (
-              <table className="history-table">
+              <table>
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>User ID</th>
-                    <th>User Name</th>
-                    <th>Tea Packet Type</th>
+                    <th>Farmer ID</th>
+                    <th>Tea Type</th>
                     <th>Packet Size</th>
-                    <th>Amount</th>
-                    <th>Payment Option</th>
-                    <th>Status</th>
-                    {activeTab === "newRequests" && <th>Action</th>}
+                    <th>Count</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRequests.map((request) => (
-                    <tr key={request.request_id}>
-                      <td>{new Date(request.requestDate).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}</td>
-                      <td>{request.userId}</td>
-                      <td>{request.userName}</td>
-                      <td>{request.teaPacketType}</td>
-                      <td>{request.teaPacketSize}</td>
-                      <td>{request.amount}</td>
-                      <td>{request.paymentOption}</td>
-                      <td>
-                        <span className={`status ${request.status.toLowerCase()}`}>
-                          {request.status}
-                        </span>
-                      </td>
-                      {activeTab === "newRequests" && (
-                        <td className="action-buttons">
-                          <button
-                            className="confirm-button"
-                            onClick={() => handleConfirm(request.request_id)}
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            className="delete-button"
-                            onClick={() => handleDelete(request.request_id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      )}
+                  {distributionHistory.map((record, index) => (
+                    <tr key={index}>
+                      <td>{new Date(record.distributionDate).toLocaleDateString()}</td>
+                      <td>{record.farmerId}</td>
+                      <td>{record.teaType}</td>
+                      <td>{record.packetSize}</td>
+                      <td>{record.packetCount}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             )}
           </div>
-
-          {/* Pagination */}
-          <div className="pagination">
-            <button>&laquo;</button>
-            <button className="active">1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>&raquo;</button>
-          </div>
         </div>
-      </div>
+      )}
+
+      {/* Current Inventory Section */}
+      {activeTab === "inventory" && (
+        <div className="section">
+          <h3>Current Tea Packet Inventory</h3>
+          {isLoading ? (
+            <p>Loading inventory...</p>
+          ) : inventory.length === 0 ? (
+            <p>No inventory records found</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Tea Type</th>
+                  <th>Packet Size</th>
+                  <th>Available Count</th>
+                  <th>Last Updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inventory.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.teaType}</td>
+                    <td>{item.packetSize}</td>
+                    <td>{item.packetCount}</td>
+                    <td>{new Date(item.lastUpdated).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
     </div>
   );
 };
