@@ -320,7 +320,7 @@ export const deleteTeaPackets = async (req, res) => {
     });
 };
 
-  export const searchUsers = async (req, res) => {
+export const searchUsers = async (req, res) => {
       const { term } = req.query;
   
       // Validate search term
