@@ -316,12 +316,6 @@ const fetchFarmerSuggestions = async (query) => {
         <div className="content">
           <div className="page-header">
             <h1>Advance Requests</h1>
-            <button 
-              className="add-advance-button"
-              onClick={() => setShowAddModal(true)}
-            >
-              Add Advance
-            </button>
           </div>
 
           {/* Tabs */}
@@ -353,6 +347,12 @@ const fetchFarmerSuggestions = async (query) => {
           {/* New Requests Table */}
           {activeTab === "newRequests" && (
             <div className="requests-table">
+            <button 
+              className="add-advance-button"
+              onClick={() => setShowAddModal(true)}
+            >
+              Add Advance
+            </button>
               <table>
                 <thead>
                   <tr>
@@ -590,7 +590,7 @@ const fetchFarmerSuggestions = async (query) => {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Add New Advance</h2>
+              <h2 className="addpeymentbut">Add New Advance</h2>
               <button 
                 className="close-button"
                 onClick={() => {

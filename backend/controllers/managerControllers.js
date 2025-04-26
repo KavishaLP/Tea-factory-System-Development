@@ -657,23 +657,13 @@ export const searchFarmersInDB = async (req, res) => {
         const searchTerm = `%${query}%`;
         
         // Search only by userId (case insensitive)
-        // const sql = `
-        //     SELECT userId as id 
-        //     FROM farmeraccounts 
-        //     WHERE userName LIKE ?
-        //     ORDER BY userId
-        //     LIMIT 10
-        // `;
         const sql = `
-        SELECT userId as id, firstName, lastName
-        FROM farmeraccounts
-        WHERE userName LIKE ? 
-           OR firstName LIKE ? 
-           OR lastName LIKE ?
-        ORDER BY userId
-        LIMIT 10
-    `;
-    
+            SELECT userId as id, firstName, lastName
+            FROM farmeraccounts 
+            WHERE userName OR firstName OR lastName LIKE ?
+            ORDER BY userId
+            LIMIT 10
+        `;
 
         
         sqldb.query(sql, [searchTerm], (err, results) => {

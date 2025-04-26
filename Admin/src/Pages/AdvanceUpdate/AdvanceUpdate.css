@@ -67,6 +67,10 @@
   transform: translateY(-2px);
 }
 
+.addpeymentbut{
+  margin-bottom: 20px !important;
+}
+
 /* Filter Controls */
 .filter-controls {
   display: flex;
