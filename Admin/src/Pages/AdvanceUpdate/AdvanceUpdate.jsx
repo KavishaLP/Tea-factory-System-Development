@@ -618,7 +618,7 @@ const fetchFarmerSuggestions = async (query) => {
                   <ul className="suggestions-dropdown">
                     {farmerSuggestions.map((farmer, index) => (
                       <li key={index} onClick={() => handleSuggestionClick(farmer)}>
-                        {farmer.userId} - {farmer.firstName} {farmer.lastName}
+                        {farmer.id} - {farmer.firstName} {farmer.lastName}
                       </li>
                     ))}
                   </ul>
