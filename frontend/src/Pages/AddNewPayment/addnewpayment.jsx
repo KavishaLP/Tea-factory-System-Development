@@ -21,8 +21,8 @@ function AddPayment() {
     // For filters
     const [filters, setFilters] = useState({
         userId: "",
-        year: "",  // Empty string for no filter
-        month: ""  // Empty string for no filter
+        year: "",
+        month: ""
     });
 
     const [toPaymentsFilters, setToPaymentsFilters] = useState({
@@ -50,84 +50,12 @@ function AddPayment() {
         finalPayment: "",
     });
 
-    const resetFilters = () => {
-        setFilters({
-            userId: "",
-            year: "",  // Empty string for no filter
-            month: ""  // Empty string for no filter
-        });
-        setSearchTerm(""); // Also clear the search term
-    };
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
 
-    // Fetch current date on mount
-    useEffect(() => {
-        const date = new Date();
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"];
-        const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-        setCurrentDate(formattedDate);
-    }, []);
-
-    // Fetch payment history when tab or filters change
-    useEffect(() => {
-        if (activeTab === "viewHistory" || activeTab === "toPayment") {
-            fetchPaymentHistory();
-        }
-    }, [activeTab, filters.year, filters.month, currentMonth, currentYear]);
-
-    const fetchPaymentHistory = async () => {
-        try {
-            setHistoryLoading(true);
-            // Only include year and month in the request if they have values
-            const requestData = {};
-            if (filters.year) requestData.year = filters.year;
-            if (filters.month) requestData.month = filters.month;
-
-            const response = await axios.post(
-                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
-                requestData,
-                { withCredentials: true }
-            );
-
-            if (response.data.Status === 'Success') {
-                setPaymentHistory(response.data.paymentHistory);
-            } else {
-                console.error('Failed to fetch payment history');
-                setPaymentHistory([]); // Ensure paymentsHistory is empty in case of failure
-            }
-        } catch (error) {
-            console.error('Error fetching payment history:', error);
-            setPaymentHistory([]); // Ensure paymentsHistory is empty in case of error
-        } finally {
-            setHistoryLoading(false);
-        }
-    };
-
-    // Month navigation functions
-    const navigateMonth = (direction) => {
-        if (direction === 'prev') {
-            if (currentMonth === 0) {
-                setCurrentMonth(11);
-                setCurrentYear(prev => prev - 1);
-            } else {
-                setCurrentMonth(prev => prev - 1);
-            }
-        } else {
-            if (currentMonth === 11) {
-                setCurrentMonth(0);
-                setCurrentYear(prev => prev + 1);
-            } else {
-                setCurrentMonth(prev => prev + 1);
-            }
-        }
-
-        // Update filters based on the new month and year
-        setFilters(prev => ({
-            ...prev,
-            year: currentYear,
-            month: currentMonth + 1,
-        }));
-    };
+    // =============================================
+    // To Payments functions ---------------------------------
+    // =============================================
 
     // Separate month navigation for "To Payments"
     const navigateToPaymentsMonth = (direction) => {
@@ -158,55 +86,38 @@ function AddPayment() {
         });
     };
 
-    useEffect(() => {
-        applyFilters();
-    }, [paymentsHistory, filters, searchTerm]);
+    // Fetch payment history for "To Payments"
+    const fetchToPaymentsHistory = async () => {
+        try {
+            setHistoryLoading(true);
+            const requestData = {};
+            if (toPaymentsFilters.year) requestData.year = toPaymentsFilters.year;
+            if (toPaymentsFilters.month) requestData.month = toPaymentsFilters.month;
 
-    const handleFilterChange = (e) => {
-        const { name, value } = e.target;
-        setFilters(prev => ({
-            ...prev,
-            [name]: value
-        }));
+            const response = await axios.post(
+                "http://localhost:8081/api/manager/get-Farmer-Payment-History",
+                requestData,
+                { withCredentials: true }
+            );
+
+            if (response.data.Status === "Success") {
+                setPaymentHistory(response.data.paymentHistory);
+            } else {
+                setPaymentHistory([]);
+            }
+        } catch (error) {
+            console.error("Error fetching payment history:", error);
+            setPaymentHistory([]);
+        } finally {
+            setHistoryLoading(false);
+        }
     };
 
-    const applyFilters = () => {
-        let filtered = [...paymentsHistory];
+    // =============================================
+    // Add New Payment functions ----------------------------
+    // =============================================
 
-        if (filters.year) {
-            filtered = filtered.filter(payment => new Date(payment.created_at).getFullYear() === parseInt(filters.year));
-        }
-
-        if (filters.month) {
-            filtered = filtered.filter(payment => new Date(payment.created_at).getMonth() + 1 === parseInt(filters.month));
-        }
-
-        if (searchTerm) {
-            const term = searchTerm.toLowerCase();
-            filtered = filtered.filter(payment => {
-                const userId = String(payment.userId).toLowerCase();
-                const finalTeaKilos = String(payment.finalTeaKilos).toLowerCase();
-                const paymentPerKilo = String(payment.paymentPerKilo).toLowerCase();
-                const finalAmount = String(payment.finalAmount).toLowerCase();
-                const advances = String(payment.advances).toLowerCase();
-                const finalPayment = String(payment.finalPayment).toLowerCase();
-                const date = new Date(payment.created_at).toLocaleDateString('en-US').toLowerCase();
-
-                return (
-                    userId.includes(term) ||
-                    finalTeaKilos.includes(term) ||
-                    paymentPerKilo.includes(term) ||
-                    finalAmount.includes(term) ||
-                    advances.includes(term) ||
-                    finalPayment.includes(term) ||
-                    date.includes(term)
-                );
-            });
-        }
-        setFilteredHistory(filtered);
-    };
-
-    // User suggestion functions (unchanged)
+    // User suggestion functions
     const fetchUserSuggestions = async (query) => {
         try {
             const response = await axios.post(
@@ -268,7 +179,7 @@ function AddPayment() {
         fetchDEtailsRelatedTOUser(userId);
     };
 
-    // Calculation effects (unchanged)
+    // Calculation effects
     useEffect(() => {
         const { paymentPerKilo, finalTeaKilos } = formData;
         if (paymentPerKilo && finalTeaKilos) {
@@ -386,34 +297,61 @@ function AddPayment() {
         }
     };
 
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
+    // =============================================
+    // View Payments History functions ----------------------
+    // =============================================
 
-    // Fetch payment history for "To Payments"
-    const fetchToPaymentsHistory = async () => {
-        try {
-            setHistoryLoading(true);
-            const requestData = {};
-            if (toPaymentsFilters.year) requestData.year = toPaymentsFilters.year;
-            if (toPaymentsFilters.month) requestData.month = toPaymentsFilters.month;
+    const resetFilters = () => {
+        setFilters({
+            userId: "",
+            year: "",
+            month: ""
+        });
+        setSearchTerm("");
+    };
 
-            const response = await axios.post(
-                "http://localhost:8081/api/manager/get-Farmer-Payment-History",
-                requestData,
-                { withCredentials: true }
-            );
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
-            if (response.data.Status === "Success") {
-                setPaymentHistory(response.data.paymentHistory);
-            } else {
-                setPaymentHistory([]);
-            }
-        } catch (error) {
-            console.error("Error fetching payment history:", error);
-            setPaymentHistory([]);
-        } finally {
-            setHistoryLoading(false);
+    const applyFilters = () => {
+        let filtered = [...paymentsHistory];
+
+        if (filters.year) {
+            filtered = filtered.filter(payment => new Date(payment.created_at).getFullYear() === parseInt(filters.year));
         }
+
+        if (filters.month) {
+            filtered = filtered.filter(payment => new Date(payment.created_at).getMonth() + 1 === parseInt(filters.month));
+        }
+
+        if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            filtered = filtered.filter(payment => {
+                const userId = String(payment.userId).toLowerCase();
+                const finalTeaKilos = String(payment.finalTeaKilos).toLowerCase();
+                const paymentPerKilo = String(payment.paymentPerKilo).toLowerCase();
+                const finalAmount = String(payment.finalAmount).toLowerCase();
+                const advances = String(payment.advances).toLowerCase();
+                const finalPayment = String(payment.finalPayment).toLowerCase();
+                const date = new Date(payment.created_at).toLocaleDateString('en-US').toLowerCase();
+
+                return (
+                    userId.includes(term) ||
+                    finalTeaKilos.includes(term) ||
+                    paymentPerKilo.includes(term) ||
+                    finalAmount.includes(term) ||
+                    advances.includes(term) ||
+                    finalPayment.includes(term) ||
+                    date.includes(term)
+                );
+            });
+        }
+        setFilteredHistory(filtered);
     };
 
     // Fetch payment history for "View Payments History"
@@ -443,6 +381,80 @@ function AddPayment() {
         }
     };
 
+    // =============================================
+    // Common functions and effects -------------------------
+    // =============================================
+
+    // Fetch current date on mount
+    useEffect(() => {
+        const date = new Date();
+        const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        setCurrentDate(formattedDate);
+    }, []);
+
+    // Fetch payment history when tab or filters change
+    useEffect(() => {
+        if (activeTab === "viewHistory" || activeTab === "toPayment") {
+            fetchPaymentHistory();
+        }
+    }, [activeTab, filters.year, filters.month, currentMonth, currentYear]);
+
+    const fetchPaymentHistory = async () => {
+        try {
+            setHistoryLoading(true);
+            const requestData = {};
+            if (filters.year) requestData.year = filters.year;
+            if (filters.month) requestData.month = filters.month;
+
+            const response = await axios.post(
+                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+                requestData,
+                { withCredentials: true }
+            );
+
+            if (response.data.Status === 'Success') {
+                setPaymentHistory(response.data.paymentHistory);
+            } else {
+                console.error('Failed to fetch payment history');
+                setPaymentHistory([]);
+            }
+        } catch (error) {
+            console.error('Error fetching payment history:', error);
+            setPaymentHistory([]);
+        } finally {
+            setHistoryLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        applyFilters();
+    }, [paymentsHistory, filters, searchTerm]);
+
+    // Month navigation functions
+    const navigateMonth = (direction) => {
+        if (direction === 'prev') {
+            if (currentMonth === 0) {
+                setCurrentMonth(11);
+                setCurrentYear(prev => prev - 1);
+            } else {
+                setCurrentMonth(prev => prev - 1);
+            }
+        } else {
+            if (currentMonth === 11) {
+                setCurrentMonth(0);
+                setCurrentYear(prev => prev + 1);
+            } else {
+                setCurrentMonth(prev => prev + 1);
+            }
+        }
+
+        setFilters(prev => ({
+            ...prev,
+            year: currentYear,
+            month: currentMonth + 1,
+        }));
+    };
+
     // Call the respective fetch functions based on the active tab
     useEffect(() => {
         if (activeTab === "toPayment") {
@@ -451,6 +463,10 @@ function AddPayment() {
             fetchViewHistory();
         }
     }, [activeTab, toPaymentsFilters, viewHistoryFilters]);
+
+    // =============================================
+    // Render Section ------------------------------
+    // =============================================
 
     return (
         <div className="cfa-content">
