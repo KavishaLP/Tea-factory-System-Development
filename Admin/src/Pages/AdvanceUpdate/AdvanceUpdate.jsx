@@ -77,7 +77,7 @@ const fetchFarmerSuggestions = async (query) => {
   const handleSuggestionClick = (farmer) => {
     setNewAdvance(prev => ({ 
       ...prev, 
-      userId: farmer.userId 
+      userId: farmer.id   
     }));
     setFarmerSuggestions([]);
     setShowSuggestions(false);
