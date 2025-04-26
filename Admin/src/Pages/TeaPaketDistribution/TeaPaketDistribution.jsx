@@ -6,7 +6,6 @@ const TeaPacketDistribution = () => {
   const [activeTab, setActiveTab] = useState("addProduction");
   const [inventory, setInventory] = useState([]);
   const [distributionData, setDistributionData] = useState({
-    farmerId: "",
     distributions: [{
       teaType: "",
       packetSize: "",
@@ -157,11 +156,6 @@ const TeaPacketDistribution = () => {
     setError("");
     setSuccess("");
     
-    if (!distributionData.farmerId) {
-      setError("Please enter Farmer ID");
-      return;
-    }
-
     // Validate all distribution rows
     for (const [index, dist] of distributionData.distributions.entries()) {
       if (!dist.teaType || !dist.packetSize || !dist.packetCount) {
@@ -300,18 +294,6 @@ const TeaPacketDistribution = () => {
         <div className="section">
           <h3>Distribute Tea Packets</h3>
           <form onSubmit={handleDistributeTea}>
-            <div className="form-group">
-              <label>Farmer ID:</label>
-              <input
-                type="text"
-                name="farmerId"
-                value={distributionData.farmerId}
-                onChange={handleFarmerIdChange}
-                required
-              />
-            </div>
-
-            <h4>Tea Distributions</h4>
             {distributionData.distributions.map((dist, index) => (
               <div key={index} className="distribution-row">
                 <div className="form-group">
