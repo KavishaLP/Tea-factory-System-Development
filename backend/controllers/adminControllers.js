@@ -407,6 +407,7 @@ export const fetchTeaInventory = (req, res) => {
     `;
 
     sqldb.query(query, (err, results) => {
+      console.log("Results:", results)
         if (err) {
             console.error('Error fetching tea inventory:', err);
             return res.status(500).json({ 
