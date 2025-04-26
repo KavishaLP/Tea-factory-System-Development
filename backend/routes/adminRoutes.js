@@ -23,6 +23,7 @@ router.get('/search', searchUsers);
 
 router.get('/tea-inventory', fetchTeaInventory);
 router.post('/add-tea-production', addTeaProduction);
+router.post('/distribute-tea', addTeaProduction);
 
 
 

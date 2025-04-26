@@ -480,3 +480,74 @@ export const addTeaProduction = (req, res) => {
     });
   });
 };
+
+export const distributeTea = (req, res) => {
+  const { distributions } = req.body;
+  
+  if (!distributions || !Array.isArray(distributions) || distributions.length === 0) {
+      return res.status(400).json({
+          status: "Error",
+          message: "Invalid distribution data"
+      });
+  }
+
+  // Start transaction
+  sqldb.beginTransaction(err => {
+      if (err) {
+          console.error("Error starting transaction:", err);
+          return res.status(500).json({
+              status: "Error",
+              message: "Failed to start transaction"
+          });
+      }
+
+      const updateQueries = distributions.map(dist => {
+          return new Promise((resolve, reject) => {
+              const updateQuery = `
+                  UPDATE tea_inventory
+                  SET packet_count = packet_count - ?
+                  WHERE tea_type = ? AND packet_size = ? AND packet_count >= ?
+              `;
+              
+              sqldb.query(
+                  updateQuery,
+                  [dist.packetCount, dist.teaType, dist.packetSize, dist.packetCount],
+                  (err, result) => {
+                      if (err) return reject(err);
+                      if (result.affectedRows !== 1) {
+                          return reject(new Error(`Insufficient stock for ${dist.teaType} ${dist.packetSize}`));
+                      }
+                      resolve();
+                  }
+              );
+          });
+      });
+
+      Promise.all(updateQueries)
+          .then(() => {
+              sqldb.commit(err => {
+                  if (err) {
+                      console.error("Error committing transaction:", err);
+                      return sqldb.rollback(() => {
+                          res.status(500).json({
+                              status: "Error",
+                              message: "Failed to commit transaction"
+                          });
+                      });
+                  }
+                  res.status(200).json({
+                      status: "Success",
+                      message: "Tea distributed successfully"
+                  });
+              });
+          })
+          .catch(error => {
+              sqldb.rollback(() => {
+                  res.status(400).json({
+                      status: "Error",
+                      message: error.message || "Distribution failed"
+                  });
+              });
+          });
+  });
+};
