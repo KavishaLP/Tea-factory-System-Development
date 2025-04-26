@@ -1,7 +1,9 @@
 //routes/adminRoutes
 
 import express from 'express';
-import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack, fetchRequestAdvance, fetchTotalUsers, getTeaPacketsRequests, confirmTeaPackets, deleteTeaPackets, searchUsers } from '../controllers/adminControllers.js'
+import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack, fetchRequestAdvance, fetchTotalUsers, getTeaPacketsRequests, confirmTeaPackets, deleteTeaPackets, searchUsers,
+    fetchTeaInventory
+ } from '../controllers/adminControllers.js'
 
 const router = express.Router();
 
@@ -17,7 +19,7 @@ router.post('/confirm-tea-packets', confirmTeaPackets);
 router.post('/delete-tea-packets', deleteTeaPackets);
 
 router.get('/search', searchUsers);
-router.get('/tea-inventory', searchUsers);
+router.get('/tea-inventory', fetchTeaInventory);
 
 
 export default router;

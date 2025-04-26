@@ -319,7 +319,7 @@ export const deleteTeaPackets = async (req, res) => {
         message: "Tea packet request deleted successfully.",
       });
     });
-  };
+};
 
   export const searchUsers = async (req, res) => {
       const { term } = req.query;
@@ -388,4 +388,37 @@ export const deleteTeaPackets = async (req, res) => {
               message: "Internal server error"
           });
       }
-  };
+};
+
+
+// tra pakets
+
+export const fetchTeaInventory = (req, res) => {
+    // Query to get all tea inventory items with their details
+    const query = `
+        SELECT 
+            id,
+            tea_type AS teaType,
+            packet_size AS packetSize,
+            packet_count AS packetCount,
+            last_updated AS lastUpdated
+        FROM tea_inventory
+        ORDER BY tea_type, packet_size
+    `;
+
+    sqldb.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching tea inventory:', err);
+            return res.status(500).json({ 
+                status: "Error",
+                message: 'Failed to fetch tea inventory data'
+            });
+        }
+
+        // Send the inventory data as a response
+        res.status(200).json({
+            status: "Success",
+            inventory: results
+        });
+    });
+};
