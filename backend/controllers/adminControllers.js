@@ -429,22 +429,51 @@ export const addTeaProduction = async (req, res) => {
     const { id, packetCount } = req.body;
 
     if (!id || !packetCount || packetCount <= 0) {
-      return res.status(400).json({ status: "Error", message: "Invalid input data" });
+      return res.status(400).json({ 
+        status: "Error", 
+        message: "Invalid input data" 
+      });
     }
 
-    const [result] = await sqldb.execute(
-      'UPDATE tea_inventory SET packet_count = packet_count + ?, last_updated = CURRENT_TIMESTAMP WHERE id = ?',
+    // First check if the item exists
+    const [checkResult] = await sqldb.execute(
+      'SELECT id FROM tea_inventory WHERE id = ?',
+      [id]
+    );
+
+    if (checkResult.length === 0) {
+      return res.status(404).json({ 
+        status: "Error", 
+        message: "Tea inventory item not found" 
+      });
+    }
+
+    // Update the inventory
+    const [updateResult] = await sqldb.execute(
+      `UPDATE tea_inventory 
+       SET packet_count = packet_count + ?, 
+           last_updated = CURRENT_TIMESTAMP 
+       WHERE id = ?`,
       [packetCount, id]
     );
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ status: "Error", message: "Tea inventory item not found" });
+    if (updateResult.affectedRows === 1) {
+      return res.status(200).json({ 
+        status: "Success", 
+        message: "Production added successfully" 
+      });
+    } else {
+      return res.status(500).json({ 
+        status: "Error", 
+        message: "Failed to update inventory" 
+      });
     }
-
-    return res.status(200).json({ status: "Success", message: "Production added successfully" });
 
   } catch (error) {
     console.error("Error adding tea production:", error);
-    return res.status(500).json({ status: "Error", message: "Server error while adding production" });
+    return res.status(500).json({ 
+      status: "Error", 
+      message: "Server error while adding production" 
+    });
   }
 };
