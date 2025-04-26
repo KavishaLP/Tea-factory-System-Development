@@ -37,25 +37,6 @@ function AdvanceUpdate() {
   const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
 
   // Fetch farmer suggestions
-  const fetchFarmerSuggestions = async (query) => {
-    try {
-      const response = await axios.post(
-        'http://localhost:8081/api/manager/search-farmers-indb',
-        { query },
-        { withCredentials: true }
-      );
-      console.log("Farmer suggestions response:", response.data);
-      if (response.data.Status === 'Success') {
-        setFarmerSuggestions(response.data.farmers);
-        console.log("Farmer suggestions:",farmerSuggestions);
-      } else {
-        setFarmerSuggestions([]);
-      }
-    } catch (error) {
-      console.error('Error fetching farmer suggestions:', error);
-      setFarmerSuggestions([]);
-    }
-  };
 
   // Handle user ID input change with suggestions
   const handleUserIdChange = (e) => {
