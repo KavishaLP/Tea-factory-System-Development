@@ -17,6 +17,7 @@ router.post('/confirm-tea-packets', confirmTeaPackets);
 router.post('/delete-tea-packets', deleteTeaPackets);
 
 router.get('/search', searchUsers);
+router.get('/tea-inventory', searchUsers);
 
 
 export default router;
