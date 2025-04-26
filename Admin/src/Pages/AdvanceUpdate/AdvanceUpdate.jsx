@@ -40,13 +40,14 @@ function AdvanceUpdate() {
   const fetchFarmerSuggestions = async (query) => {
     try {
       const response = await axios.post(
-        'http://localhost:8081/api/admin/search-farmers-indb',
+        'http://localhost:8081/api/manager/search-farmers-indb',
         { query },
         { withCredentials: true }
       );
-
+      console.log("Farmer suggestions response:", response.data);
       if (response.data.Status === 'Success') {
         setFarmerSuggestions(response.data.farmers);
+        console.log("Farmer suggestions:",farmerSuggestions);
       } else {
         setFarmerSuggestions([]);
       }
