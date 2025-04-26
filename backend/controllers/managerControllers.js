@@ -688,6 +688,51 @@ export const searchFarmersInDB = async (req, res) => {
     }
 };
 
+// Backend function to search Employees by ID only
+export const searchEmployeesInDB = async (req, res) => {
+    const { query } = req.body;
+    
+    if (!query || typeof query !== 'string' || query.trim().length < 2) {
+        return res.status(400).json({ 
+            Status: 'Error', 
+            Error: 'Search query must be at least 2 characters long' 
+        });
+    }
+
+    try {
+        const searchTerm = `%${query}%`;
+        
+        const sql = `
+            SELECT userId, firstName, lastName 
+            FROM employeeaccounts 
+            WHERE userId LIKE ? OR firstName LIKE ? OR lastName LIKE ?
+            ORDER BY userId
+            LIMIT 10
+        `;
+        
+        sqldb.query(sql, [searchTerm, searchTerm, searchTerm], (err, results) => {
+            if (err) {
+                console.error("Database Search Error:", err);
+                return res.status(500).json({ 
+                    Status: 'Error', 
+                    Error: 'Database search error' 
+                });
+            }
+
+            return res.json({ 
+                Status: 'Success', 
+                employees: results 
+            });
+        });
+    } catch (error) {
+        console.error("Search Employees Error:", error);
+        return res.status(500).json({ 
+            Status: 'Error', 
+            Error: 'Internal server error' 
+        });
+    }
+};
+
 // Get details related to user
 export const getDEtailsRelatedTOUser = async (req, res) => {
   const { userId } = req.body;
