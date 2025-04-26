@@ -2,6 +2,7 @@
 
 import sqldb from '../config/sqldb.js';
 
+
 export const getAdvanceRequests = async (req, res) => {
     console.log("Fetching advance requests...");
 
@@ -112,9 +113,7 @@ export const deleteAdvance = async (req, res) => {
     }
 };
 
-
 //----------------------------------------------------------------------------------------
-
 
 export const addTeaSack = async (req, res) => {
   console.log("Received Data:", req.body);
@@ -392,7 +391,6 @@ export const deleteTeaPackets = async (req, res) => {
 
 
 // tra pakets
-
 export const fetchTeaInventory = (req, res) => {
     // Query to get all tea inventory items with their details
     const query = `
