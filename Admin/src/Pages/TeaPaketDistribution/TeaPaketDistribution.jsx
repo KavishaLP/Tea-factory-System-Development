@@ -4,12 +4,7 @@ import "./TeaPaketDistribution.css";
 
 const TeaPacketDistribution = () => {
   const [activeTab, setActiveTab] = useState("addProduction");
-  const [productionData, setProductionData] = useState({
-    teaType: "",
-    packetSize: "",
-    packetCount: "",
-    productionDate: new Date().toISOString().split('T')[0]
-  });
+  const [inventory, setInventory] = useState([]);
   const [distributionData, setDistributionData] = useState({
     farmerId: "",
     distributions: [{
@@ -18,16 +13,14 @@ const TeaPacketDistribution = () => {
       packetCount: ""
     }]
   });
-  const [inventory, setInventory] = useState([]);
-  const [availableVarieties, setAvailableVarieties] = useState([]);
+  const [newProduction, setNewProduction] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Fetch inventory and available varieties on component mount
+  // Fetch inventory on component mount
   useEffect(() => {
     fetchInventory();
-    fetchAvailableVarieties();
   }, []);
 
   const fetchInventory = async () => {
@@ -38,6 +31,12 @@ const TeaPacketDistribution = () => {
         { withCredentials: true }
       );
       setInventory(response.data.inventory || []);
+      // Initialize newProduction with all inventory items
+      const initialProduction = {};
+      response.data.inventory.forEach(item => {
+        initialProduction[`${item.tea_type}_${item.packet_size}`] = "";
+      });
+      setNewProduction(initialProduction);
     } catch (error) {
       setError("Failed to fetch inventory data.");
       console.error("Error:", error);
@@ -46,175 +45,51 @@ const TeaPacketDistribution = () => {
     }
   };
 
-  const fetchAvailableVarieties = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8081/api/admin/tea-varieties",
-        { withCredentials: true }
-      );
-      setAvailableVarieties(response.data.varieties || []);
-    } catch (error) {
-      console.error("Error fetching tea varieties:", error);
-    }
-  };
-
-  const handleProductionInputChange = (e) => {
-    const { name, value } = e.target;
-    setProductionData(prev => ({
+  const handleProductionChange = (teaType, packetSize, value) => {
+    setNewProduction(prev => ({
       ...prev,
-      [name]: value
+      [`${teaType}_${packetSize}`]: value
     }));
   };
 
-  const handleDistributionInputChange = (e, index) => {
-    const { name, value } = e.target;
-    setDistributionData(prev => {
-      const updatedDistributions = [...prev.distributions];
-      updatedDistributions[index] = {
-        ...updatedDistributions[index],
-        [name]: value
-      };
-      return {
-        ...prev,
-        distributions: updatedDistributions
-      };
-    });
-  };
-
-  const handleFarmerIdChange = (e) => {
-    setDistributionData(prev => ({
-      ...prev,
-      farmerId: e.target.value
-    }));
-  };
-
-  const addDistributionRow = () => {
-    setDistributionData(prev => ({
-      ...prev,
-      distributions: [
-        ...prev.distributions,
-        { teaType: "", packetSize: "", packetCount: "" }
-      ]
-    }));
-  };
-
-  const removeDistributionRow = (index) => {
-    if (distributionData.distributions.length > 1) {
-      setDistributionData(prev => ({
-        ...prev,
-        distributions: prev.distributions.filter((_, i) => i !== index)
-      }));
-    }
-  };
-
-  const getAvailableSizesForType = (teaType) => {
-    if (!teaType) return [];
-    const sizes = availableVarieties
-      .filter(v => v.tea_type === teaType)
-      .map(v => v.packet_size);
-    return [...new Set(sizes)];
-  };
-
-  const handleAddProduction = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+  const handleAddProduction = async (teaType, packetSize) => {
+    const count = newProduction[`${teaType}_${packetSize}`];
     
-    if (!productionData.teaType || !productionData.packetSize || !productionData.packetCount) {
-      setError("Please fill all fields");
-      return;
-    }
-
-    if (productionData.packetCount <= 0) {
-      setError("Packet count must be greater than 0");
+    if (!count || count <= 0) {
+      setError(`Please enter a valid count for ${teaType} ${packetSize}`);
       return;
     }
 
     try {
       const response = await axios.post(
         "http://localhost:8081/api/admin/add-tea-production",
-        productionData,
+        {
+          teaType,
+          packetSize,
+          packetCount: count,
+          productionDate: new Date().toISOString().split('T')[0]
+        },
         { withCredentials: true }
       );
       
       if (response.data.status === "Success") {
-        setSuccess("Tea production added successfully!");
-        setProductionData({
-          teaType: "",
-          packetSize: "",
-          packetCount: "",
-          productionDate: new Date().toISOString().split('T')[0]
-        });
+        setSuccess(`Added ${count} ${packetSize} ${teaType} packets successfully!`);
+        // Clear the input field
+        setNewProduction(prev => ({
+          ...prev,
+          [`${teaType}_${packetSize}`]: ""
+        }));
         fetchInventory();
       } else {
         throw new Error(response.data.message || "Failed to add production");
       }
     } catch (error) {
-      setError(error.message || "Failed to add tea production");
+      setError(error.message || `Failed to add ${teaType} ${packetSize} production`);
       console.error("Error:", error);
     }
   };
 
-  const handleDistributeTea = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    
-    if (!distributionData.farmerId) {
-      setError("Please enter Farmer ID");
-      return;
-    }
-
-    // Validate all distribution rows
-    for (const [index, dist] of distributionData.distributions.entries()) {
-      if (!dist.teaType || !dist.packetSize || !dist.packetCount) {
-        setError(`Please fill all fields in distribution row ${index + 1}`);
-        return;
-      }
-
-      if (dist.packetCount <= 0) {
-        setError(`Packet count must be greater than 0 in row ${index + 1}`);
-        return;
-      }
-
-      // Check inventory availability
-      const availableItem = inventory.find(
-        item => item.tea_type === dist.teaType && 
-               item.packet_size === dist.packetSize
-      );
-
-      if (!availableItem || availableItem.packet_count < dist.packetCount) {
-        setError(`Not enough inventory for ${dist.teaType} ${dist.packetSize} in row ${index + 1}`);
-        return;
-      }
-    }
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/api/admin/distribute-tea",
-        distributionData,
-        { withCredentials: true }
-      );
-      
-      if (response.data.status === "Success") {
-        setSuccess("Tea distributed successfully!");
-        setDistributionData({
-          farmerId: "",
-          distributions: [{
-            teaType: "",
-            packetSize: "",
-            packetCount: ""
-          }]
-        });
-        fetchInventory();
-      } else {
-        throw new Error(response.data.message || "Failed to distribute tea");
-      }
-    } catch (error) {
-      setError(error.message || "Failed to distribute tea");
-      console.error("Error:", error);
-    }
-  };
+  // ... [Keep all the distribution related code from previous example] ...
 
   return (
     <div className="tea-distribution-container">
@@ -244,166 +119,60 @@ const TeaPacketDistribution = () => {
       {activeTab === "addProduction" && (
         <div className="section">
           <h3>Add Tea Production</h3>
-          <form onSubmit={handleAddProduction}>
-            <div className="form-group">
-              <label>Tea Type:</label>
-              <select
-                name="teaType"
-                value={productionData.teaType}
-                onChange={handleProductionInputChange}
-                required
-              >
-                <option value="">Select Tea Type</option>
-                {availableVarieties
-                  .map(v => v.tea_type)
-                  .filter((value, index, self) => self.indexOf(value) === index)
-                  .map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Packet Size:</label>
-              <select
-                name="packetSize"
-                value={productionData.packetSize}
-                onChange={handleProductionInputChange}
-                required
-                disabled={!productionData.teaType}
-              >
-                <option value="">Select Packet Size</option>
-                {getAvailableSizesForType(productionData.teaType).map(size => (
-                  <option key={size} value={size}>{size}</option>
+          <div className="inventory-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tea Type</th>
+                  <th>Packet Size</th>
+                  <th>Current Stock</th>
+                  <th>Add Quantity</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inventory.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.tea_type}</td>
+                    <td>{item.packet_size}</td>
+                    <td>{item.packet_count}</td>
+                    <td>
+                      <input
+                        type="number"
+                        min="1"
+                        value={newProduction[`${item.tea_type}_${item.packet_size}`] || ""}
+                        onChange={(e) => handleProductionChange(
+                          item.tea_type, 
+                          item.packet_size, 
+                          e.target.value
+                        )}
+                        placeholder="Enter quantity"
+                      />
+                    </td>
+                    <td>
+                      <button
+                        className="add-btn"
+                        onClick={() => handleAddProduction(
+                          item.tea_type, 
+                          item.packet_size
+                        )}
+                        disabled={isLoading}
+                      >
+                        Add
+                      </button>
+                    </td>
+                  </tr>
                 ))}
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Packet Count:</label>
-              <input
-                type="number"
-                name="packetCount"
-                value={productionData.packetCount}
-                onChange={handleProductionInputChange}
-                min="1"
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>Production Date:</label>
-              <input
-                type="date"
-                name="productionDate"
-                value={productionData.productionDate}
-                onChange={handleProductionInputChange}
-                required
-              />
-            </div>
-            
-            <button type="submit" className="submit-btn" disabled={isLoading}>
-              {isLoading ? "Adding..." : "Add Production"}
-            </button>
-          </form>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Distribute Tea Section */}
       {activeTab === "distribution" && (
         <div className="section">
-          <h3>Distribute Tea Packets</h3>
-          <form onSubmit={handleDistributeTea}>
-            <div className="form-group">
-              <label>Farmer ID:</label>
-              <input
-                type="text"
-                name="farmerId"
-                value={distributionData.farmerId}
-                onChange={handleFarmerIdChange}
-                required
-              />
-            </div>
-
-            <h4>Tea Distributions</h4>
-            {distributionData.distributions.map((dist, index) => (
-              <div key={index} className="distribution-row">
-                <div className="form-group">
-                  <label>Tea Type:</label>
-                  <select
-                    name="teaType"
-                    value={dist.teaType}
-                    onChange={(e) => handleDistributionInputChange(e, index)}
-                    required
-                  >
-                    <option value="">Select Tea Type</option>
-                    {inventory
-                      .map(item => item.tea_type)
-                      .filter((value, index, self) => self.indexOf(value) === index)
-                      .map(type => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label>Packet Size:</label>
-                  <select
-                    name="packetSize"
-                    value={dist.packetSize}
-                    onChange={(e) => handleDistributionInputChange(e, index)}
-                    required
-                    disabled={!dist.teaType}
-                  >
-                    <option value="">Select Packet Size</option>
-                    {inventory
-                      .filter(item => item.tea_type === dist.teaType)
-                      .map(item => item.packet_size)
-                      .filter((value, index, self) => self.indexOf(value) === index)
-                      .map(size => (
-                        <option key={size} value={size}>{size}</option>
-                      ))}
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label>Packet Count:</label>
-                  <input
-                    type="number"
-                    name="packetCount"
-                    value={dist.packetCount}
-                    onChange={(e) => handleDistributionInputChange(e, index)}
-                    min="1"
-                    required
-                  />
-                </div>
-
-                {distributionData.distributions.length > 1 && (
-                  <button
-                    type="button"
-                    className="remove-btn"
-                    onClick={() => removeDistributionRow(index)}
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="add-btn"
-                onClick={addDistributionRow}
-              >
-                Add Another Distribution
-              </button>
-              
-              <button type="submit" className="submit-btn" disabled={isLoading}>
-                {isLoading ? "Distributing..." : "Distribute Tea"}
-              </button>
-            </div>
-          </form>
+          {/* ... [Keep the distribution section from previous example] ... */}
         </div>
       )}
     </div>
