@@ -21,11 +21,59 @@ function Employeepayment() {
     year: "",
     month: ""
   });
+  
+  // For employee suggestions
+  const [employeeSuggestions, setEmployeeSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Get current year and month for default filter values
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+
+  // Function to fetch employee suggestions
+  const fetchEmployeeSuggestions = async (query) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:8081/api/manager/search-employees-indb',
+        { query },
+        { withCredentials: true }
+      );
+
+      if (response.data.Status === 'Success') {
+        setEmployeeSuggestions(response.data.employees);
+      } else {
+        setEmployeeSuggestions([]);
+      }
+    } catch (error) {
+      console.error('Error fetching employee suggestions:', error);
+      setEmployeeSuggestions([]);
+    }
+  };
+
+  // Handle user ID input change with suggestions
+  const handleUserIdChange = (e) => {
+    const { value } = e.target;
+    setFormData(prev => ({ ...prev, userId: value }));
+
+    if (value.length >= 2) {
+      fetchEmployeeSuggestions(value);
+      setShowSuggestions(true);
+    } else {
+      setEmployeeSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (employee) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      userId: employee.userId 
+    }));
+    setEmployeeSuggestions([]);
+    setShowSuggestions(false);
+  };
 
   // Function to fetch payment history
   useEffect(() => {
@@ -206,10 +254,20 @@ function Employeepayment() {
                 type="text"
                 name="userId"
                 value={formData.userId}
-                onChange={handleChange}
+                onChange={handleUserIdChange}
                 required
-                placeholder="Enter user ID"
+                placeholder="Start typing to search employee IDs"
+                autoComplete="off"
               />
+              {showSuggestions && employeeSuggestions.length > 0 && (
+                <ul className="suggestions-dropdown">
+                  {employeeSuggestions.map((employee, index) => (
+                    <li key={index} onClick={() => handleSuggestionClick(employee)}>
+                      {employee.userId} - {employee.firstName} {employee.lastName}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="input-group">

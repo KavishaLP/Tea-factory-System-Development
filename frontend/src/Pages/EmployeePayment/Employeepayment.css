@@ -264,6 +264,8 @@ button.loading::after {
   border-radius: 8px;
 }
 
+
+
 /* Responsive Table */
 @media screen and (max-width: 768px) {
   .payment-history {
