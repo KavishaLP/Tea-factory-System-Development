@@ -57,7 +57,7 @@ function AddPayment() {
     // To Payments functions ---------------------------------
     // =============================================
 
-    // Separate month navigation for "To Payments"
+// Separate month navigation for "To Payments" ----------------------------------------------------------------------
     const navigateToPaymentsMonth = (direction) => {
         setToPaymentsFilters((prevFilters) => {
             let newMonth = prevFilters.month ? parseInt(prevFilters.month) : currentMonth + 1;
@@ -86,7 +86,7 @@ function AddPayment() {
         });
     };
 
-    // Fetch payment history for "To Payments"
+// Fetch payment history for "To Payments" ----------------------------------------------------------------------
     const fetchToPaymentsHistory = async () => {
         try {
             setHistoryLoading(true);
