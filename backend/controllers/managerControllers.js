@@ -564,116 +564,77 @@ export const confirmFertilizer = async (req, res) => {
     }
 
     try {
-        // Query to get the fertilizer request details along with the price information and created_at date
-        const getFertilizerDetailsQuery = `
-            SELECT fr.userId, fr.amount, fp.price, fr.created_at
-            FROM fertilizer_requests fr
-            JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
-            WHERE fr.request_id = ? AND fr.status = 'Pending'
-        `;
-        sqldb.query(getFertilizerDetailsQuery, [requestId], (err, result) => {
+        const sqlQuery = "UPDATE fertilizer_requests SET status = 'Approved' WHERE request_id = ?";
+        sqldb.query(sqlQuery, [requestId], (err, result) => {
             if (err) {
                 console.error("Database Query Error:", err);
                 return res.status(500).json({ message: "Database error", error: err });
             }
 
-            if (result.length === 0) {
-                return res.status(404).json({ message: "Fertilizer request not found or already processed." });
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: "Fertilizer request not found." });
             }
 
-            const { userId, amount, price, created_at } = result[0];
-
-            // Calculate the total fertilizer amount
-            const totalFertilizerAmount = amount * price;
-
-            // Extract the year and month from the created_at field
-            const createdDate = new Date(created_at);
-            const requestYear = createdDate.getFullYear();
-            const requestMonth = createdDate.getMonth() + 1; // Months are 0-based, so adding 1
-
-            // Update fertilizer request status to 'Approved'
-            const updateRequestQuery = "UPDATE fertilizer_requests SET status = 'Approved' WHERE request_id = ?";
-            sqldb.query(updateRequestQuery, [requestId], (updateErr, updateResult) => {
-                if (updateErr) {
-                    console.error("Error updating fertilizer request status:", updateErr);
-                    return res.status(500).json({ message: "Error updating fertilizer request status", error: updateErr });
+            // After approving, get user's email
+            const getEmailQuery = `
+                SELECT fa.gmail 
+                FROM fertilizer_requests fr
+                JOIN farmeraccounts fa ON fr.userId = fa.userId
+                WHERE fr.request_id = ?
+            `;
+            sqldb.query(getEmailQuery, [requestId], (emailErr, emailResults) => {
+                if (emailErr) {
+                    console.error("Error fetching user email:", emailErr);
+                    return res.status(500).json({ message: "Error fetching user email", error: emailErr });
                 }
 
-                // Now update the farmer_payments table with the fertilizer cost for the correct month and year
-                const updatePaymentQuery = `
-                    INSERT INTO farmer_payments (userId, fertilizer, year, month, created_at)
-                    VALUES (?, ?, ?, ?, NOW())
-                    ON DUPLICATE KEY UPDATE fertilizer = fertilizer + ?;
-                `;
-                sqldb.query(updatePaymentQuery, [userId, totalFertilizerAmount, requestYear, requestMonth, totalFertilizerAmount], (paymentErr, paymentResult) => {
-                    if (paymentErr) {
-                        console.error("Error updating farmer payments:", paymentErr);
-                        return res.status(500).json({ message: "Error updating farmer payments", error: paymentErr });
-                    }
+                if (emailResults.length === 0) {
+                    return res.status(404).json({ message: "User email not found." });
+                }
 
-                    // Fetch the user's email for the notification
-                    const getEmailQuery = `
-                        SELECT fa.gmail 
-                        FROM farmeraccounts fa
-                        WHERE fa.userId = ?
-                    `;
-                    sqldb.query(getEmailQuery, [userId], (emailErr, emailResults) => {
-                        if (emailErr) {
-                            console.error("Error fetching user email:", emailErr);
-                            return res.status(500).json({ message: "Error fetching user email", error: emailErr });
-                        }
+                const userEmail = emailResults[0].gmail;
 
-                        if (emailResults.length === 0) {
-                            return res.status(404).json({ message: "User email not found." });
-                        }
+                if (!userEmail) {
+                    // User doesn't have an email -> just return success (no mail sending)
+                    return res.status(200).json({
+                        status: "Success",
+                        message: "Fertilizer request confirmed successfully. (No email sent - user has no email)",
+                    });
+                }
 
-                        const userEmail = emailResults[0].gmail;
+                // Setup nodemailer transporter
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASS,
+                    },
+                });
 
-                        if (!userEmail) {
-                            // User doesn't have an email, just return success
-                            return res.status(200).json({
-                                status: "Success",
-                                message: "Fertilizer request confirmed successfully. (No email sent - user has no email)",
-                            });
-                        }
-
-                        // Setup nodemailer transporter
-                        const transporter = nodemailer.createTransport({
-                            service: 'gmail',
-                            auth: {
-                                user: process.env.EMAIL_USER,
-                                pass: process.env.EMAIL_PASS,
-                            },
-                        });
-
-                        // Email content
-                        const mailOptions = {
-                            from: process.env.EMAIL_USER,
-                            to: userEmail,
-                            subject: 'Tea Factory Fertilizer Request Approved',
-                            text: `Dear Farmer,
+                // Email content
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: userEmail,
+                    subject: 'Tea Factory Fertilizer Request Approved',
+                    text: `Dear Farmer,
 
 Your fertilizer request has been approved successfully.
-
-Total Amount: ${totalFertilizerAmount.toFixed(2)}.
 
 Please follow the next steps as informed by the Tea Factory.
 
 Thank you,
 Tea Factory Management`,
-                        };
+                };
 
-                        transporter.sendMail(mailOptions, (mailErr, info) => {
-                            if (mailErr) {
-                                console.error("Error sending email:", mailErr);
-                                return res.status(500).json({ message: "Error sending email", error: mailErr });
-                            }
+                transporter.sendMail(mailOptions, (mailErr, info) => {
+                    if (mailErr) {
+                        console.error("Error sending email:", mailErr);
+                        return res.status(500).json({ message: "Error sending email", error: mailErr });
+                    }
 
-                            return res.status(200).json({
-                                status: "Success",
-                                message: "Fertilizer request confirmed and email notification sent successfully.",
-                            });
-                        });
+                    return res.status(200).json({
+                        status: "Success",
+                        message: "Fertilizer request confirmed and email notification sent successfully.",
                     });
                 });
             });
@@ -683,7 +644,6 @@ Tea Factory Management`,
         return res.status(500).json({ message: "An unexpected error occurred.", error: error });
     }
 };
-
 
 // Delete fertilizer request
 export const deleteFertilizer = async (req, res) => {
