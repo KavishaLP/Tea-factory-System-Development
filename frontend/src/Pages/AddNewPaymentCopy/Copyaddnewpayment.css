@@ -21,6 +21,17 @@
   font-weight: 500;
 }
 
+.error-message {
+  color: #ef4444;
+  text-align: center;
+  margin: 1rem 0;
+  grid-column: 1 / -1;
+  font-size: 0.9rem;
+  background-color: #fee2e2;
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
 .cfa-grid {
   max-width: 1200px;
   margin: 0 auto;
