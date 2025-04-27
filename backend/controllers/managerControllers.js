@@ -638,7 +638,6 @@ export const confirmFertilizer = async (req, res) => {
     }
 };
 
-
 // Delete fertilizer request
 export const deleteFertilizer = async (req, res) => {
     console.log("Deleting fertilizer request:", req.body);
