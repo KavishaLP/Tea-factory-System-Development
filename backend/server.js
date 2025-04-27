@@ -3,6 +3,8 @@
 
 // npm install mysql2 dotenv bcrypt axios express body-parser cors
 // npm install mysql2 dotenv bcrypt jsonwebtoken express cors cookie-parser mongoose
+//npm install node-cron
+
 
 //npm i -D nodemon ->developer depemdancy
 
@@ -19,6 +21,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import cron from 'node-cron';
 
 dotenv.config();
 
