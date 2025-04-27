@@ -1,82 +1,73 @@
-import React from "react";
+import React, { useState } from 'react';
 
-function ViewPaymentsHistory({
-  filteredHistory,
-  historyLoading,
-  searchTerm,
-  filters,
-  monthNames,
-  handleFilterChange,
-  resetFilters,
-  setSearchTerm
-}) {
-  return (
-    <div className="payment-history">
-      <div className="filter-section">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <select
-          name="year"
-          value={filters.year}
-          onChange={handleFilterChange}
-        >
-          <option value="">Select Year</option>
-          {[2023, 2024, 2025].map(year => (
-            <option key={year} value={year}>{year}</option>
-          ))}
-        </select>
+function ViewPaymentsHistory() {
+    const [filters, setFilters] = useState({
+        userId: "",
+        year: "",
+        month: ""
+    });
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredHistory, setFilteredHistory] = useState([]);
 
-        <select
-          name="month"
-          value={filters.month}
-          onChange={handleFilterChange}
-        >
-          <option value="">Select Month</option>
-          {monthNames.map((month, index) => (
-            <option key={index + 1} value={index + 1}>{month}</option>
-          ))}
-        </select>
-        <button onClick={resetFilters}>Reset Filters</button>
-      </div>
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
-      {historyLoading ? (
-        <p>Loading...</p>
-      ) : filteredHistory.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Final Tea Kilos</th>
-              <th>Payment Per Kilo</th>
-              <th>Final Amount</th>
-              <th>Advances</th>
-              <th>Final Payment</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredHistory.map((payment, index) => (
-              <tr key={index}>
-                <td>{payment.userId}</td>
-                <td>{payment.finalTeaKilos}</td>
-                <td>{payment.paymentPerKilo}</td>
-                <td>{payment.finalAmount}</td>
-                <td>{payment.advances}</td>
-                <td>{payment.finalPayment}</td>
-                <td>{new Date().toLocaleDateString('en-US')}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No payment records found.</p>
-      )}
-    </div>
-  );
+    const resetFilters = () => {
+        setFilters({
+            userId: "",
+            year: "",
+            month: ""
+        });
+        setSearchTerm("");
+    };
+
+    const applyFilters = () => {
+        // In a real app, this would filter data from backend
+        setFilteredHistory([]);
+    };
+
+    return (
+        <div className="payment-filters">
+            <div className="filter-inputs">
+                <input
+                    type="text"
+                    name="userId"
+                    placeholder="Filter by User ID"
+                    value={filters.userId}
+                    onChange={handleFilterChange}
+                />
+                <select name="year" value={filters.year} onChange={handleFilterChange}>
+                    <option value="">Select Year</option>
+                    {/* Dynamically generate year options */}
+                    {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                        <option key={year} value={year}>{year}</option>
+                    ))}
+                </select>
+                <select name="month" value={filters.month} onChange={handleFilterChange}>
+                    <option value="">Select Month</option>
+                    {/* Dynamically generate month options */}
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                        <option key={month} value={month}>{month}</option>
+                    ))}
+                </select>
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+            <div className="filter-buttons">
+                <button onClick={applyFilters}>Apply Filters</button>
+                <button onClick={resetFilters}>Reset Filters</button>
+            </div>
+        </div>
+    );
 }
 
 export default ViewPaymentsHistory;

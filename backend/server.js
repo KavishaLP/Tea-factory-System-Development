@@ -13,6 +13,7 @@ import  authRoutes from './routes/authRoutes.js';
 import managerRoutes from './routes/managerRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import { initializeMonthlyPayments } from './controllers/managerControllers.js';
 
 import dotenv from 'dotenv';
 import express from 'express';
@@ -33,6 +34,20 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
+
+cron.schedule('1 0 1 * *', async () => {
+  console.log('Running monthly payment initialization...');
+  try {
+    await initializeMonthlyPayments(
+      {}, // empty req
+      { 
+        status: () => ({ json: (msg) => console.log('Cron Job:', msg) }) 
+      }
+    );
+  } catch (error) {
+    console.error('Cron job error:', error);
+  }
+});
 
 // Routes
 app.use('/api/auth', authRoutes);

@@ -835,3 +835,52 @@ export const searchEmployeesInDB = async (req, res) => {
 };
 
 
+//-------------------------------------------------
+//-----------------------------------------------
+
+// Function to initialize empty payment records every month start
+export const initializeMonthlyPayments = async (req, res) => {
+    try {
+      // Fetch all farmer userIds
+      const [farmers] = await sqldb.promise().query('SELECT userId FROM farmeraccounts');
+  
+      if (farmers.length === 0) {
+        return res.status(404).json({ message: 'No farmers found to initialize payments.' });
+      }
+  
+      // Prepare insert values
+      const paymentValues = farmers.map(farmer => [
+        farmer.userId,
+        0.00, // paymentPerKilo
+        0.00, // finalTeaKilos
+        0.00, // paymentForFinalTeaKilos
+        0.00, // additionalPayments
+        0.00, // transport
+        0.00, // directPayments
+        0.00, // finalAmount
+        0.00, // advances
+        0.00, // teaPackets
+        0.00, // fertilizer
+        0.00, // finalPayment
+        'Pending' // status
+      ]);
+  
+      // Insert query
+      const insertQuery = `
+        INSERT INTO farmer_payments 
+          (userId, paymentPerKilo, finalTeaKilos, paymentForFinalTeaKilos, 
+           additionalPayments, transport, directPayments, finalAmount, 
+           advances, teaPackets, fertilizer, finalPayment, status)
+        VALUES ?
+      `;
+  
+      await sqldb.promise().query(insertQuery, [paymentValues]);
+  
+      return res.status(200).json({ message: 'Monthly payment records initialized successfully.' });
+    } catch (error) {
+      console.error('Error initializing monthly payments:', error);
+      return res.status(500).json({ message: 'Server error while initializing payments.', error: error.message });
+    }
+};
+
+
