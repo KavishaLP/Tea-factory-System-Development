@@ -16,7 +16,7 @@ import CheckMail from './Pages/AuthPages/CheckMail/CheckMail';
 import ForgetPasswordSuccess from './Pages/AuthPages/ForgetPasswordSuccess/ForgetPasswordSuccess';
 import UpdateNewPassword from './Pages/AuthPages/UpdateNewPassword/UpdateNewPassword';
 
-import AddNewPaymentCopy from './Pages/AddNewPaymentCopy/Copyaddnewpayment';
+// import AddNewPaymentCopy from './Pages/AddNewPaymentCopy/Copyaddnewpayment';
 import Dashboard from './Pages/DashBoard/Dashboard';
 import AddNewPayment from './Pages/AddNewPayment/addnewpayment';
 import Employeepayment from './Pages/EmployeePayment/Employeepayment';
@@ -62,7 +62,7 @@ function App() {
 
 
             <Route path="/Mng-Payment-Logs" element={<AddNewPayment />} />
-            <Route path="/test-Mng-Payment-Logs" element={<AddNewPaymentCopy />} />
+            {/* <Route path="/test-Mng-Payment-Logs" element={<AddNewPaymentCopy />} /> */}
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport />} />
 
             <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
