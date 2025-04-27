@@ -143,10 +143,8 @@ function ToPayments() {
             <tr>
               <th>User ID</th>
               <th>Final Tea Kilos</th>
-              <th>Payment Per Kilo</th>
-              <th>Final Amount</th>
               <th>Advances</th>
-              <th>Final Payment</th>
+              <th>Fertilizer</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -155,10 +153,8 @@ function ToPayments() {
               <tr key={index}>
                 <td>{payment.userId}</td>
                 <td>{payment.finalTeaKilos}</td>
-                <td>{payment.paymentPerKilo}</td>
-                <td>{payment.finalAmount}</td>
                 <td>{payment.advances}</td>
-                <td>{payment.finalPayment}</td>
+                <td>{payment.fertilizer}</td>
                 <td>{new Date(payment.created_at).toLocaleDateString("en-US")}</td>
               </tr>
             ))}

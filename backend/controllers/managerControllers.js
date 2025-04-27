@@ -911,7 +911,7 @@ export const fetchPaymentsHistory = async (req, res) => {
       console.error('Error fetching payment history:', error);
       res.status(500).json({ message: 'Error fetching payment history.' });
     }
-  };
+};
   
 
 
