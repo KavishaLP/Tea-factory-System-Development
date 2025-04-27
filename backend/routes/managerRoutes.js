@@ -26,6 +26,8 @@ router.post('/search-employees-indb', searchEmployeesInDB);
 
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
 
+//--------------------------------
+router.post('/fetch-payments-history', fetchPaymentsHistory);
 
 
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Make sure axios is installed for API requests
 
 function ToPayments() {
     const [paymentsHistory, setPaymentsHistory] = useState([]);
@@ -6,30 +7,39 @@ function ToPayments() {
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
     const [toPaymentsFilters, setToPaymentsFilters] = useState({
-        year: "",
-        month: "",
+        year: currentYear,
+        month: currentMonth + 1, // months in JS are 0-indexed
     });
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
 
     useEffect(() => {
-        // Fetch payments history (mock data for now)
-        setHistoryLoading(true);
-        setTimeout(() => {
-            const mockPayments = [
-                { userId: '123', finalTeaKilos: 100, paymentPerKilo: 5, finalAmount: 500, advances: 50, finalPayment: 450, created_at: new Date() },
-                { userId: '456', finalTeaKilos: 120, paymentPerKilo: 5, finalAmount: 600, advances: 60, finalPayment: 540, created_at: new Date() },
-            ];
-            setPaymentsHistory(mockPayments);
+        fetchPaymentsHistory();
+    }, [toPaymentsFilters]); // Trigger fetch when filters change
+
+    // Fetch payments history based on selected month and year
+    const fetchPaymentsHistory = async () => {
+        try {
+            setHistoryLoading(true);
+            const response = await axios.get(`http://localhost:8081/api/manager/fetch-payments-history`, {
+                params: {
+                    month: toPaymentsFilters.month,
+                    year: toPaymentsFilters.year,
+                },
+            });
+            setPaymentsHistory(response.data);
             setHistoryLoading(false);
-        }, 500);
-    }, []);
+        } catch (error) {
+            console.error('Error fetching payment history:', error);
+            setHistoryLoading(false);
+        }
+    };
 
     const navigateToPaymentsMonth = (direction) => {
         setToPaymentsFilters((prevFilters) => {
-            let newMonth = prevFilters.month ? parseInt(prevFilters.month) : currentMonth + 1;
-            let newYear = prevFilters.year ? parseInt(prevFilters.year) : currentYear;
+            let newMonth = prevFilters.month;
+            let newYear = prevFilters.year;
 
             if (direction === "prev") {
                 if (newMonth === 1) {
@@ -48,8 +58,8 @@ function ToPayments() {
             }
 
             return {
-                year: newYear.toString(),
-                month: newMonth.toString(),
+                year: newYear,
+                month: newMonth,
             };
         });
     };
@@ -57,15 +67,15 @@ function ToPayments() {
     return (
         <div className="payment-history">
             <div className="filter-buttons">
-                <button >Refresh to Payments</button>
+                <button onClick={fetchPaymentsHistory}>Refresh Payments</button>
             </div>
+
             <div className="month-navigation">
-                <button onClick={() => navigateToPaymentsMonth("prev")}>&lt; Previous</button>
+                <button onClick={() => navigateToPaymentsMonth("prev")}>{"<"} Previous</button>
                 <h3>
-                    {monthNames[toPaymentsFilters.month ? parseInt(toPaymentsFilters.month) - 1 : currentMonth]}{" "}
-                    {toPaymentsFilters.year || currentYear}
+                    {monthNames[toPaymentsFilters.month - 1]} {toPaymentsFilters.year}
                 </h3>
-                <button onClick={() => navigateToPaymentsMonth("next")}>Next &gt;</button>
+                <button onClick={() => navigateToPaymentsMonth("next")}>Next {">"}</button>
             </div>
 
             {historyLoading ? (
