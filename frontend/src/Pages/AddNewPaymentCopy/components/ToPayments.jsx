@@ -10,6 +10,8 @@ function ToPayments() {
     year: currentYear,
     month: currentMonth + 1, // JavaScript months are 0-indexed, so add 1
   });
+  const [confirmationMessage, setConfirmationMessage] = useState(""); // State for confirmation message
+  const [confirmationType, setConfirmationType] = useState(""); // State to determine the type of confirmation (success or error)
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -46,6 +48,27 @@ function ToPayments() {
     }
   };
 
+  // Handle "Refresh Payments" button click
+  const handleRefreshPayments = async () => {
+    try {
+      // Send request to backend to update payments records
+      const response = await axios.post('http://localhost:8081/api/manager/refresh-payments'); // No need to send month and year
+  
+      // Handle success response
+      if (response.status === 200) {
+        setConfirmationMessage("Payments have been successfully refreshed!");
+        setConfirmationType("success"); // Set success confirmation type
+      } else {
+        setConfirmationMessage("Failed to refresh payments. Please try again.");
+        setConfirmationType("error"); // Set error confirmation type
+      }
+    } catch (error) {
+      console.error('Error refreshing payments:', error);
+      setConfirmationMessage("Failed to refresh payments. Please try again.");
+      setConfirmationType("error"); // Set error confirmation type
+    }
+  };
+  
   // Navigate through months (previous or next)
   const navigateToPaymentsMonth = (direction) => {
     setToPaymentsFilters((prevFilters) => {
@@ -86,8 +109,15 @@ function ToPayments() {
     <div className="payment-history">
       {/* Filter and refresh button */}
       <div className="filter-buttons">
-        <button onClick={fetchPaymentsHistory}>Refresh Payments</button>
+        <button onClick={handleRefreshPayments}>Refresh Payments</button>
       </div>
+
+      {/* Confirmation message for success or failure */}
+      {confirmationMessage && (
+        <div className={`confirmation-message ${confirmationType}`}>
+          {confirmationMessage}
+        </div>
+      )}
 
       {/* Month navigation buttons */}
       <div className="month-navigation">
