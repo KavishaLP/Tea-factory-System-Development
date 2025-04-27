@@ -2,7 +2,8 @@
 import express from 'express';
 import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, 
     getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer, 
-    searchFarmersInDB, getDEtailsRelatedTOUser, getAllFarmers, getAllEmployers,searchEmployeesInDB
+    searchFarmersInDB, getDEtailsRelatedTOUser, getAllFarmers, getAllEmployers,searchEmployeesInDB,
+    fetchPaymentsHistory
 } from '../controllers/managerControllers.js';
 
 const router = express.Router();
@@ -27,7 +28,7 @@ router.post('/search-employees-indb', searchEmployeesInDB);
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
 
 //--------------------------------
-router.post('/fetch-payments-history', fetchPaymentsHistory);
+router.get('/fetch-payments-history', fetchPaymentsHistory);
 
 
 

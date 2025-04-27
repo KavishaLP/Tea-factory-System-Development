@@ -883,6 +883,34 @@ export const initializeMonthlyPayments = async (req, res) => {
     }
 };
 
+// Fetch payments history function
+export const fetchPaymentsHistory = async (req, res) => {
+    try {
+        // Extract the month and year from the query parameters
+        const { month, year } = req.query;
+
+        if (!month || !year) {
+            return res.status(400).json({ message: 'Month and year are required' });
+        }
+
+        // Query to get payments history for the specific month and year
+        const query = `
+            SELECT * FROM farmer_payments 
+            WHERE MONTH(created_at) = ? AND YEAR(created_at) = ? AND status = 'Pending'
+        `;
+        const [payments] = await sqldb.promise().query(query, [month, year]);
+
+        // Return the payments history
+        if (payments.length > 0) {
+            res.status(200).json(payments);
+        } else {
+            res.status(404).json({ message: 'No payment records found for the selected month and year' });
+        }
+    } catch (error) {
+        console.error('Error fetching payment history:', error);
+        res.status(500).json({ message: 'Error fetching payment history.' });
+    }
+};
 
 
 
