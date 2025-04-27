@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function AddNewPaymentForm() {
     const [formData, setFormData] = useState({
@@ -20,14 +21,56 @@ function AddNewPaymentForm() {
     const [userSuggestions, setUserSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    // User suggestion functions
+    // Fetch user suggestions from backend
+    const fetchUserSuggestions = async (query) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:8081/api/manager/search-farmers-indb',
+                { query },
+                { withCredentials: true }
+            );
+
+            if (response.data.Status === 'Success') {
+                setUserSuggestions(response.data.farmers.map(farmer => farmer.id));
+            } else {
+                setUserSuggestions([]);
+            }
+        } catch (error) {
+            console.error('Error fetching user suggestions:', error);
+            setUserSuggestions([]);
+        }
+    };
+
+    // Fetch user details when a user is selected
+    const fetchUserDetails = async (userId) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:8081/api/manager/get-details-related-to-user',
+                { userId },
+                { withCredentials: true }
+            );
+
+            if (response.data.Status === 'Success') {
+                setFormData(prev => ({
+                    ...prev,
+                    finalTeaKilos: response.data.finalTeaKilos || "0",
+                    transport: response.data.transport || "0",
+                    advances: response.data.advances || "0"
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            setError('Failed to fetch details for this user');
+        }
+    };
+
+    // Handle user ID input changes
     const handleUserIdChange = (e) => {
         const { value } = e.target;
         setFormData(prev => ({ ...prev, userId: value }));
 
         if (value.length >= 2) {
-            // In a real app, this would fetch suggestions from backend
-            setUserSuggestions([]);
+            fetchUserSuggestions(value);
             setShowSuggestions(true);
         } else {
             setUserSuggestions([]);
@@ -35,7 +78,15 @@ function AddNewPaymentForm() {
         }
     };
 
-    // Calculation effects
+    // Handle suggestion selection
+    const handleSuggestionClick = (userId) => {
+        setFormData(prev => ({ ...prev, userId }));
+        setUserSuggestions([]);
+        setShowSuggestions(false);
+        fetchUserDetails(userId);
+    };
+
+    // Handle form field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         const positiveNumberPattern = /^\d*\.?\d*$/;
@@ -51,45 +102,57 @@ function AddNewPaymentForm() {
             ...prevData,
             [name]: value
         }));
+    };
 
-        // Recalculate dependent fields
-        if (name === "paymentPerKilo" || name === "finalTeaKilos") {
-            const paymentForFinalTeaKilos = parseFloat(formData.paymentPerKilo || 0) * parseFloat(formData.finalTeaKilos || 0);
+    // Calculate derived values whenever dependent fields change
+    useEffect(() => {
+        const { paymentPerKilo, finalTeaKilos } = formData;
+        if (paymentPerKilo && finalTeaKilos) {
+            const paymentForFinalTeaKilos = parseFloat(paymentPerKilo) * parseFloat(finalTeaKilos);
             setFormData(prevData => ({
                 ...prevData,
                 paymentForFinalTeaKilos: paymentForFinalTeaKilos,
             }));
         }
+    }, [formData.paymentPerKilo, formData.finalTeaKilos]);
 
-        if (name === "paymentForFinalTeaKilos" || name === "additionalPayments" || name === "transport" || name === "directPayments") {
+    useEffect(() => {
+        const { paymentForFinalTeaKilos, additionalPayments, transport, directPayments } = formData;
+        if (paymentForFinalTeaKilos || additionalPayments || transport || directPayments) {
             const finalAmount =
-                (parseFloat(formData.paymentForFinalTeaKilos) || 0) +
-                (parseFloat(formData.additionalPayments) || 0) +
-                (parseFloat(formData.transport) || 0) +
-                (parseFloat(formData.directPayments) || 0);
+                (parseFloat(paymentForFinalTeaKilos) || 0) +
+                (parseFloat(additionalPayments) || 0) +
+                (parseFloat(transport) || 0) +
+                (parseFloat(directPayments) || 0);
+
             setFormData(prevData => ({
                 ...prevData,
                 finalAmount: finalAmount.toFixed(2),
             }));
         }
+    }, [formData.paymentForFinalTeaKilos, formData.additionalPayments, formData.transport, formData.directPayments]);
 
-        if (name === "finalAmount" || name === "advances" || name === "teaPackets" || name === "fertilizer") {
-            const totalDeductions =
-                (parseFloat(formData.advances) || 0) +
-                (parseFloat(formData.teaPackets) || 0) +
-                (parseFloat(formData.fertilizer) || 0);
-            const finalPayment = (parseFloat(formData.finalAmount) || 0) - totalDeductions;
-            setFormData(prevData => ({
-                ...prevData,
-                finalPayment: finalPayment.toFixed(2),
-            }));
-        }
-    };
+    useEffect(() => {
+        const { finalAmount, advances, teaPackets, fertilizer } = formData;
+        const totalDeductions =
+            (parseFloat(advances) || 0) +
+            (parseFloat(teaPackets) || 0) +
+            (parseFloat(fertilizer) || 0);
 
-    const handleSubmit = (e) => {
+        const finalPayment = (parseFloat(finalAmount) || 0) - totalDeductions;
+
+        setFormData(prevData => ({
+            ...prevData,
+            finalPayment: finalPayment.toFixed(2),
+        }));
+    }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);
+
+    // Handle form submission
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const positiveNumberPattern = /^\d+(\.\d+)?$/;
 
+        // Validate all numeric fields
         if (
             !positiveNumberPattern.test(formData.finalTeaKilos) ||
             !positiveNumberPattern.test(formData.paymentPerKilo) ||
@@ -107,43 +170,46 @@ function AddNewPaymentForm() {
         setError("");
         setIsLoading(true);
 
-        // In a real app, this would submit to backend
-        console.log("Form would be submitted:", formData);
-        setTimeout(() => {
-            setIsLoading(false);
-            alert("Payment added successfully (demo)!");
-            setFormData({
-                userId: "",
-                finalTeaKilos: "",
-                paymentPerKilo: "",
-                paymentForFinalTeaKilos: "",
-                additionalPayments: "",
-                directPayments: "",
-                finalPayment: "",
-                advances: "",
-                teaPackets: "",
-                fertilizer: "",
-                transport: "",
-                finalAmount: "",
-            });
-        }, 1000);
-    };
+        try {
+            const response = await axios.post(
+                'http://localhost:8081/api/manager/add-Farmer-Payment',
+                formData,
+                { withCredentials: true }
+            );
 
-    const handleSuggestionClick = (userId) => {
-        setFormData(prev => ({ ...prev, userId }));
-        setUserSuggestions([]);
-        setShowSuggestions(false);
-        // In a real app, this would fetch user details
-        setFormData(prev => ({
-            ...prev,
-            finalTeaKilos: "0",
-            transport: "0",
-            advances: "0"
-        }));
+            if (response.data && response.data.Status === "Success") {
+                alert("Payment added successfully!");
+                // Reset form
+                setFormData({
+                    userId: "",
+                    finalTeaKilos: "",
+                    paymentPerKilo: "",
+                    paymentForFinalTeaKilos: "",
+                    additionalPayments: "",
+                    directPayments: "",
+                    finalPayment: "",
+                    advances: "",
+                    teaPackets: "",
+                    fertilizer: "",
+                    transport: "",
+                    finalAmount: "",
+                });
+            } else {
+                setError(response.data.Error || 'Failed to add payment. Please try again.');
+            }
+        } catch (error) {
+            if (error.response) {
+                setError(error.response.data.message || 'Server error. Please try again.');
+            } else {
+                setError('An error occurred. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="payment-form">
             {error && <p className="error-message">{error}</p>}
 
             <div className="input-group">
@@ -221,6 +287,7 @@ function AddNewPaymentForm() {
                         value={formData.transport}
                         onChange={handleChange}
                         placeholder="Transport"
+                        readOnly
                     />
                 </div>
             </div>
@@ -232,35 +299,8 @@ function AddNewPaymentForm() {
                     name="directPayments"
                     value={formData.directPayments}
                     onChange={handleChange}
-                    placeholder="Direct"
+                    placeholder="Enter direct payments"
                 />
-            </div>
-
-            <div className="input-group">
-                <label>Advances</label>
-                <div className="deduction-fields">
-                    <input
-                        type="text"
-                        name="advances"
-                        value={formData.advances}
-                        onChange={handleChange}
-                        placeholder="Advances"
-                    />
-                    <input
-                        type="text"
-                        name="teaPackets"
-                        value={formData.teaPackets}
-                        onChange={handleChange}
-                        placeholder="Tea Packets"
-                    />
-                    <input
-                        type="text"
-                        name="fertilizer"
-                        value={formData.fertilizer}
-                        onChange={handleChange}
-                        placeholder="Fertilizer"
-                    />
-                </div>
             </div>
 
             <div className="input-group">
@@ -270,9 +310,39 @@ function AddNewPaymentForm() {
                     name="finalAmount"
                     value={formData.finalAmount}
                     onChange={handleChange}
-                    placeholder="Final Amount"
+                    placeholder="Enter final amount"
                     readOnly
                 />
+            </div>
+
+            <div className="input-group">
+                <label>Deductions</label>
+                <div className="deduction-fields">
+                    <input
+                        type="text"
+                        name="advances"
+                        value={formData.advances}
+                        onChange={handleChange}
+                        placeholder="Advances"
+                        readOnly
+                    />
+                    <input
+                        type="text"
+                        name="teaPackets"
+                        value={formData.teaPackets}
+                        onChange={handleChange}
+                        placeholder="Tea Packets"
+                        readOnly
+                    />
+                    <input
+                        type="text"
+                        name="fertilizer"
+                        value={formData.fertilizer}
+                        onChange={handleChange}
+                        placeholder="Fertilizer"
+                        readOnly
+                    />
+                </div>
             </div>
 
             <div className="input-group">
@@ -287,7 +357,7 @@ function AddNewPaymentForm() {
                 />
             </div>
 
-            <button type="submit" disabled={isLoading}>
+            <button type="submit" disabled={isLoading} className="submit-button">
                 {isLoading ? "Adding Payment..." : "Add Payment"}
             </button>
         </form>
