@@ -13,6 +13,7 @@ CREATE TABLE farmer_payments (
   fertilizer DECIMAL(10, 2) DEFAULT 0,
   finalPayment DECIMAL(10, 2) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status ENUM('Pending', 'Approved') NOT NULL DEFAULT 'Pending'
   FOREIGN KEY (userId) REFERENCES farmeraccounts(userId) ON DELETE CASCADE
 );
 

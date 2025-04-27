@@ -86,23 +86,13 @@ function AddNewPaymentForm() {
         fetchUserDetails(userId);
     };
 
-    // Handle form field changes with proper validation
+    // Handle form field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         const positiveNumberPattern = /^\d*\.?\d*$/;
 
-        // Skip validation for userId field
-        if (name === "userId") {
-            setFormData(prevData => ({
-                ...prevData,
-                [name]: value
-            }));
-            return;
-        }
-
-        // For all number fields (required and optional)
-        if (value !== "" && !positiveNumberPattern.test(value)) {
-            setError("Please enter a valid positive number or leave empty");
+        if (name !== "userId" && value !== "" && !positiveNumberPattern.test(value)) {
+            setError("Please enter a valid positive number");
             return;
         } else {
             setError("");
@@ -112,11 +102,6 @@ function AddNewPaymentForm() {
             ...prevData,
             [name]: value
         }));
-    };
-
-    // Clear optional field value
-    const clearField = (fieldName) => {
-        setFormData(prev => ({ ...prev, [fieldName]: "" }));
     };
 
     // Calculate derived values whenever dependent fields change
@@ -133,18 +118,19 @@ function AddNewPaymentForm() {
 
     useEffect(() => {
         const { paymentForFinalTeaKilos, additionalPayments, transport, directPayments } = formData;
-        const finalAmount =
-            (parseFloat(paymentForFinalTeaKilos) || 0) +
-            (parseFloat(additionalPayments) || 0) +
-            (parseFloat(transport) || 0) +
-            (parseFloat(directPayments) || 0);
+        if (paymentForFinalTeaKilos || additionalPayments || transport || directPayments) {
+            const finalAmount =
+                (parseFloat(paymentForFinalTeaKilos) || 0) +
+                (parseFloat(additionalPayments) || 0) +
+                (parseFloat(transport) || 0) +
+                (parseFloat(directPayments) || 0);
 
-        setFormData(prevData => ({
-            ...prevData,
-            finalAmount: finalAmount.toFixed(2),
-        }));
-    }, [formData.paymentForFinalTeaKilos, formData.additionalPayments, 
-        formData.transport, formData.directPayments]);
+            setFormData(prevData => ({
+                ...prevData,
+                finalAmount: finalAmount.toFixed(2),
+            }));
+        }
+    }, [formData.paymentForFinalTeaKilos, formData.additionalPayments, formData.transport, formData.directPayments]);
 
     useEffect(() => {
         const { finalAmount, advances, teaPackets, fertilizer } = formData;
@@ -159,45 +145,25 @@ function AddNewPaymentForm() {
             ...prevData,
             finalPayment: finalPayment.toFixed(2),
         }));
-    }, [formData.finalAmount, formData.advances, 
-        formData.teaPackets, formData.fertilizer]);
+    }, [formData.finalAmount, formData.advances, formData.teaPackets, formData.fertilizer]);
 
-    // Handle form submission with proper validation
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         const positiveNumberPattern = /^\d+(\.\d+)?$/;
 
-        // Required fields validation
-        const requiredFields = [
-            'finalTeaKilos',
-            'paymentPerKilo'
-        ];
-
-        const invalidRequiredFields = requiredFields.filter(field => {
-            return !formData[field] || !positiveNumberPattern.test(formData[field]);
-        });
-
-        if (invalidRequiredFields.length > 0) {
-            setError("Please enter valid positive numbers for all required payment fields.");
-            return;
-        }
-
-        // Optional fields validation (must be positive if not empty)
-        const optionalFields = [
-            'additionalPayments',
-            'transport',
-            'directPayments',
-            'advances',
-            'teaPackets',
-            'fertilizer'
-        ];
-
-        const invalidOptionalFields = optionalFields.filter(field => {
-            return formData[field] && !positiveNumberPattern.test(formData[field]);
-        });
-
-        if (invalidOptionalFields.length > 0) {
-            setError("Optional fields must contain valid positive numbers or be empty.");
+        // Validate all numeric fields
+        if (
+            !positiveNumberPattern.test(formData.finalTeaKilos) ||
+            !positiveNumberPattern.test(formData.paymentPerKilo) ||
+            !positiveNumberPattern.test(formData.additionalPayments) ||
+            !positiveNumberPattern.test(formData.transport) ||
+            !positiveNumberPattern.test(formData.directPayments) ||
+            !positiveNumberPattern.test(formData.advances) ||
+            !positiveNumberPattern.test(formData.teaPackets) ||
+            !positiveNumberPattern.test(formData.fertilizer)
+        ) {
+            setError("Please enter valid positive numbers for all payment fields.");
             return;
         }
 
@@ -244,10 +210,10 @@ function AddNewPaymentForm() {
 
     return (
         <form onSubmit={handleSubmit} className="payment-form">
-            {error && <span className="error-message">{error}</span>}
+            {error && <p className="error-message">{error}</p>}
 
             <div className="input-group">
-                <label>User ID (required)</label>
+                <label>User ID</label>
                 <input
                     type="text"
                     name="userId"
@@ -269,7 +235,7 @@ function AddNewPaymentForm() {
             </div>
 
             <div className="input-group">
-                <label>Final Tea Kilos (required)</label>
+                <label>Final Tea Kilos</label>
                 <input
                     type="text"
                     name="finalTeaKilos"
@@ -282,7 +248,7 @@ function AddNewPaymentForm() {
             </div>
 
             <div className="input-group">
-                <label>Payment For 1 Kilo (required)</label>
+                <label>Payment For 1 Kilo</label>
                 <input
                     type="text"
                     name="paymentPerKilo"
@@ -306,8 +272,8 @@ function AddNewPaymentForm() {
             </div>
 
             <div className="input-group">
-                <label>Additional Payments (optional)</label>
-                <div className="input-with-clear">
+                <label>Additional Payments</label>
+                <div className="deduction-fields">
                     <input
                         type="text"
                         name="additionalPayments"
@@ -315,21 +281,6 @@ function AddNewPaymentForm() {
                         onChange={handleChange}
                         placeholder="Additional"
                     />
-                    {formData.additionalPayments && (
-                        <button 
-                            type="button" 
-                            className="clear-field"
-                            onClick={() => clearField('additionalPayments')}
-                        >
-                            ×
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <div className="input-group">
-                <label>Transport</label>
-                <div className="input-with-clear">
                     <input
                         type="text"
                         name="transport"
@@ -342,25 +293,14 @@ function AddNewPaymentForm() {
             </div>
 
             <div className="input-group">
-                <label>Direct Payments (optional)</label>
-                <div className="input-with-clear">
-                    <input
-                        type="text"
-                        name="directPayments"
-                        value={formData.directPayments}
-                        onChange={handleChange}
-                        placeholder="Direct"
-                    />
-                    {formData.directPayments && (
-                        <button 
-                            type="button" 
-                            className="clear-field"
-                            onClick={() => clearField('directPayments')}
-                        >
-                            ×
-                        </button>
-                    )}
-                </div>
+                <label>Direct Payments</label>
+                <input
+                    type="text"
+                    name="directPayments"
+                    value={formData.directPayments}
+                    onChange={handleChange}
+                    placeholder="Enter direct payments"
+                />
             </div>
 
             <div className="input-group">
@@ -370,7 +310,7 @@ function AddNewPaymentForm() {
                     name="finalAmount"
                     value={formData.finalAmount}
                     onChange={handleChange}
-                    placeholder="Final Amount"
+                    placeholder="Enter final amount"
                     readOnly
                 />
             </div>
@@ -378,52 +318,30 @@ function AddNewPaymentForm() {
             <div className="input-group">
                 <label>Deductions</label>
                 <div className="deduction-fields">
-                    <div className="input-with-clear">
-                        <input
-                            type="text"
-                            name="advances"
-                            value={formData.advances}
-                            onChange={handleChange}
-                            placeholder="Advances"
-                            readOnly
-                        />
-                    </div>
-                    <div className="input-with-clear">
-                        <input
-                            type="text"
-                            name="teaPackets"
-                            value={formData.teaPackets}
-                            onChange={handleChange}
-                            placeholder="Tea Packets"
-                        />
-                        {formData.teaPackets && (
-                            <button 
-                                type="button" 
-                                className="clear-field"
-                                onClick={() => clearField('teaPackets')}
-                            >
-                                ×
-                            </button>
-                        )}
-                    </div>
-                    <div className="input-with-clear">
-                        <input
-                            type="text"
-                            name="fertilizer"
-                            value={formData.fertilizer}
-                            onChange={handleChange}
-                            placeholder="Fertilizer"
-                        />
-                        {formData.fertilizer && (
-                            <button 
-                                type="button" 
-                                className="clear-field"
-                                onClick={() => clearField('fertilizer')}
-                            >
-                                ×
-                            </button>
-                        )}
-                    </div>
+                    <input
+                        type="text"
+                        name="advances"
+                        value={formData.advances}
+                        onChange={handleChange}
+                        placeholder="Advances"
+                        readOnly
+                    />
+                    <input
+                        type="text"
+                        name="teaPackets"
+                        value={formData.teaPackets}
+                        onChange={handleChange}
+                        placeholder="Tea Packets"
+                        readOnly
+                    />
+                    <input
+                        type="text"
+                        name="fertilizer"
+                        value={formData.fertilizer}
+                        onChange={handleChange}
+                        placeholder="Fertilizer"
+                        readOnly
+                    />
                 </div>
             </div>
 
