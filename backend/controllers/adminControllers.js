@@ -42,6 +42,105 @@ export const getAdvanceRequests = async (req, res) => {
     }
 };
 
+export const confirmAdvance = async (req, res) => {
+  console.log("Confirming advance request:", req.body);
+
+  const { advanceId } = req.body;
+
+  // Validate required fields
+  if (!advanceId) {
+    return res.status(400).json({ message: 'Advance ID is required.' });
+  }
+
+  try {
+    // Step 1: Get the advance details to know the amount and userId
+    const getAdvanceQuery = "SELECT * FROM advance_payment WHERE advn_id = ?";
+    const advanceDetails = await new Promise((resolve, reject) => {
+      sqldb.query(getAdvanceQuery, [advanceId], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+
+    if (advanceDetails.length === 0) {
+      return res.status(404).json({ message: 'Advance request not found.' });
+    }
+
+    const { userId, amount, date } = advanceDetails[0];
+
+    // Step 2: Update the advance request action to "Approved"
+    const updateAdvanceQuery = "UPDATE advance_payment SET action = 'Approved' WHERE advn_id = ?";
+    await new Promise((resolve, reject) => {
+      sqldb.query(updateAdvanceQuery, [advanceId], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+
+    // Step 3: Update the advances column in farmer_payments for the specific user
+    const advanceMonth = new Date(date).getMonth() + 1; // Months are 0-based in JavaScript
+    const advanceYear = new Date(date).getFullYear();
+
+    // Check if there is an existing payment record for this user in the same month and year
+    const checkPaymentQuery = `
+      SELECT * FROM farmer_payments
+      WHERE userId = ? AND MONTH(created_at) = ? AND YEAR(created_at) = ?
+    `;
+
+    const paymentResults = await new Promise((resolve, reject) => {
+      sqldb.query(checkPaymentQuery, [userId, advanceMonth, advanceYear], (err, results) => {
+        if (err) reject(err);
+        resolve(results);
+      });
+    });
+
+    if (paymentResults.length > 0) {
+      // Update the advances column for the existing record
+      const updatePaymentQuery = `
+        UPDATE farmer_payments
+        SET advances = advances + ?
+        WHERE userId = ? AND MONTH(created_at) = ? AND YEAR(created_at) = ?
+      `;
+
+      await new Promise((resolve, reject) => {
+        sqldb.query(updatePaymentQuery, [amount, userId, advanceMonth, advanceYear], (err) => {
+          if (err) reject(err);
+          resolve();
+        });
+      });
+
+      return res.json({
+        status: 'Success',
+        message: 'Advance request confirmed and payment record updated successfully'
+      });
+    } else {
+      // If no payment record exists, create a new payment record
+      const insertPaymentQuery = `
+        INSERT INTO farmer_payments (userId, advances, created_at)
+        VALUES (?, ?, ?)
+      `;
+
+      await new Promise((resolve, reject) => {
+        sqldb.query(insertPaymentQuery, [userId, amount, date], (err) => {
+          if (err) reject(err);
+          resolve();
+        });
+      });
+
+      return res.json({
+        status: 'Success',
+        message: 'Advance request confirmed and new payment record created successfully'
+      });
+    }
+  } catch (error) {
+    console.error("Unexpected Error:", error);
+    return res.status(500).json({
+      status: 'Error',
+      message: 'An unexpected error occurred.',
+      error: error
+    });
+  }
+};
 
 
 export const deleteAdvance = async (req, res) => {
