@@ -1,5 +1,4 @@
 //controllers/adminControllers.js
-
 import sqldb from '../config/sqldb.js';
 
 
@@ -111,6 +110,61 @@ export const deleteAdvance = async (req, res) => {
         console.error("Unexpected Error:", error);
         return res.status(500).json({ message: 'An unexpected error occurred.', error: error });
     }
+};
+
+export const addAdvancePayment = async (req, res) => {
+  const { userId, amount, date } = req.body;
+
+  if (!userId || !amount || !date) {
+      return res.status(400).json({ 
+          status: 'Error', 
+          message: 'All fields are required' 
+      });
+  }
+
+  try {
+      // Check if farmer exists
+      const farmerCheck = await new Promise((resolve, reject) => {
+          sqldb.query(
+              'SELECT userId FROM farmeraccounts WHERE userId = ?',
+              [userId],
+              (err, result) => {
+                  if (err) reject(err);
+                  resolve(result);
+              }
+          );
+      });
+
+      if (farmerCheck.length === 0) {
+          return res.status(404).json({ 
+              status: 'Error', 
+              message: 'Farmer not found' 
+          });
+      }
+
+      // Insert advance
+      const insertAdvance = await new Promise((resolve, reject) => {
+          sqldb.query(
+              'INSERT INTO advance_payment (userId, amount, date, action) VALUES (?, ?, ?, "Approved")',
+              [userId, amount, date],
+              (err, result) => {
+                  if (err) reject(err);
+                  resolve(result);
+              }
+          );
+      });
+
+      return res.json({ 
+          status: 'Success', 
+          message: 'Advance added successfully' 
+      });
+  } catch (error) {
+      console.error('Error adding advance:', error);
+      return res.status(500).json({ 
+          status: 'Error', 
+          message: 'Internal server error' 
+      });
+  }
 };
 
 //----------------------------------------------------------------------------------------
@@ -552,58 +606,4 @@ export const distributeTea = (req, res) => {
   });
 };
 
-// Controller
-export const addAdvancePayment = async (req, res) => {
-  const { userId, amount, date } = req.body;
 
-  if (!userId || !amount || !date) {
-      return res.status(400).json({ 
-          status: 'Error', 
-          message: 'All fields are required' 
-      });
-  }
-
-  try {
-      // Check if farmer exists
-      const farmerCheck = await new Promise((resolve, reject) => {
-          sqldb.query(
-              'SELECT userId FROM farmeraccounts WHERE userId = ?',
-              [userId],
-              (err, result) => {
-                  if (err) reject(err);
-                  resolve(result);
-              }
-          );
-      });
-
-      if (farmerCheck.length === 0) {
-          return res.status(404).json({ 
-              status: 'Error', 
-              message: 'Farmer not found' 
-          });
-      }
-
-      // Insert advance
-      const insertAdvance = await new Promise((resolve, reject) => {
-          sqldb.query(
-              'INSERT INTO advance_payment (userId, amount, date, action) VALUES (?, ?, ?, "Approved")',
-              [userId, amount, date],
-              (err, result) => {
-                  if (err) reject(err);
-                  resolve(result);
-              }
-          );
-      });
-
-      return res.json({ 
-          status: 'Success', 
-          message: 'Advance added successfully' 
-      });
-  } catch (error) {
-      console.error('Error adding advance:', error);
-      return res.status(500).json({ 
-          status: 'Error', 
-          message: 'Internal server error' 
-      });
-  }
-};
