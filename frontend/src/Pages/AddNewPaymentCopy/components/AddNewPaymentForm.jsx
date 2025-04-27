@@ -210,8 +210,9 @@ function AddNewPaymentForm() {
 
     return (
         <form onSubmit={handleSubmit} className="payment-form">
+            <div>
             {error && <p className="error-message">{error}</p>}
-
+            </div>
             <div className="input-group">
                 <label>User ID</label>
                 <input
