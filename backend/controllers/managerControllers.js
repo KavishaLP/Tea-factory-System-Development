@@ -554,6 +554,89 @@ export const getFertilizerRequests = (req, res) => {
 };
 
 // Approve fertilizer request and send email
+export const confirmFertilizer = async (req, res) => {
+    console.log("Confirming fertilizer request:", req.body);
+
+    const { requestId } = req.body;
+
+    if (!requestId) {
+        return res.status(400).json({ message: "Request ID is required." });
+    }
+
+    try {
+        // Step 1: Fetch fertilizer request details (fertilizer type, amount, etc.)
+        const fertilizerRequestQuery = `
+            SELECT fr.userId, fr.fertilizer_veriance_id, fr.amount, fp.price
+            FROM fertilizer_requests fr
+            JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
+            WHERE fr.request_id = ? AND fr.status = 'Approved'
+        `;
+        sqldb.query(fertilizerRequestQuery, [requestId], async (err, fertilizerDetails) => {
+            if (err) {
+                console.error("Error fetching fertilizer details:", err);
+                return res.status(500).json({ message: "Error fetching fertilizer details", error: err });
+            }
+
+            if (fertilizerDetails.length === 0) {
+                return res.status(404).json({ message: "Fertilizer request not found or not approved." });
+            }
+
+            const { userId, amount, price } = fertilizerDetails[0];
+            const totalFertilizerAmount = amount * price; // Total cost of fertilizer requested
+
+            // Step 2: Update the fertilizer request status to 'Approved'
+            const updateRequestQuery = "UPDATE fertilizer_requests SET status = 'Approved' WHERE request_id = ?";
+            sqldb.query(updateRequestQuery, [requestId], (updateErr, updateResult) => {
+                if (updateErr) {
+                    console.error("Error updating fertilizer request status:", updateErr);
+                    return res.status(500).json({ message: "Error updating fertilizer request status", error: updateErr });
+                }
+
+                // Step 3: Get the user's current payment record and month for updating fertilizer payments
+                const getPaymentRecordQuery = `
+                    SELECT created_at, advances, fertilizer FROM farmer_payments
+                    WHERE userId = ? ORDER BY created_at DESC LIMIT 1
+                `;
+                sqldb.query(getPaymentRecordQuery, [userId], (paymentErr, paymentResult) => {
+                    if (paymentErr) {
+                        console.error("Error fetching payment record:", paymentErr);
+                        return res.status(500).json({ message: "Error fetching payment record", error: paymentErr });
+                    }
+
+                    if (paymentResult.length === 0) {
+                        return res.status(404).json({ message: "Payment record not found for this user." });
+                    }
+
+                    const { created_at, advances, fertilizer: existingFertilizerAmount } = paymentResult[0];
+                    const paymentMonth = new Date(created_at).getMonth() + 1; // Get the month from the created_at field
+
+                    // Step 4: Update the farmer's fertilizer amount in the farmer_payments table
+                    const updateFertilizerAmountQuery = `
+                        UPDATE farmer_payments 
+                        SET fertilizer = ? 
+                        WHERE userId = ? AND MONTH(created_at) = ?
+                    `;
+                    const updatedFertilizerAmount = existingFertilizerAmount + totalFertilizerAmount;
+                    sqldb.query(updateFertilizerAmountQuery, [updatedFertilizerAmount, userId, paymentMonth], (fertilizerErr, fertilizerResult) => {
+                        if (fertilizerErr) {
+                            console.error("Error updating farmer's fertilizer payment:", fertilizerErr);
+                            return res.status(500).json({ message: "Error updating farmer's fertilizer payment", error: fertilizerErr });
+                        }
+
+                        // Step 5: Send confirmation response
+                        return res.status(200).json({
+                            status: "Success",
+                            message: "Fertilizer request confirmed and payment updated successfully.",
+                        });
+                    });
+                });
+            });
+        });
+    } catch (error) {
+        console.error("Unexpected Error:", error);
+        return res.status(500).json({ message: "An unexpected error occurred.", error: error });
+    }
+};
 
 
 // Delete fertilizer request
