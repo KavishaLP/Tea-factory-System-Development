@@ -15,11 +15,20 @@ function AddNewPaymentForm() {
         teaPackets: "",
         fertilizer: "",
         finalPayment: "",
+        month: new Date().getMonth() + 1, // Current month (1-12)
+        year: new Date().getFullYear()    // Current year
     });
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [userSuggestions, setUserSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [confirmationMessage, setConfirmationMessage] = useState("");
+    const [confirmationType, setConfirmationType] = useState("");
+
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
 
     // Fetch user suggestions from backend
     const fetchUserSuggestions = async (query) => {
@@ -41,15 +50,20 @@ function AddNewPaymentForm() {
         }
     };
 
-    // Fetch user details when a user is selected
+    // Fetch user details with month/year when a user is selected
     const fetchUserDetails = async (userId) => {
+        console.log(userId)
         try {
             const response = await axios.post(
-                'http://localhost:8081/api/manager/get-details-related-to-user',
-                { userId },
+                'http://localhost:8081/api/manager/get-farmer-paymemts',
+                { 
+                    userId,
+                    month: formData.month,
+                    year: formData.year
+                },
                 { withCredentials: true }
             );
-
+            console.log(response, formData.month, formData.year)
             if (response.data.Status === 'Success') {
                 setFormData(prev => ({
                     ...prev,
@@ -62,6 +76,32 @@ function AddNewPaymentForm() {
             console.error('Error fetching user details:', error);
             setError('Failed to fetch details for this user');
         }
+    };
+
+    // Handle month navigation
+    const navigateMonth = (direction) => {
+        setFormData(prev => {
+            let newMonth = prev.month;
+            let newYear = prev.year;
+
+            if (direction === "prev") {
+                if (newMonth === 1) {
+                    newMonth = 12;
+                    newYear -= 1;
+                } else {
+                    newMonth -= 1;
+                }
+            } else {
+                if (newMonth === 12) {
+                    newMonth = 1;
+                    newYear += 1;
+                } else {
+                    newMonth += 1;
+                }
+            }
+
+            return { ...prev, month: newMonth, year: newYear };
+        });
     };
 
     // Handle user ID input changes
@@ -104,7 +144,7 @@ function AddNewPaymentForm() {
         }));
     };
 
-    // Calculate derived values whenever dependent fields change
+    // Calculate derived values
     useEffect(() => {
         const { paymentPerKilo, finalTeaKilos } = formData;
         if (paymentPerKilo && finalTeaKilos) {
@@ -118,18 +158,16 @@ function AddNewPaymentForm() {
 
     useEffect(() => {
         const { paymentForFinalTeaKilos, additionalPayments, transport, directPayments } = formData;
-        if (paymentForFinalTeaKilos || additionalPayments || transport || directPayments) {
-            const finalAmount =
-                (parseFloat(paymentForFinalTeaKilos) || 0) +
-                (parseFloat(additionalPayments) || 0) +
-                (parseFloat(transport) || 0) +
-                (parseFloat(directPayments) || 0);
+        const finalAmount =
+            (parseFloat(paymentForFinalTeaKilos) || 0) +
+            (parseFloat(additionalPayments) || 0) +
+            (parseFloat(transport) || 0) +
+            (parseFloat(directPayments) || 0);
 
-            setFormData(prevData => ({
-                ...prevData,
-                finalAmount: finalAmount.toFixed(2),
-            }));
-        }
+        setFormData(prevData => ({
+            ...prevData,
+            finalAmount: finalAmount.toFixed(2),
+        }));
     }, [formData.paymentForFinalTeaKilos, formData.additionalPayments, formData.transport, formData.directPayments]);
 
     useEffect(() => {
@@ -152,18 +190,31 @@ function AddNewPaymentForm() {
         e.preventDefault();
         const positiveNumberPattern = /^\d+(\.\d+)?$/;
 
-        // Validate all numeric fields
+        // Validate required fields
         if (
             !positiveNumberPattern.test(formData.finalTeaKilos) ||
-            !positiveNumberPattern.test(formData.paymentPerKilo) ||
-            !positiveNumberPattern.test(formData.additionalPayments) ||
-            !positiveNumberPattern.test(formData.transport) ||
-            !positiveNumberPattern.test(formData.directPayments) ||
-            !positiveNumberPattern.test(formData.advances) ||
-            !positiveNumberPattern.test(formData.teaPackets) ||
-            !positiveNumberPattern.test(formData.fertilizer)
+            !positiveNumberPattern.test(formData.paymentPerKilo)
         ) {
-            setError("Please enter valid positive numbers for all payment fields.");
+            setError("Please enter valid positive numbers for required fields.");
+            return;
+        }
+
+        // Validate optional fields (must be positive if not empty)
+        const optionalFields = [
+            'additionalPayments',
+            'transport',
+            'directPayments',
+            'advances',
+            'teaPackets',
+            'fertilizer'
+        ];
+
+        const invalidOptionalFields = optionalFields.filter(field => {
+            return formData[field] && !positiveNumberPattern.test(formData[field]);
+        });
+
+        if (invalidOptionalFields.length > 0) {
+            setError("Optional fields must contain valid positive numbers or be empty.");
             return;
         }
 
@@ -178,31 +229,34 @@ function AddNewPaymentForm() {
             );
 
             if (response.data && response.data.Status === "Success") {
-                alert("Payment added successfully!");
+                setConfirmationMessage("Payment added successfully!");
+                setConfirmationType("success");
                 // Reset form
                 setFormData({
                     userId: "",
-                    finalTeaKilos: "",
                     paymentPerKilo: "",
+                    finalTeaKilos: "",
                     paymentForFinalTeaKilos: "",
                     additionalPayments: "",
+                    transport: "",
                     directPayments: "",
-                    finalPayment: "",
+                    finalAmount: "",
                     advances: "",
                     teaPackets: "",
                     fertilizer: "",
-                    transport: "",
-                    finalAmount: "",
+                    finalPayment: "",
+                    month: new Date().getMonth() + 1,
+                    year: new Date().getFullYear()
                 });
             } else {
-                setError(response.data.Error || 'Failed to add payment. Please try again.');
+                setConfirmationMessage(response.data.Error || 'Failed to add payment. Please try again.');
+                setConfirmationType("error");
             }
         } catch (error) {
-            if (error.response) {
-                setError(error.response.data.message || 'Server error. Please try again.');
-            } else {
-                setError('An error occurred. Please try again.');
-            }
+            setConfirmationMessage(
+                error.response?.data?.message || 'An error occurred. Please try again.'
+            );
+            setConfirmationType("error");
         } finally {
             setIsLoading(false);
         }
@@ -210,7 +264,25 @@ function AddNewPaymentForm() {
 
     return (
         <form onSubmit={handleSubmit} className="payment-form">
-            {error && <p className="error-message">{error}</p>}
+            {error && <div className="error-message">{error}</div>}
+            {confirmationMessage && (
+                <div className={`confirmation-message ${confirmationType}`}>
+                    {confirmationMessage}
+                </div>
+            )}
+
+            {/* Month Navigation */}
+            <div className="month-navigation">
+                <button type="button" onClick={() => navigateMonth("prev")}>
+                    &lt; Previous
+                </button>
+                <h3>
+                    {monthNames[formData.month - 1]} {formData.year}
+                </h3>
+                <button type="button" onClick={() => navigateMonth("next")}>
+                    Next &gt;
+                </button>
+            </div>
 
             <div className="input-group">
                 <label>User ID</label>

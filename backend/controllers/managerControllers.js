@@ -5,6 +5,7 @@ import util from 'util';
 import sqldb from '../config/sqldb.js';
 import moment  from 'moment-timezone';
 import nodemailer from 'nodemailer'; // make sure you import it at the top
+import { console } from 'inspector';
 
 
 const query = util.promisify(sqldb.query).bind(sqldb);
@@ -174,6 +175,7 @@ export const addFarmerPayment = (req, res) => {
 
 // Get payment history function (Approved only)
 export const getFarmerPaymentHistory = (req, res) => {
+    console.log("Fetching payment history:", req.body);
     // SQL Query to fetch only approved payment history
     const sql = `
         SELECT 
@@ -230,6 +232,7 @@ export const getAllFarmers = (req, res) => {
 // Get details related to user
 export const getDEtailsRelatedTOUser = async (req, res) => {
     const { userId } = req.body;
+    console.log("Fetching details related to user:", userId);
     
     if (!userId) {
       return res.status(400).json({ Status: 'Error', Error: 'userId is required' });
@@ -327,6 +330,38 @@ export const getDEtailsRelatedTOUser = async (req, res) => {
       console.error("Server Error:", error);
       res.status(500).json({ Status: 'Error', Error: 'Internal server error' });
     }
+};
+
+export const getDEtailsRelatedTOUser1 = (req, res) => {
+    console.log("Fetching details related to user:", req.body);
+    const { userId, month, year } = req.query;
+
+    // Check if all required query params are present
+    if (!userId || !month || !year) {
+        return res.status(400).json({ message: "userId, month, and year are required" });
+    }
+
+    // SQL query
+    const sql = `
+        SELECT *
+        FROM farmer_payments
+        WHERE userId = ?
+        AND MONTH(created_at) = ?
+        AND YEAR(created_at) = ?
+    `;
+
+    db.query(sql, [userId, month, year], (err, results) => {
+        if (err) {
+            console.error('Error fetching user details:', err);
+            return res.status(500).json({ message: "Database query error", error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No payment details found for this user in the given month and year" });
+        }
+
+        res.status(200).json({ data: results });
+    });
 };
 
 //---------------------------------------------------------------------------------------------------
@@ -499,9 +534,7 @@ export const getEmployeePaymentHistory = (req, res) => {
     });
 };
 
-
 //---------------------------------------------------------------------------------------------------
-
 
 // Get fertilizer requests
 export const getFertilizerRequests = (req, res) => {
