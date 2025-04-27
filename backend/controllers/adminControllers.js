@@ -42,40 +42,7 @@ export const getAdvanceRequests = async (req, res) => {
     }
 };
 
-export const confirmAdvance = async (req, res) => {
-    console.log("Confirming advance request:", req.body);
 
-    const { advanceId } = req.body;
-    console.log(advanceId)
-    // Validate required fields
-    if (!advanceId) {
-        return res.status(400).json({ message: 'Advance ID is required.' });
-    }
-
-    try {
-        // Query to update the action to "Approved"
-        const sqlQuery = "UPDATE advance_payment SET action = 'Approved' WHERE advn_id = ?";
-        sqldb.query(sqlQuery, [advanceId], (err, result) => {
-            if (err) {
-                console.error("Database Query Error:", err);
-                return res.status(500).json({ message: 'Database error', error: err });
-            }
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ message: 'Advance request not found.' });
-            }
-
-            // Success response
-            return res.status(200).json({
-                status: "Success",
-                message: "Advance request confirmed successfully.",
-            });
-        });
-    } catch (error) {
-        console.error("Unexpected Error:", error);
-        return res.status(500).json({ message: 'An unexpected error occurred.', error: error });
-    }
-};
 
 export const deleteAdvance = async (req, res) => {
     console.log("Deleting advance request:", req.body);
