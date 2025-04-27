@@ -52,10 +52,9 @@ function AddNewPaymentForm() {
 
     // Fetch user details with month/year when a user is selected
     const fetchUserDetails = async (userId) => {
-        console.log(userId)
         try {
             const response = await axios.post(
-                'http://localhost:8081/api/manager/get-farmer-paymemts',
+                'http://localhost:8081/api/manager/get-details-related-to-user',
                 { 
                     userId,
                     month: formData.month,
@@ -63,7 +62,7 @@ function AddNewPaymentForm() {
                 },
                 { withCredentials: true }
             );
-            console.log(response, formData.month, formData.year)
+
             if (response.data.Status === 'Success') {
                 setFormData(prev => ({
                     ...prev,

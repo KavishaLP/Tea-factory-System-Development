@@ -33,6 +33,7 @@ function ToPayments() {
         `http://localhost:8081/api/manager/fetch-payments-history`,
         { params: { month: toPaymentsFilters.month, year: toPaymentsFilters.year } }
       );
+      console.log(response.data); // Log the response for debugging
 
       // Check if data is returned
       if (response.data.length === 0) {

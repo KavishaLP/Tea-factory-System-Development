@@ -10,7 +10,6 @@ const router = express.Router();
 
 router.post('/add-farmer', addFarmer);
 router.post('/add-Farmer-Payment', addFarmerPayment);
-router.post('/get-Farmer-Payment-History', getFarmerPaymentHistory);
 router.get('/get-farmer-accounts',getAllFarmers)
 
 router.post('/add-employee', addEmployee);
@@ -25,10 +24,12 @@ router.post('/delete-fertilizer', deleteFertilizer);
 router.post('/search-farmers-indb', searchFarmersInDB);
 router.post('/search-employees-indb', searchEmployeesInDB);
 
-router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
-
 //--------------------------------
 router.post('/fetch-payments-history', fetchPaymentsHistory);
+router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
+router.post('/get-Farmer-Payment-History', getFarmerPaymentHistory);
+
+
 
 
 
