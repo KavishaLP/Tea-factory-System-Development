@@ -32,7 +32,13 @@ function ToPayments() {
         { params: { month: toPaymentsFilters.month, year: toPaymentsFilters.year } }
       );
 
-      setPaymentsHistory(response.data); // Set data into state
+      // Check if data is returned
+      if (response.data.length === 0) {
+        setPaymentsHistory([]); // If no data, show empty message
+      } else {
+        setPaymentsHistory(response.data); // Set data into state
+      }
+
       setHistoryLoading(false); // End loading
     } catch (error) {
       console.error('Error fetching payment history:', error);
@@ -54,6 +60,13 @@ function ToPayments() {
           newMonth -= 1;
         }
       } else if (direction === "next") {
+        // Prevent navigation to future months
+        const currentDate = new Date();
+        const nextMonthDate = new Date(newYear, newMonth); // Create a date object from newYear and newMonth
+        if (nextMonthDate > currentDate) {
+          return prevFilters; // If trying to navigate to future month, do nothing
+        }
+        
         if (newMonth === 12) {
           newMonth = 1;
           newYear += 1;
@@ -82,7 +95,12 @@ function ToPayments() {
         <h3>
           {monthNames[toPaymentsFilters.month - 1]} {toPaymentsFilters.year}
         </h3>
-        <button onClick={() => navigateToPaymentsMonth("next")}>Next {">"}</button>
+        <button
+          onClick={() => navigateToPaymentsMonth("next")}
+          disabled={new Date(toPaymentsFilters.year, toPaymentsFilters.month) > new Date()} // Disable next button if future month
+        >
+          Next {">"}
+        </button>
       </div>
 
       {/* Conditional rendering based on loading state */}
@@ -117,8 +135,8 @@ function ToPayments() {
           </tbody>
         </table>
       ) : (
-        // Show no records found message
-        <p>No payment records found for {monthNames[currentMonth]} {currentYear}.</p>
+        // Show no records found message if there are no payments for this month
+        <p>No records available for {monthNames[toPaymentsFilters.month - 1]} {toPaymentsFilters.year}.</p>
       )}
     </div>
   );

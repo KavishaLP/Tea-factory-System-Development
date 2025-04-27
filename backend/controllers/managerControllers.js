@@ -899,7 +899,7 @@ export const fetchPaymentsHistory = async (req, res) => {
             WHERE MONTH(created_at) = ? AND YEAR(created_at) = ? AND status = 'Pending'
         `;
         const [payments] = await sqldb.promise().query(query, [month, year]);
-
+        console.log("Payments history:", payments);
         // Return the payments history
         if (payments.length > 0) {
             res.status(200).json(payments);
