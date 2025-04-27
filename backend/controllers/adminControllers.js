@@ -142,7 +142,6 @@ export const confirmAdvance = async (req, res) => {
   }
 };
 
-
 export const deleteAdvance = async (req, res) => {
     console.log("Deleting advance request:", req.body);
 
