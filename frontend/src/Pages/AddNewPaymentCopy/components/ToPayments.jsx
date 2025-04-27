@@ -48,27 +48,6 @@ function ToPayments() {
     }
   };
 
-  // Handle "Refresh Payments" button click
-  const handleRefreshPayments = async () => {
-    try {
-      // Send request to backend to update payments records
-      const response = await axios.post('http://localhost:8081/api/manager/refresh-payments'); // No need to send month and year
-  
-      // Handle success response
-      if (response.status === 200) {
-        setConfirmationMessage("Payments have been successfully refreshed!");
-        setConfirmationType("success"); // Set success confirmation type
-      } else {
-        setConfirmationMessage("Failed to refresh payments. Please try again.");
-        setConfirmationType("error"); // Set error confirmation type
-      }
-    } catch (error) {
-      console.error('Error refreshing payments:', error);
-      setConfirmationMessage("Failed to refresh payments. Please try again.");
-      setConfirmationType("error"); // Set error confirmation type
-    }
-  };
-  
   // Navigate through months (previous or next)
   const navigateToPaymentsMonth = (direction) => {
     setToPaymentsFilters((prevFilters) => {
@@ -107,18 +86,6 @@ function ToPayments() {
 
   return (
     <div className="payment-history">
-      {/* Filter and refresh button */}
-      <div className="filter-buttons">
-        <button onClick={handleRefreshPayments}>Refresh Payments</button>
-      </div>
-
-      {/* Confirmation message for success or failure */}
-      {confirmationMessage && (
-        <div className={`confirmation-message ${confirmationType}`}>
-          {confirmationMessage}
-        </div>
-      )}
-
       {/* Month navigation buttons */}
       <div className="month-navigation">
         <button onClick={() => navigateToPaymentsMonth("prev")}>{"<"} Previous</button>
@@ -143,8 +110,10 @@ function ToPayments() {
             <tr>
               <th>User ID</th>
               <th>Final Tea Kilos</th>
+              <th>Payment Per Kilo</th>
+              <th>Final Amount</th>
               <th>Advances</th>
-              <th>Fertilizer</th>
+              <th>Final Payment</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -153,8 +122,10 @@ function ToPayments() {
               <tr key={index}>
                 <td>{payment.userId}</td>
                 <td>{payment.finalTeaKilos}</td>
+                <td>{payment.paymentPerKilo}</td>
+                <td>{payment.finalAmount}</td>
                 <td>{payment.advances}</td>
-                <td>{payment.fertilizer}</td>
+                <td>{payment.finalPayment}</td>
                 <td>{new Date(payment.created_at).toLocaleDateString("en-US")}</td>
               </tr>
             ))}
