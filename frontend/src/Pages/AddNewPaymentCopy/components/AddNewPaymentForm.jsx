@@ -328,7 +328,7 @@ function AddNewPaymentForm() {
             </div>
 
             <div className="input-group">
-                <label>Transport (optional)</label>
+                <label>Transport</label>
                 <div className="input-with-clear">
                     <input
                         type="text"
@@ -336,16 +336,8 @@ function AddNewPaymentForm() {
                         value={formData.transport}
                         onChange={handleChange}
                         placeholder="Transport"
+                        readOnly
                     />
-                    {formData.transport && (
-                        <button 
-                            type="button" 
-                            className="clear-field"
-                            onClick={() => clearField('transport')}
-                        >
-                            ×
-                        </button>
-                    )}
                 </div>
             </div>
 
@@ -393,16 +385,8 @@ function AddNewPaymentForm() {
                             value={formData.advances}
                             onChange={handleChange}
                             placeholder="Advances"
+                            readOnly
                         />
-                        {formData.advances && (
-                            <button 
-                                type="button" 
-                                className="clear-field"
-                                onClick={() => clearField('advances')}
-                            >
-                                ×
-                            </button>
-                        )}
                     </div>
                     <div className="input-with-clear">
                         <input
