@@ -90,14 +90,24 @@ function AddNewPaymentForm() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         const positiveNumberPattern = /^\d*\.?\d*$/;
-
-        if (name !== "userId" && value !== "" && !positiveNumberPattern.test(value)) {
-            setError("Please enter a valid positive number");
+    
+        // Skip validation for userId field
+        if (name === "userId") {
+            setFormData(prevData => ({
+                ...prevData,
+                [name]: value
+            }));
+            return;
+        }
+    
+        // For all number fields (required and optional)
+        if (value !== "" && !positiveNumberPattern.test(value)) {
+            setError("Please enter a valid positive number or leave empty");
             return;
         } else {
             setError("");
         }
-
+    
         setFormData(prevData => ({
             ...prevData,
             [name]: value
