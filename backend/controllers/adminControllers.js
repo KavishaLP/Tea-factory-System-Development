@@ -116,56 +116,108 @@ export const addAdvancePayment = async (req, res) => {
   const { userId, amount, date } = req.body;
 
   if (!userId || !amount || !date) {
-      return res.status(400).json({ 
-          status: 'Error', 
-          message: 'All fields are required' 
-      });
+    return res.status(400).json({ 
+        status: 'Error', 
+        message: 'All fields are required' 
+    });
   }
 
   try {
-      // Check if farmer exists
-      const farmerCheck = await new Promise((resolve, reject) => {
-          sqldb.query(
-              'SELECT userId FROM farmeraccounts WHERE userId = ?',
-              [userId],
-              (err, result) => {
-                  if (err) reject(err);
-                  resolve(result);
-              }
-          );
+    // Check if the farmer exists
+    const farmerCheck = await new Promise((resolve, reject) => {
+      sqldb.query(
+        'SELECT userId FROM farmeraccounts WHERE userId = ?',
+        [userId],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        }
+      );
+    });
+
+    if (farmerCheck.length === 0) {
+      return res.status(404).json({ 
+        status: 'Error', 
+        message: 'Farmer not found' 
+      });
+    }
+
+    // Insert advance payment into advance_payment table
+    const insertAdvance = await new Promise((resolve, reject) => {
+      sqldb.query(
+        'INSERT INTO advance_payment (userId, amount, date, action) VALUES (?, ?, ?, "Approved")',
+        [userId, amount, date],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        }
+      );
+    });
+
+    // Get the month and year from the advance payment date
+    const advanceMonth = new Date(date).getMonth() + 1; // Months are 0-based in JavaScript
+    const advanceYear = new Date(date).getFullYear();
+
+    // Check if there is an existing payment record for this user in the same month and year
+    const checkPaymentQuery = `
+      SELECT * FROM farmer_payments
+      WHERE userId = ? AND MONTH(created_at) = ? AND YEAR(created_at) = ?
+    `;
+
+    const paymentResults = await new Promise((resolve, reject) => {
+      sqldb.query(checkPaymentQuery, [userId, advanceMonth, advanceYear], (err, results) => {
+        if (err) reject(err);
+        resolve(results);
+      });
+    });
+
+    if (paymentResults.length > 0) {
+      // Update the advances column for the existing record
+      const updatePaymentQuery = `
+        UPDATE farmer_payments
+        SET advances = advances + ?
+        WHERE userId = ? AND MONTH(created_at) = ? AND YEAR(created_at) = ?
+      `;
+
+      await new Promise((resolve, reject) => {
+        sqldb.query(updatePaymentQuery, [amount, userId, advanceMonth, advanceYear], (err) => {
+          if (err) reject(err);
+          resolve();
+        });
       });
 
-      if (farmerCheck.length === 0) {
-          return res.status(404).json({ 
-              status: 'Error', 
-              message: 'Farmer not found' 
-          });
-      }
+      return res.json({
+        status: 'Success',
+        message: 'Advance payment added and payment record updated successfully'
+      });
+    } else {
+      // If no payment record exists, create a new payment record
+      const insertPaymentQuery = `
+        INSERT INTO farmer_payments (userId, advances, created_at)
+        VALUES (?, ?, ?)
+      `;
 
-      // Insert advance
-      const insertAdvance = await new Promise((resolve, reject) => {
-          sqldb.query(
-              'INSERT INTO advance_payment (userId, amount, date, action) VALUES (?, ?, ?, "Approved")',
-              [userId, amount, date],
-              (err, result) => {
-                  if (err) reject(err);
-                  resolve(result);
-              }
-          );
+      await new Promise((resolve, reject) => {
+        sqldb.query(insertPaymentQuery, [userId, amount, date], (err) => {
+          if (err) reject(err);
+          resolve();
+        });
       });
 
-      return res.json({ 
-          status: 'Success', 
-          message: 'Advance added successfully' 
+      return res.json({
+        status: 'Success',
+        message: 'Advance payment added and new payment record created successfully'
       });
+    }
   } catch (error) {
-      console.error('Error adding advance:', error);
-      return res.status(500).json({ 
-          status: 'Error', 
-          message: 'Internal server error' 
-      });
+    console.error('Error adding advance:', error);
+    return res.status(500).json({
+      status: 'Error',
+      message: 'Internal server error'
+    });
   }
 };
+
 
 //----------------------------------------------------------------------------------------
 
