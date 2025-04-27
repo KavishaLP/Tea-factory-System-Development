@@ -24,8 +24,10 @@ router.post('/delete-fertilizer', deleteFertilizer);
 router.post('/search-farmers-indb', searchFarmersInDB);
 router.post('/search-employees-indb', searchEmployeesInDB);
 
-
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
+
+
+
 
 
 export default router;
