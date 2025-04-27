@@ -169,6 +169,7 @@ export const addAdvancePayment = async (req, res) => {
 
 //----------------------------------------------------------------------------------------
 
+//Add tea sack data
 export const addTeaSack = async (req, res) => {
   console.log("Received Data:", req.body);
 
@@ -231,11 +232,70 @@ export const addTeaSack = async (req, res) => {
           return res.status(500).json({ message: 'Error inserting tea sack data into database', error: err });
         }
 
-        // Success response
-        return res.status(200).json({
-          status: "Success",
-          message: "Tea sack data submitted successfully.",
-          teaSackId: result.insertId
+        // Get the month and year from the date of the tea sack update
+        const updateMonth = new Date(date).getMonth() + 1; // Months are 0-based in JavaScript
+        const updateYear = new Date(date).getFullYear();
+
+        // Check if there is an existing payment record for this user in the same month and year
+        const checkPaymentQuery = `
+          SELECT * FROM farmer_payments
+          WHERE userId = ? AND MONTH(created_at) = ? AND YEAR(created_at) = ?
+        `;
+
+        sqldb.query(checkPaymentQuery, [userId, updateMonth, updateYear], (err, paymentResults) => {
+          if (err) {
+            console.error("Database Payment Check Error:", err);
+            return res.status(500).json({ message: 'Error checking payment record', error: err });
+          }
+
+          // If payment record exists, update the finalTeaKilos column
+          if (paymentResults.length > 0) {
+            const paymentUpdateQuery = `
+              UPDATE farmer_payments
+              SET finalTeaKilos = finalTeaKilos + ?
+              WHERE userId = ? AND MONTH(created_at) = ? AND YEAR(created_at) = ?
+            `;
+
+            sqldb.query(paymentUpdateQuery, [totalTeaSackAmount, userId, updateMonth, updateYear], (err) => {
+              if (err) {
+                console.error("Database Payment Update Error:", err);
+                return res.status(500).json({ message: 'Error updating payment record', error: err });
+              }
+              // Success response for updating payment record
+              return res.status(200).json({
+                status: "Success",
+                message: "Tea sack data and payment record updated successfully.",
+                teaSackId: result.insertId
+              });
+            });
+          } else {
+            // If no payment record exists for the month, create a new payment record
+            const insertPaymentQuery = `
+              INSERT INTO farmer_payments (
+                userId, finalTeaKilos, created_at
+              ) VALUES (?, ?, ?)
+            `;
+
+            const insertPaymentValues = [
+              userId,
+              totalTeaSackAmount,
+              date
+            ];
+
+            sqldb.query(insertPaymentQuery, insertPaymentValues, (err, paymentResult) => {
+              if (err) {
+                console.error("Database Payment Insert Error:", err);
+                return res.status(500).json({ message: 'Error inserting payment record', error: err });
+              }
+
+              // Success response for inserting a new payment record
+              return res.status(200).json({
+                status: "Success",
+                message: "Tea sack data submitted and new payment record created successfully.",
+                teaSackId: result.insertId
+              });
+            });
+          }
         });
       });
     });
