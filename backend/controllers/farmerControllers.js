@@ -414,6 +414,40 @@ export const getPaymentDetails = async (req, res) => {
 
 
 // Get advance summary for a specific month/year
+export const getAdvances = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+
+        const query = `
+            SELECT
+                COUNT(CASE WHEN action = 'Pending' THEN 1 ELSE NULL END) AS pending_count,
+                COUNT(CASE WHEN action = 'Approved' THEN 1 ELSE NULL END) AS approved_count,
+                COUNT(CASE WHEN action = 'Rejected' THEN 1 ELSE NULL END) AS rejected_count
+            FROM advance_payment
+            WHERE userId = ?
+            AND YEAR(date) = ?
+            AND MONTH(date) = ?
+        `;
+
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                pending: results[0].pending_count || 0,
+                approved: results[0].approved_count || 0,
+                rejected: results[0].rejected_count || 0
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching advances:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch advance data'
+        });
+    }
+};
 
 
 // Get advance details for popup
