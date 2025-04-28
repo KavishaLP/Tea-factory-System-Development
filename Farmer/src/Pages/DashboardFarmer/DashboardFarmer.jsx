@@ -108,7 +108,7 @@ const DashboardFarmer = ({ userId }) => {
           });
           break;
         case "fertilizer":
-          response = await axios.get("/api/farmer/fertilizer-request-details", {
+          response = await axios.get("http://localhost:8081/api/farmer/fertilizer-request-details", {
             params: { userId, monthYear }
           });
           break;
