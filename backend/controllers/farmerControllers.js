@@ -414,7 +414,6 @@ export const getPaymentDetails = async (req, res) => {
 
 
 // Get advance summary for a specific month/year
-// Get advance summary for a specific month/year
 export const getAdvances = async (req, res) => {
     try {
         const { userId, monthYear } = req.query;
