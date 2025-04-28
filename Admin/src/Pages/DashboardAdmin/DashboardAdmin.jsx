@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import "./DashboardAdmin.css";
-import Navbar from '../../Component/Navbar/Navbar2';
-import Sidebar from '../../Component/sidebar/sidebar2';
 import axios from "axios";
-import { FaUsers, FaClock, FaMoneyBillWave } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave } from 'react-icons/fa';
+import "./DashboardAdmin.css";
 
 const DashboardAdmin = () => {
   const [pendingRequests, setPendingRequests] = useState(0);
@@ -31,44 +29,42 @@ const DashboardAdmin = () => {
   }, []);
 
   return (
-    <div className="admin-dashboard">      
-      <div className="main-content">
-        <div className="dashboard-header">
-          <h1>Admin Dashboard</h1>
-          <p className="dashboard-subtitle">System Overview</p>
-        </div>
-        
-        {loading ? (
-          <div className="loading-state">
-            <div className="spinner"></div>
-            <p>Loading dashboard data...</p>
-          </div>
-        ) : (
-          <div className="metrics-grid">
-            <div className="metric-card users-card">
-              <div className="metric-icon">
-                <FaUsers />
-              </div>
-              <div className="metric-content">
-                <h3>Total Users</h3>
-                <p className="metric-value">{totalUsers}</p>
-                <p className="metric-description">Registered accounts</p>
-              </div>
-            </div>
-            
-            <div className="metric-card requests-card">
-              <div className="metric-icon">
-                <FaMoneyBillWave />
-              </div>
-              <div className="metric-content">
-                <h3>Pending Requests</h3>
-                <p className="metric-value">{pendingRequests}</p>
-                <p className="metric-description">Awaiting approval</p>
-              </div>
-            </div>
-          </div>
-        )}
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p className="dashboard-subtitle">System Overview</p>
       </div>
+      
+      {loading ? (
+        <div className="loading-state">
+          <div className="spinner"></div>
+          <p>Loading dashboard data...</p>
+        </div>
+      ) : (
+        <div className="metrics-container">
+          <div className="metric-card">
+            <div className="card-icon">
+              <FaUsers />
+            </div>
+            <div className="card-content">
+              <h3>Total Users</h3>
+              <p className="card-value">{totalUsers}</p>
+              <p className="card-description">Registered accounts</p>
+            </div>
+          </div>
+          
+          <div className="metric-card">
+            <div className="card-icon">
+              <FaMoneyBillWave />
+            </div>
+            <div className="card-content">
+              <h3>Pending Requests</h3>
+              <p className="card-value">{pendingRequests}</p>
+              <p className="card-description">Awaiting approval</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
