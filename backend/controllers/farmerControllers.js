@@ -373,43 +373,6 @@ export const getPayments = async (req, res) => {
     }
 };
 
-// Get payment details for popup
-export const getPaymentDetails = async (req, res) => {
-    try {
-        const { userId, monthYear } = req.query;
-        const [year, month] = monthYear.split('-');
-        
-        const query = `
-            SELECT 
-                id,
-                created_at,
-                finalTeaKilos,
-                paymentPerKilo,
-                advances,
-                finalPayment,
-                status
-            FROM farmer_payments
-            WHERE userId = ?
-            AND YEAR(created_at) = ?
-            AND MONTH(created_at) = ?
-            ORDER BY created_at DESC
-        `;
-        
-        const [results] = await sqldb.promise().query(query, [userId, year, month]);
-        
-        res.status(200).json({
-            success: true,
-            data: results
-        });
-    } catch (error) {
-        console.error('Error fetching payment details:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch payment details'
-        });
-    }
-};
-
 
 
 // Get advance summary for a specific month/year

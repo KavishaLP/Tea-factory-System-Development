@@ -5,7 +5,6 @@ import { requestAdvance, requestFertilizer, FetchFertilizerPrices, getPaymentsBy
     getTeaDeliveries,
     getTeaDeliveryDetails,
     getPayments,
-    getPaymentDetails,
     getAdvances,
     getAdvanceDetails,
     getFertilizerRequests,
@@ -27,7 +26,6 @@ router.get('/fertilizer-requests', getFertilizerRequests);
 
 // Detailed popup endpoints
 router.get('/tea-delivery-details', getTeaDeliveryDetails);
-router.get('/payment-details', getPaymentDetails);
 router.get('/advance-details', getAdvanceDetails);
 router.get('/fertilizer-request-details', getFertilizerDetails);
 export default router;
