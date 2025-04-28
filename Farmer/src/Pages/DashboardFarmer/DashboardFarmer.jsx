@@ -79,7 +79,7 @@ const DashboardFarmer = ({ userId }) => {
   };
 
   const fetchFertilizers = async (userId, monthYear) => {
-    const response = await axios.get("/api/farmer/fertilizer-requests", {
+    const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-requests", {
       params: { userId, monthYear }
     });
     return response.data;
