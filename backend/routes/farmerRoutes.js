@@ -19,5 +19,10 @@ router.post('/fertilizer-request', requestFertilizer);
 router.get('/fertilizer-prices', FetchFertilizerPrices);
 router.get('/payments/:userId', getPaymentsByUserId);
 
+// Dashboard summary endpoints
+router.get('/tea-deliveries', getTeaDeliveries);
+router.get('/last-payment', getPayments);
+router.get('/advances', getAdvances);
+router.get('/fertilizer-requests', getFertilizerRequests);
 
 export default router;
