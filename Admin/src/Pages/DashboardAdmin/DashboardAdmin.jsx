@@ -31,10 +31,7 @@ const DashboardAdmin = () => {
   }, []);
 
   return (
-    <div className="admin-dashboard">
-      <Navbar />
-      <Sidebar />
-      
+    <div className="admin-dashboard">      
       <div className="main-content">
         <div className="dashboard-header">
           <h1>Admin Dashboard</h1>
