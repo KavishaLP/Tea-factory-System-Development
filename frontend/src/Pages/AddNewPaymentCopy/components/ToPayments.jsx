@@ -4,14 +4,11 @@ import axios from 'axios';
 function ToPayments() {
   const [paymentsHistory, setPaymentsHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [toPaymentsFilters, setToPaymentsFilters] = useState({
-    year: currentYear,
-    month: currentMonth + 1,
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
   });
-  const [confirmationMessage, setConfirmationMessage] = useState("");
-  const [confirmationType, setConfirmationType] = useState("");
+  const [error, setError] = useState(null);
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -20,14 +17,13 @@ function ToPayments() {
 
   useEffect(() => {
     fetchPaymentsHistory();
-  }, [toPaymentsFilters]);
+  }, [toPaymentsFilters.month, toPaymentsFilters.year]);
 
   const fetchPaymentsHistory = async () => {
-    console.log("Fetching payments history for:", toPaymentsFilters);
     try {
       setHistoryLoading(true);
-      
-      // Changed to use query parameters instead of request body
+      setError(null);
+
       const response = await axios.get(
         `http://localhost:8081/api/manager/fetch-to-payments`,
         {
@@ -37,67 +33,50 @@ function ToPayments() {
           }
         }
       );
-      
-      console.log(response.data);
 
-      if (response.data.length === 0) {
-        setPaymentsHistory([]);
-      } else {
-        setPaymentsHistory(response.data);
-      }
-
+      setPaymentsHistory(response.data);
       setHistoryLoading(false);
     } catch (error) {
       console.error('Error fetching payment history:', error);
+      setError('Failed to fetch payment history. Please try again.');
       setHistoryLoading(false);
-      setConfirmationMessage("Error fetching payment history");
-      setConfirmationType("error");
+      setPaymentsHistory([]);
     }
   };
 
   const navigateToPaymentsMonth = (direction) => {
-    setToPaymentsFilters((prevFilters) => {
-      let newMonth = prevFilters.month;
-      let newYear = prevFilters.year;
+    setToPaymentsFilters(prev => {
+      let newMonth = prev.month;
+      let newYear = prev.year;
 
       if (direction === "prev") {
-        if (newMonth === 1) {
+        newMonth--;
+        if (newMonth < 1) {
           newMonth = 12;
-          newYear -= 1;
-        } else {
-          newMonth -= 1;
+          newYear--;
         }
       } else if (direction === "next") {
+        // Check if trying to navigate to future month
         const currentDate = new Date();
-        const nextMonthDate = new Date(newYear, newMonth, 1); // First day of next month
+        const selectedDate = new Date(newYear, newMonth); // Next month
         
-        if (nextMonthDate > currentDate) {
-          return prevFilters;
+        if (selectedDate > currentDate) {
+          return prev; // Don't update if future month
         }
         
-        if (newMonth === 12) {
+        newMonth++;
+        if (newMonth > 12) {
           newMonth = 1;
-          newYear += 1;
-        } else {
-          newMonth += 1;
+          newYear++;
         }
       }
 
-      return {
-        year: newYear,
-        month: newMonth,
-      };
+      return { month: newMonth, year: newYear };
     });
   };
 
   return (
     <div className="payment-history">
-      {confirmationMessage && (
-        <div className={`confirmation-message ${confirmationType}`}>
-          {confirmationMessage}
-        </div>
-      )}
-      
       <div className="month-navigation">
         <button onClick={() => navigateToPaymentsMonth("prev")}>{"<"} Previous</button>
         <h3>
@@ -106,13 +85,15 @@ function ToPayments() {
         <button
           onClick={() => navigateToPaymentsMonth("next")}
           disabled={
-            new Date(toPaymentsFilters.year, toPaymentsFilters.month, 1) >= 
-            new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
+            new Date(toPaymentsFilters.year, toPaymentsFilters.month) >=
+            new Date(new Date().getFullYear(), new Date().getMonth() + 1)
           }
         >
           Next {">"}
         </button>
       </div>
+
+      {error && <p className="error-message">{error}</p>}
 
       {historyLoading ? (
         <p>Loading...</p>

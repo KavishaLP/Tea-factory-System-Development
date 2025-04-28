@@ -932,32 +932,42 @@ export const initializeMonthlyPayments = async (req, res) => {
 
 // Fetch payments history function
 export const fetchToPayments = async (req, res) => {
-    console.log("Fetching payment history:", req.body);
     try {
-      // Extract month and year from query parameters
-      const { month, year } = req.query;
-  
-      // Validate if month and year are provided
-      if (!month || !year) {
-        return res.status(400).json({ message: 'Month and year are required' });
-      }
+        const { month, year } = req.query;
 
-      // Query to get payments history for the specific month and year
-      const query = `
-        SELECT * FROM farmer_payments 
-        WHERE MONTH(created_at) = ? AND YEAR(created_at) = ? AND status = 'Pending'
-      `;
-      const [payments] = await sqldb.promise().query(query, [month, year]);
-  
-      // Check if there are payments, and return appropriate response
-      if (payments.length > 0) {
+        if (!month || !year) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Month and year are required as query parameters' 
+            });
+        }
+
+        const monthInt = parseInt(month);
+        const yearInt = parseInt(year);
+
+        if (isNaN(monthInt) || isNaN(yearInt)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Month and year must be valid numbers'
+            });
+        }
+
+        const query = `
+            SELECT * FROM farmer_payments 
+            WHERE MONTH(created_at) = ? AND YEAR(created_at) = ? 
+            AND status = 'Pending'
+            ORDER BY created_at DESC
+        `;
+        
+        const [payments] = await sqldb.promise().query(query, [monthInt, yearInt]);
+
         res.status(200).json(payments);
-      } else {
-        res.status(200).json([]); // Send empty array if no records found
-      }
     } catch (error) {
-      console.error('Error fetching payment history:', error);
-      res.status(500).json({ message: 'Error fetching payment history.' });
+        console.error('Error fetching TO payments:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error while fetching payment history'
+        });
     }
 };
 
