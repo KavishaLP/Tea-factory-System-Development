@@ -173,49 +173,6 @@ export const addFarmerPayment = (req, res) => {
     });
 };
 
-// Get payment history function (Approved only)
-export const getFarmerPaymentHistory = (req, res) => {
-    console.log("Fetching payment history:", req.body);
-    // SQL Query to fetch only approved payment history
-    const sql = `
-        SELECT 
-            userId, 
-            paymentPerKilo, 
-            finalTeaKilos, 
-            paymentForFinalTeaKilos, 
-            additionalPayments, 
-            transport, 
-            directPayments, 
-            finalAmount, 
-            advances, 
-            teaPackets, 
-            fertilizer, 
-            finalPayment, 
-            created_at 
-        FROM farmer_payments 
-        WHERE status = 'Approved' 
-        ORDER BY created_at DESC
-    `;
-
-    // Execute the query to fetch the approved payment history
-    sqldb.query(sql, (err, results) => {
-        if (err) {
-            console.error('Database Error:', err);
-            return res.status(500).json({ message: 'Error while fetching payment history', error: err });
-        }
-
-        // Check if there are any approved records found
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'No approved payment history found.' });
-        }
-
-        console.log("Approved payment history fetched successfully:", results);
-
-        // Send the fetched data as a response
-        return res.status(200).json({ Status: "Success", paymentHistory: results });
-    });
-};
-
 export const getAllFarmers = (req, res) => {
     const query = 'SELECT * FROM farmeraccounts';
   
@@ -1001,6 +958,49 @@ export const fetchPaymentsHistory = async (req, res) => {
       console.error('Error fetching payment history:', error);
       res.status(500).json({ message: 'Error fetching payment history.' });
     }
+};
+
+// Get payment history function (Approved only)
+export const getFarmerPaymentHistory = (req, res) => {
+    console.log("Fetching hhhhh payment history:", req.body);
+    // SQL Query to fetch only approved payment history
+    const sql = `
+        SELECT 
+            userId, 
+            paymentPerKilo, 
+            finalTeaKilos, 
+            paymentForFinalTeaKilos, 
+            additionalPayments, 
+            transport, 
+            directPayments, 
+            finalAmount, 
+            advances, 
+            teaPackets, 
+            fertilizer, 
+            finalPayment, 
+            created_at 
+        FROM farmer_payments 
+        WHERE status = 'Approved' 
+        ORDER BY created_at DESC
+    `;
+
+    // Execute the query to fetch the approved payment history
+    sqldb.query(sql, (err, results) => {
+        if (err) {
+            console.error('Database Error:', err);
+            return res.status(500).json({ message: 'Error while fetching payment history', error: err });
+        }
+
+        // Check if there are any approved records found
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'No approved payment history found.' });
+        }
+
+        console.log("Approved payment history fetched successfully:", results);
+
+        // Send the fetched data as a response
+        return res.status(200).json({ Status: "Success", paymentHistory: results });
+    });
 };
 
 

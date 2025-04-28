@@ -28,6 +28,7 @@ function ViewPaymentsHistory() {
     }, [paymentsHistory, filters, searchTerm]);
 
     const fetchViewHistory = async () => {
+        console.log("Fetching payments history for: "); // Log the filters for debugging
         try {
             setHistoryLoading(true);
             const requestData = {};

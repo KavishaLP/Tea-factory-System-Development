@@ -25,6 +25,7 @@ function ToPayments() {
 
   // Fetch payment history based on selected filters (month and year)
   const fetchPaymentsHistory = async () => {
+    console.log("Fetching payments history for:"); // Log the filters for debugging
     try {
       setHistoryLoading(true); // Start loading
 
