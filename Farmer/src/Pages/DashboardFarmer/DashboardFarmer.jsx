@@ -252,9 +252,14 @@ const DashboardFarmer = ({ userId }) => {
             <div className="dashboard-card">
               <FaMoneyBillWave className="card-icon" />
               <h3>Last Payment</h3>
-              <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
+              {dashboardData.payments.amount > 0 ? (
+                <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
+              ) : (
+                <p className="card-value">Payment not finalized</p>
+              )}
               <p className="card-description">Most recent approved payment</p>
             </div>
+
           </div>
 
           {/* Row 2 - Advances */}
