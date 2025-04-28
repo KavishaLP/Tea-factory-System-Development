@@ -414,7 +414,54 @@ export const getPaymentDetails = async (req, res) => {
 
 
 // Get advance summary for a specific month/year
+// Get advance summary for a specific month/year
+export const getAdvances = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
 
+        const query = `
+            SELECT
+                SUM(CASE WHEN action = 'Pending' THEN amount ELSE 0 END) AS pending_amount,
+                COUNT(CASE WHEN action = 'Pending' THEN 1 ELSE NULL END) AS pending_count,
+                SUM(CASE WHEN action = 'Approved' THEN amount ELSE 0 END) AS approved_amount,
+                COUNT(CASE WHEN action = 'Approved' THEN 1 ELSE NULL END) AS approved_count,
+                SUM(CASE WHEN action = 'Rejected' THEN amount ELSE 0 END) AS rejected_amount,
+                COUNT(CASE WHEN action = 'Rejected' THEN 1 ELSE NULL END) AS rejected_count
+            FROM advance_payment
+            WHERE userId = ?
+            AND YEAR(date) = ?
+            AND MONTH(date) = ?
+        `;
+
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        const data = results[0];
+
+        res.status(200).json({
+            success: true,
+            data: {
+                pending: {
+                    count: data.pending_count || 0,
+                    amount: data.pending_amount || 0
+                },
+                approved: {
+                    count: data.approved_count || 0,
+                    amount: data.approved_amount || 0
+                },
+                rejected: {
+                    count: data.rejected_count || 0,
+                    amount: data.rejected_amount || 0
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching advances:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch advance data'
+        });
+    }
+};
 
 // Get advance details for popup
 export const getAdvanceDetails = async (req, res) => {
