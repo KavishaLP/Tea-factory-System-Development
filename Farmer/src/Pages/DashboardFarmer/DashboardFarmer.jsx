@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaMoneyBillWave, FaSeedling, FaHistory, FaTimes } from "react-icons/fa";
+import { FaMoneyBillWave, FaSeedling, FaHistory } from "react-icons/fa";
 import axios from "axios";
 import "./DashboardFarmer.css";
 
@@ -11,20 +11,27 @@ const DashboardFarmer = ({ userId }) => {
   const [dashboardData, setDashboardData] = useState({
     teaDeliveries: { total: 0 },
     payments: { amount: 0 },
-    advances: { pending: { count: 0, amount: 0 }, approved: { count: 0, amount: 0 } },
-    fertilizerRequests: { pending: 0, approved: 0 }
+    advances: { 
+      pending: { count: 0, amount: 0 }, 
+      approved: { count: 0, amount: 0 },
+      rejected: { count: 0, amount: 0 }
+    },
+    fertilizerRequests: { 
+      pending: 0, 
+      approved: 0,
+      rejected: 0 
+    }
   });
-
-  // Helper function to safely format numbers
-  const formatNumber = (value, decimals = 2) => {
-    const num = parseFloat(value);
-    return isNaN(num) ? '0.00' : num.toFixed(decimals);
-  };
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
+
+  const formatNumber = (value, decimals = 2) => {
+    const num = parseFloat(value);
+    return isNaN(num) ? '0.00' : num.toFixed(decimals);
+  };
 
   useEffect(() => {
     fetchDashboardData();
@@ -37,7 +44,6 @@ const DashboardFarmer = ({ userId }) => {
       
       const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
       
-      // Fetch all dashboard data in parallel
       const [teaData, paymentData, advanceData, fertilizerData] = await Promise.all([
         fetchTeaDeliveries(userId, monthYear),
         fetchPayments(userId, monthYear),
@@ -48,8 +54,16 @@ const DashboardFarmer = ({ userId }) => {
       setDashboardData({
         teaDeliveries: teaData.data || { total: 0 },
         payments: paymentData.data || { amount: 0 },
-        advances: advanceData.data || { pending: { count: 0, amount: 0 }, approved: { count: 0, amount: 0 } },
-        fertilizerRequests: fertilizerData.data || { pending: 0, approved: 0 }
+        advances: advanceData.data || { 
+          pending: { count: 0, amount: 0 }, 
+          approved: { count: 0, amount: 0 },
+          rejected: { count: 0, amount: 0 }
+        },
+        fertilizerRequests: fertilizerData.data || { 
+          pending: 0, 
+          approved: 0,
+          rejected: 0 
+        }
       });
       
       setLoading(false);
@@ -60,7 +74,6 @@ const DashboardFarmer = ({ userId }) => {
     }
   };
 
-  // API call functions
   const fetchTeaDeliveries = async (userId, monthYear) => {
     try {
       const response = await axios.get("http://localhost:8081/api/farmer/tea-deliveries", {
@@ -93,7 +106,11 @@ const DashboardFarmer = ({ userId }) => {
       return response.data;
     } catch (error) {
       console.error("Error fetching advances:", error);
-      return { data: { pending: { count: 0, amount: 0 }, approved: { count: 0, amount: 0 } } };
+      return { data: { 
+        pending: { count: 0, amount: 0 }, 
+        approved: { count: 0, amount: 0 },
+        rejected: { count: 0, amount: 0 }
+      } };
     }
   };
 
@@ -105,7 +122,7 @@ const DashboardFarmer = ({ userId }) => {
       return response.data;
     } catch (error) {
       console.error("Error fetching fertilizer requests:", error);
-      return { data: { pending: 0, approved: 0 } };
+      return { data: { pending: 0, approved: 0, rejected: 0 } };
     }
   };
 
@@ -118,7 +135,6 @@ const DashboardFarmer = ({ userId }) => {
         setCurrentMonth(currentMonth - 1);
       }
     } else {
-      // Don't allow navigation to future months
       const now = new Date();
       if (currentYear < now.getFullYear() || 
           (currentYear === now.getFullYear() && currentMonth < now.getMonth() + 1)) {
@@ -132,13 +148,13 @@ const DashboardFarmer = ({ userId }) => {
     }
   };
 
-  const handleFertilizerAction = async (action, requestId) => {
+  const handleAction = async (type, action, id) => {
     try {
-      await axios.put(`/api/farmer/fertilizer-requests/${requestId}`, { action });
+      await axios.put(`/api/farmer/${type}-requests/${id}`, { action });
       fetchDashboardData();
     } catch (error) {
-      console.error(`Error ${action} fertilizer request:`, error);
-      setError(`Failed to ${action} fertilizer request. Please try again.`);
+      console.error(`Error ${action} ${type} request:`, error);
+      setError(`Failed to ${action} ${type} request. Please try again.`);
     }
   };
 
@@ -172,76 +188,104 @@ const DashboardFarmer = ({ userId }) => {
         </div>
       ) : (
         <div className="dashboard-grid">
-          {/* First Row */}
+          {/* Row 1 */}
           <div className="dashboard-row">
-            {/* Updated Tea Delivered card */}
             <div className="dashboard-card">
               <FaSeedling className="card-icon" />
               <h3>Tea Delivered</h3>
               <p>{formatNumber(dashboardData.teaDeliveries.total)} Kg</p>
             </div>
 
-            {/* Updated Last Payment card */}
             <div className="dashboard-card">
               <FaMoneyBillWave className="card-icon" />
               <h3>Last Payment</h3>
               <p>Rs. {formatNumber(dashboardData.payments.amount)}</p>
             </div>
+          </div>
 
-            {/* Updated Advances card */}
-            <div className="dashboard-card full-width">
-              <FaMoneyBillWave className="card-icon" />
-              <h3>Advances</h3>
-              <div className="advance-details">
-                <div className="advance-item">
-                  <span className="advance-label">Pending:</span>
-                  <span className="advance-value">
-                    {dashboardData.advances.pending.count} (Rs. {formatNumber(dashboardData.advances.pending.amount)})
-                  </span>
-                </div>
-                <div className="advance-item">
-                  <span className="advance-label">Approved:</span>
-                  <span className="advance-value">
-                    {dashboardData.advances.approved.count} (Rs. {formatNumber(dashboardData.advances.approved.amount)})
-                  </span>
-                </div>
+          {/* Row 2 - Advances */}
+          <div className="dashboard-card full-width">
+            <FaMoneyBillWave className="card-icon" />
+            <h3>Advances</h3>
+            <div className="status-container">
+              <div className="status-item">
+                <span className="status-label">Pending:</span>
+                <span className="status-value">
+                  {dashboardData.advances.pending.count} (Rs. {formatNumber(dashboardData.advances.pending.amount)})
+                </span>
               </div>
+              <div className="status-item">
+                <span className="status-label">Approved:</span>
+                <span className="status-value">
+                  {dashboardData.advances.approved.count} (Rs. {formatNumber(dashboardData.advances.approved.amount)})
+                </span>
+              </div>
+              <div className="status-item">
+                <span className="status-label">Rejected:</span>
+                <span className="status-value">
+                  {dashboardData.advances.rejected.count} (Rs. {formatNumber(dashboardData.advances.rejected.amount)})
+                </span>
+              </div>
+            </div>
+            <div className="action-buttons">
+              <button 
+                className="action-btn approve"
+                onClick={() => handleAction('advance', 'approve', 'sample-id')}
+              >
+                Approve
+              </button>
+              <button 
+                className="action-btn delete"
+                onClick={() => handleAction('advance', 'delete', 'sample-id')}
+              >
+                Delete
+              </button>
+              <button 
+                className="action-btn reject"
+                onClick={() => handleAction('advance', 'reject', 'sample-id')}
+              >
+                Reject
+              </button>
             </div>
           </div>
 
-          {/* Third Row - Fertilizer Requests with Actions */}
+          {/* Row 3 - Fertilizer Requests */}
           <div className="dashboard-card full-width">
             <FaHistory className="card-icon" />
             <h3>Fertilizer Requests</h3>
-            <div className="fertilizer-details">
-              <div className="fertilizer-stats">
-                <span className="fertilizer-label">Pending:</span>
-                <span className="fertilizer-value">{dashboardData.fertilizerRequests.pending}</span>
-                
-                <span className="fertilizer-label">Approved:</span>
-                <span className="fertilizer-value">{dashboardData.fertilizerRequests.approved}</span>
+            <div className="status-container">
+              <div className="status-item">
+                <span className="status-label">Pending:</span>
+                <span className="status-value">{dashboardData.fertilizerRequests.pending}</span>
               </div>
-              
-              <div className="fertilizer-actions">
-                <button 
-                  className="action-btn approve"
-                  onClick={() => handleFertilizerAction('approve', 'sample-id')}
-                >
-                  Approve
-                </button>
-                <button 
-                  className="action-btn delete"
-                  onClick={() => handleFertilizerAction('delete', 'sample-id')}
-                >
-                  Delete
-                </button>
-                <button 
-                  className="action-btn reject"
-                  onClick={() => handleFertilizerAction('reject', 'sample-id')}
-                >
-                  Reject
-                </button>
+              <div className="status-item">
+                <span className="status-label">Approved:</span>
+                <span className="status-value">{dashboardData.fertilizerRequests.approved}</span>
               </div>
+              <div className="status-item">
+                <span className="status-label">Rejected:</span>
+                <span className="status-value">{dashboardData.fertilizerRequests.rejected}</span>
+              </div>
+            </div>
+            <div className="action-buttons">
+              <button 
+                className="action-btn approve"
+                onClick={() => handleAction('fertilizer', 'approve', 'sample-id')}
+              >
+                Approve
+              </button>
+              <button 
+                className="action-btn delete"
+                onClick={() => handleAction('fertilizer', 'delete', 'sample-id')}
+              >
+                Delete
+              </button>
+              <button 
+                className="action-btn reject"
+                onClick={() => handleAction('fertilizer', 'reject', 'sample-id')}
+              >
+                Reject
+              </button>
             </div>
           </div>
         </div>
