@@ -290,7 +290,6 @@ export const getTeaDeliveries = async (req, res) => {
     }
 };
 
-
 // Get tea delivery details for popup
 export const getTeaDeliveryDetails = async (req, res) => {
     try {
@@ -329,6 +328,8 @@ export const getTeaDeliveryDetails = async (req, res) => {
         });
     }
 };
+
+
 
 // Get payment summary for a specific month/year
 export const getPayments = async (req, res) => {
@@ -402,6 +403,8 @@ export const getPaymentDetails = async (req, res) => {
     }
 };
 
+
+
 // Get advance summary for a specific month/year
 export const getAdvances = async (req, res) => {
     try {
@@ -472,6 +475,8 @@ export const getAdvanceDetails = async (req, res) => {
         });
     }
 };
+
+
 
 // Get fertilizer summary for a specific month/year
 export const getFertilizerRequests = async (req, res) => {
