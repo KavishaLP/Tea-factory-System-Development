@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2025 at 11:41 AM
+-- Generation Time: Apr 28, 2025 at 09:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -64,17 +64,8 @@ CREATE TABLE `advance_payment` (
 --
 
 INSERT INTO `advance_payment` (`advn_id`, `userId`, `amount`, `date`, `action`) VALUES
-(10, 'Wenu@9284u979', 3000.00, '2025-03-12', 'Approved'),
-(11, 'Wenu@9284u979', 5555.00, '2025-03-12', 'Rejected'),
-(12, 'Wenu@9284u979', 3000.00, '2025-03-12', 'Approved'),
-(13, 'Wenu@9284u979', 5000.00, '2025-03-21', 'Approved'),
-(14, 'Wenu@9284u92', 3000.00, '2025-03-23', 'Approved'),
-(15, 'Wenu@9284u92', 50000.00, '2025-03-26', 'Approved'),
-(16, 'Wenu@9284u92', 5000.00, '2025-04-06', 'Approved'),
-(17, 'Wenu@9284u92', 4200.00, '2025-04-09', 'Rejected'),
-(18, 'namal', 3999.00, '2025-04-09', 'Approved'),
-(19, 'venuja', 4000.00, '2025-04-09', 'Approved'),
-(20, 'venuja', 4444444.00, '2025-04-24', 'Approved');
+(26, 'namal', 30000.00, '2025-04-27', 'Rejected'),
+(27, 'namal', 20000.00, '2025-04-27', 'Approved');
 
 -- --------------------------------------------------------
 
@@ -105,7 +96,9 @@ INSERT INTO `employeeaccounts` (`id`, `userId`, `firstName`, `lastName`, `mobile
 (6, 'namal', 'namal', 'kamal', '0703881642', NULL, '2025-04-07 09:09:41'),
 (7, 'namal2222', 'namal', 'kamal', '0703881642', NULL, '2025-04-09 07:15:07'),
 (8, 'Wenu@9284u979g', 'tyy', 'u', '0775555555', NULL, '2025-04-24 06:56:02'),
-(9, 'Wenu@9284u979gi', 'tyy', 'u', '077555566666555', NULL, '2025-04-24 06:56:29');
+(9, 'Wenu@9284u979gi', 'tyy', 'u', '077555566666555', NULL, '2025-04-24 06:56:29'),
+(10, 'Wenu@9284u97955555', 'hh', 'kk', '01111111111111', NULL, '2025-04-25 15:41:28'),
+(11, 'w0000000010', 'j', 'kmmmmm', '011111111', NULL, '2025-04-26 06:42:09');
 
 -- --------------------------------------------------------
 
@@ -138,7 +131,8 @@ INSERT INTO `employee_payments` (`id`, `userId`, `salaryAmount`, `additionalPaym
 (8, 'W000000000002', 4444.00, 55.00, 50.00, 4449.00, '2025-04-06 11:25:25'),
 (9, 'namal', 4444.00, 55.00, 50.00, 4449.00, '2025-04-07 09:10:35'),
 (10, 'namal2222', 4444.00, 55.00, 50.00, 4449.00, '2025-04-09 07:16:16'),
-(13, 'namal2222', 3.00, 5.00, 1.00, 7.00, '2025-04-09 07:17:05');
+(13, 'namal2222', 3.00, 5.00, 1.00, 7.00, '2025-04-09 07:17:05'),
+(14, 'Wenu@9284u979', 4500000.00, 52000.00, 2.00, 4551998.00, '2025-04-25 15:42:05');
 
 -- --------------------------------------------------------
 
@@ -168,21 +162,9 @@ CREATE TABLE `farmeraccounts` (
 --
 
 INSERT INTO `farmeraccounts` (`id`, `userId`, `userName`, `firstName`, `lastName`, `address`, `mobile1`, `mobile2`, `gmail`, `password`, `RESET_CODE`, `RESET_EXPIRY`, `createdAt`, `tea_delivery_method`) VALUES
-(1, 'Wenu@9284u979', 'ferWenu@9284u979', 'kabii', 'kamdvjdsb', 'khhhhhhhhhhhbbbbbbbbbbbbbbbbbbbb,diiii', '0776876202', '0776876207', 'ekjvneksnn@gmai.com', '$2b$10$Qvw0eau0M3xWMjTNgpgSbOO5.Q7gr4CQRyNV8j5UqMi...\n', NULL, NULL, '2025-03-02 15:25:03', 'farmer_vehicle'),
-(2, 'Wenu@9284u92', 'ferWenu@9284u92', 'kavi', 'she', 'moraw,sri lanaka', '0776876204', '', 'Kavisha12345@gmail.com', '$2b$10$mz6hg66dFQ5m0NwSuXS/ue0cu0q7XO9Z1MENk2ScNWPQeGX8YLy4O', NULL, NULL, '2025-03-03 05:37:09', 'farmer_vehicle'),
-(3, '14529', 'farmer_14529', 'kavi', 'she', 'moraw,sri lanaka', '0776876204', '', 'ekjvnekhhsnn@gmai.com', '$2b$10$T7JPl/Ma1.wlctbIZkLt5OTLSkWpLOEe5GTMAfMG8aZ54izH82evO', NULL, NULL, '2025-03-05 06:56:02', 'farmer_vehicle'),
-(4, 'kavi@1000000', 'farmer_kavi@1000000', 'Gamage', 'Prasa', 'Samagi mawatha,Morawak Kanda,Morawaka, Matara,Sri Lanka', '0776876202', '', 'Kavish12345@gmail.com', '$2b$10$y.fmzzZGrsRFTQZmZTE8WOfU7ENn5GUr9pkJjZRQsIA11QXY8Lviu', NULL, NULL, '2025-03-23 06:50:40', 'farmer_vehicle'),
-(5, 'W000000001', 'farmer_W000000001', 'Kavisha', 'lioyanp', 'matara sri lanksa', '0775555555', '0702425838', 'ekjvneksnn@gmail.com', '$2b$10$.9hfoVZw0xOIt25c07YuauDfXW0tWrRXZ59zFjlh.Epf31BIDQhAu', NULL, NULL, '2025-03-26 07:27:31', 'farmer_vehicle'),
-(6, 'W222222', 'farmer_W222222', 'NAMI', 'JJJJJ', 'matara sri lanksa', '0775555554', '0111111111', 'HHHHH@gmail.com', '$2b$10$o0gibD/U7o4RbSjvO0xvYedU9Av1JTwJExi1gQYA1t5C8cggjFRvu', NULL, NULL, '2025-04-06 04:18:01', 'farmer_vehicle'),
-(7, 'W22222211111', 'farmer_W22222211111', 'NAMIAS', 'JJJJJ', 'matara sri lanksa', '0775555554', '', 'HHHHHA@gmail.com', '$2b$10$t/1dGpXetyKLFbhMzZBOO.aJyAdJCP4pNvXz8AmXnwOvsyHbBnjMK', NULL, NULL, '2025-04-06 05:13:54', 'farmer_vehicle'),
-(8, 'w111111', 'farmer_w111111', 'h', 'h', 'jh', '0111111111', '', 'gh@gmail.com', '$2b$10$KCx3D9K/MNVVoiRp.a/KRunXnpL55/5PhEw0u.NnQ1t8dlkpJ.SB6', NULL, NULL, '2025-04-06 09:42:35', 'farmer_vehicle'),
-(9, 'w11111111', 'farmer_w11111111', 'A', 'B', 'HH', '014', '', '665@gmail.com', '$2b$10$phPTLPqpTQA.ZwbCHElODev38f1CihmQ58ELkZZgf3sPDzw2zq.zK', NULL, NULL, '2025-04-06 11:24:07', 'farmer_vehicle'),
 (10, 'namal', 'farmer_namal', 'namalk', 'namal', 'namal , namal, namal', '0111111111', '0703881642', 'kskavisha2001@gmail.com', '$2b$10$yuS1Xdn0DlaolqcjQzDh4Ol8M1Kz16B9yduNxBdW.UUby45hgNP.2', NULL, NULL, '2025-04-07 09:35:11', 'farmer_vehicle'),
-(11, 'namal22', 'farmer_namal22', 'namalk', 'namal', 'namal , namal, namal', '0111111111', '', 'kskavisha20012@gmail.com', '$2b$10$jDvAFT2K9cYPWYF8De1SKurSxcv5adD2SWBOs1qVFDWQVct0Amzvq', NULL, NULL, '2025-04-09 07:13:36', 'farmer_vehicle'),
-(12, 'venuja', 'farmer_venuja', 'venuja', 'prasanjith', 'namal , namal, namal', '0111111111', '0776876202', 'venujagamage2002@gmail.com', '$2b$10$NomiqByDZmmGQ4R5hl84t.hL3qAW.H3YgLifOA7BCkrNvfh0spMRa', NULL, NULL, '2025-04-09 14:01:58', 'farmer_vehicle'),
-(14, 'pasaa', 'farmer_pasaa', 'Venuja', 'Prasanjith', 'namal , namal, namal', '0703881642', '0776876202', 'prasanjithroyalq@gmail.com', '$2b$10$KSjnt12RgHA4YoUbEoZKduPNLcnL4RUxr1i2b8fvqsvLBv.YtIOLu', NULL, NULL, '2025-04-09 14:23:36', 'farmer_vehicle'),
-(15, 'W000000004', 'farmer_W000000004', 'KKKKKKKKKK', 'EEEEEEEEEE', 'JD', '0111111111', '', 'Ksssssss@gmail.com', '$2b$10$UEJu1afMKM.igVUUH8PL3OS9oHw1P9DJTk0I5k1AJzXSMGY6LCY4G', NULL, NULL, '2025-04-24 06:51:23', 'farmer_vehicle'),
-(16, 'W0000000044', 'farmer_W0000000044', 'KKKKKKKKKK', 'EEEEEEEEEE', 'JD', '0111111111', '0444444444', 'jjjjjjh@gmail.com', '$2b$10$spsQcKzNDs26mzOPflNOd.mfIq8kUOw.c.YTFcETbKmtviv/MDSuy', NULL, NULL, '2025-04-24 07:41:21', 'farmer_vehicle');
+(18, 'saman', 'farmer_saman', 'saman ', 'kumara', 'saman saman', '0703881642', '0703881642', 'Kavisha12345@gmail.com', '$2b$10$nBjWMU2IBWwF9iQsu5tWMON94BBVnmR9GuSoLkJHhI04MsVAsOMoC', NULL, NULL, '2025-04-27 09:32:39', 'farmer_vehicle'),
+(19, 'nawein', 'farmer_nawein', 'navinj', 'lk', 'navin navin', '0111111111', '0111111111', 'HHHHH@gmail.com', '$2b$10$p5N79/9NH6Nn0eyFS4APROozNskMdsdINwXNvN1rIlsXhrGuXLp6q', NULL, NULL, '2025-04-27 09:33:15', 'farmer_vehicle');
 
 -- --------------------------------------------------------
 
@@ -213,11 +195,9 @@ CREATE TABLE `farmer_payments` (
 --
 
 INSERT INTO `farmer_payments` (`id`, `userId`, `paymentPerKilo`, `finalTeaKilos`, `paymentForFinalTeaKilos`, `additionalPayments`, `transport`, `directPayments`, `finalAmount`, `advances`, `teaPackets`, `fertilizer`, `finalPayment`, `created_at`, `status`) VALUES
-(2, 'Wenu@9284u92', 100.00, 20.00, 2000.00, 10.00, 10.00, 10.00, 2030.00, 5.00, 5.00, 5.00, 2015.00, '2025-03-05 11:16:05', 'Approved'),
-(3, '14529', 100.00, 20.00, 2000.00, 4.00, 10.00, 6.00, 2020.00, 5.00, 5.00, 5.00, 2005.00, '2025-03-05 14:40:14', 'Approved'),
-(4, 'Wenu@9284u92', 520.00, 20.00, 10400.00, 444.00, 10.00, 6.00, 10860.00, 5.00, 5.00, 5.00, 10845.00, '2025-03-05 15:11:18', 'Approved'),
-(5, 'Wenu@9284u92', 100.00, 20.00, 2000.00, 100.00, 10.00, 10.00, 2120.00, 5.00, 5.00, 5.00, 2105.00, '2025-03-27 10:38:13', 'Pending'),
-(6, 'Wenu@9284u979', 100.00, 300.00, 30000.00, 100.00, 10.00, 6.00, 30116.00, 5.00, 5.00, 5.00, 30101.00, '2025-03-27 11:06:22', 'Pending');
+(8, 'nawein', 0.00, 600.00, 2.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1200.00, '2025-04-27 10:06:50', 'Approved'),
+(9, 'saman', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2025-04-27 10:06:50', 'Approved'),
+(10, 'namal', 500.00, 80.00, 40000.00, 0.00, 960.00, 0.00, 40960.00, 20000.00, 0.00, 0.00, 20960.00, '2025-04-27 14:19:09', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -271,23 +251,15 @@ CREATE TABLE `fertilizer_requests` (
 --
 
 INSERT INTO `fertilizer_requests` (`request_id`, `userId`, `fertilizer_veriance_id`, `amount`, `requestDate`, `status`, `paymentoption`) VALUES
-(9, 'namal', 1, 3, '2025-04-09', 'Approved', 'deductpayment'),
-(10, 'namal', 3, 3, '2025-04-09', 'Rejected', 'deductpayment'),
-(11, 'namal', 2, 5, '2025-04-09', 'Rejected', 'deductpayment'),
-(12, 'namal', 2, 4, '2025-04-09', 'Approved', 'deductpayment'),
-(13, 'venuja', 2, 1, '2025-04-09', 'Approved', 'cash'),
-(14, 'venuja', 4, 3, '2025-04-09', 'Approved', 'cash'),
-(15, 'venuja', 5, 2, '2025-04-09', 'Approved', 'cash'),
-(16, 'venuja', 5, 3, '2025-04-09', 'Approved', 'deductpayment'),
-(17, 'venuja', 2, 3, '2025-04-09', 'Approved', 'deductpayment'),
-(18, 'venuja', 1, 4, '2025-04-09', 'Rejected', 'deductpayment'),
-(19, 'venuja', 1, 5, '2025-04-24', 'Approved', 'cash'),
-(20, 'venuja', 8, 3, '2025-04-24', 'Approved', 'cash'),
-(21, 'venuja', 2, 3, '2025-04-24', 'Approved', 'cash'),
-(22, 'venuja', 5, 4, '2025-04-24', 'Approved', 'deductpayment'),
-(23, 'venuja', 2, 3, '2025-04-24', 'Approved', 'deductpayment'),
-(24, 'venuja', 2, 3, '2025-04-24', 'Approved', 'cash'),
-(25, 'venuja', 5, 4, '2025-04-24', 'Approved', 'cash');
+(29, 'namal', 4, 2, '2025-04-27', 'Approved', 'cash'),
+(30, 'namal', 2, 2, '2025-04-27', 'Approved', 'cash'),
+(31, 'namal', 3, 1, '2025-04-27', 'Approved', 'cash'),
+(32, 'namal', 6, 1, '2025-04-27', 'Rejected', 'deductpayment'),
+(33, 'namal', 8, 2, '2025-04-27', 'Rejected', 'deductpayment'),
+(34, 'namal', 4, 3, '2025-04-27', 'Approved', 'deductpayment'),
+(35, 'namal', 5, 4, '2025-04-27', 'Approved', 'deductpayment'),
+(36, 'namal', 5, 1, '2025-04-27', 'Approved', 'deductpayment'),
+(37, 'namal', 6, 5, '2025-04-27', 'Approved', 'deductpayment');
 
 -- --------------------------------------------------------
 
@@ -316,6 +288,36 @@ INSERT INTO `manageraccounts` (`ID`, `USERNAME`, `PASSWORD`, `F_NAME`, `L_NAME`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tea_inventory`
+--
+
+CREATE TABLE `tea_inventory` (
+  `id` int(11) NOT NULL,
+  `tea_type` varchar(50) NOT NULL,
+  `packet_size` varchar(10) NOT NULL,
+  `packet_count` int(11) NOT NULL,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tea_inventory`
+--
+
+INSERT INTO `tea_inventory` (`id`, `tea_type`, `packet_size`, `packet_count`, `last_updated`) VALUES
+(1, 'Black Tea', '100g', 190, '2025-04-26 11:04:33'),
+(2, 'Green Tea', '250g', 140, '2025-04-26 08:40:34'),
+(3, 'Earl Grey', '500g', 100, '2025-04-26 08:40:34'),
+(4, 'Chamomile', '100g', 80, '2025-04-26 08:40:34'),
+(5, 'Oolong Tea', '250g', 60, '2025-04-26 08:40:34'),
+(6, 'Black Tea', '500g', 118, '2025-04-26 15:48:27'),
+(7, 'Green Tea', '100g', 90, '2025-04-26 08:40:34'),
+(8, 'Chamomile', '250g', 75, '2025-04-26 08:40:34'),
+(9, 'Earl Grey', '100g', 110, '2025-04-26 08:40:34'),
+(10, 'Oolong Tea', '500g', 40, '2025-04-26 08:40:34');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tea_packet_requests`
 --
 
@@ -329,16 +331,6 @@ CREATE TABLE `tea_packet_requests` (
   `status` enum('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
   `paymentoption` enum('cash','deductpayment') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tea_packet_requests`
---
-
-INSERT INTO `tea_packet_requests` (`request_id`, `userId`, `teaPacketType`, `teaPacketSize`, `amount`, `requestDate`, `status`, `paymentoption`) VALUES
-(5, 'Wenu@9284u979', 'Green Tea', '5kg', 10, '2025-03-23', 'Approved', 'cash'),
-(6, 'Wenu@9284u92', 'Black Tea', '10kg', 5, '2025-03-22', 'Approved', 'deductpayment'),
-(7, 'Wenu@9284u92', 'Herbal Tea', '5kg', 8, '2025-03-21', 'Rejected', 'cash'),
-(8, 'Wenu@9284u979', 'White Tea', '2kg', 15, '2025-03-20', 'Rejected', 'deductpayment');
 
 -- --------------------------------------------------------
 
@@ -364,9 +356,8 @@ CREATE TABLE `tea_sack_updates` (
 --
 
 INSERT INTO `tea_sack_updates` (`id`, `userId`, `date`, `tea_sack_weight`, `deduction_water`, `deduction_damage_tea`, `deduction_sack_weight`, `deduction_sharped_tea`, `deduction_other`, `final_tea_sack_weight`) VALUES
-(1, 'Wenu@9284u979', '2025-03-13', 600.00, 78.00, 0.00, 0.00, 0.00, 0.00, 522.00),
-(2, 'Wenu@9284u979', '2025-04-09', 40.00, 9.00, 7.00, 7.00, 7.00, 7.00, 3.00),
-(3, 'Wenu@9284u979', '2025-04-09', 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00);
+(8, 'namal', '2025-04-27', 60.00, 10.00, 5.00, 5.00, 5.00, 5.00, 30.00),
+(9, 'namal', '2025-04-26', 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00);
 
 -- --------------------------------------------------------
 
@@ -446,6 +437,13 @@ ALTER TABLE `fertilizer_requests`
   ADD KEY `fertilizer_veriance_id` (`fertilizer_veriance_id`);
 
 --
+-- Indexes for table `tea_inventory`
+--
+ALTER TABLE `tea_inventory`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tea_type` (`tea_type`,`packet_size`);
+
+--
 -- Indexes for table `tea_packet_requests`
 --
 ALTER TABLE `tea_packet_requests`
@@ -473,31 +471,31 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `advance_payment`
 --
 ALTER TABLE `advance_payment`
-  MODIFY `advn_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `advn_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `employeeaccounts`
 --
 ALTER TABLE `employeeaccounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `employee_payments`
 --
 ALTER TABLE `employee_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `farmeraccounts`
 --
 ALTER TABLE `farmeraccounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `farmer_payments`
 --
 ALTER TABLE `farmer_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `fertilizer_prices`
@@ -509,7 +507,13 @@ ALTER TABLE `fertilizer_prices`
 -- AUTO_INCREMENT for table `fertilizer_requests`
 --
 ALTER TABLE `fertilizer_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `tea_inventory`
+--
+ALTER TABLE `tea_inventory`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tea_packet_requests`
@@ -521,7 +525,7 @@ ALTER TABLE `tea_packet_requests`
 -- AUTO_INCREMENT for table `tea_sack_updates`
 --
 ALTER TABLE `tea_sack_updates`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `user`
