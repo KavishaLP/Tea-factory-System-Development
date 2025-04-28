@@ -29,7 +29,7 @@ const DashboardAdmin = () => {
   }, []);
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-admin">
       <div className="dashboard-header">
         <h1>Admin Dashboard</h1>
         <p className="dashboard-subtitle">System Overview</p>
@@ -41,29 +41,36 @@ const DashboardAdmin = () => {
           <p>Loading dashboard data...</p>
         </div>
       ) : (
-        <div className="metrics-container">
-          <div className="metric-card">
-            <div className="card-icon">
-              <FaUsers />
+        <>
+          <div className="metrics-row">
+            <div className="metric-card">
+              <div className="card-icon users-icon">
+                <FaUsers />
+              </div>
+              <div className="card-content">
+                <h3>Total Users</h3>
+                <p className="card-value">{totalUsers}</p>
+                <p className="card-description">Registered accounts</p>
+              </div>
             </div>
-            <div className="card-content">
-              <h3>Total Users</h3>
-              <p className="card-value">{totalUsers}</p>
-              <p className="card-description">Registered accounts</p>
+            
+            <div className="metric-card">
+              <div className="card-icon requests-icon">
+                <FaMoneyBillWave />
+              </div>
+              <div className="card-content">
+                <h3>Pending Advance Requests</h3>
+                <p className="card-value">{pendingRequests}</p>
+                <p className="card-description">Awaiting approval</p>
+              </div>
             </div>
           </div>
-          
-          <div className="metric-card">
-            <div className="card-icon">
-              <FaMoneyBillWave />
-            </div>
-            <div className="card-content">
-              <h3>Pending Requests</h3>
-              <p className="card-value">{pendingRequests}</p>
-              <p className="card-description">Awaiting approval</p>
-            </div>
+
+          {/* Space for additional components below */}
+          <div className="dashboard-content-area">
+            {/* Additional components will go here */}
           </div>
-        </div>
+        </>
       )}
     </div>
   );
