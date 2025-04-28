@@ -1,86 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaUsers, FaMoneyBillWave } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import "./DashboardAdmin.css";
+import Navbar from '../../Component/Navbar/Navbar2';
+import Sidebar from '../../Component/sidebar/sidebar2';
+import axios from "axios"; // Import axios for API calls
 
-const AdminDashboard = () => {
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    pendingAdvances: 0
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const DashboardAdmin = () => {
+  const [pendingRequests, setPendingRequests] = useState(0); // State to store pending requests count
+  const [totalUsers, setTotalUsers] = useState(0); // State to store total users count
+  const [totalPayments, setTotalPayments] = useState(0); // State to store total payments
 
+  // Fetch pending requests from the backend
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchPendingRequests = async () => {
       try {
-        setLoading(true);
-        const [usersRes, advancesRes] = await Promise.all([
-          axios.get('http://localhost:8081/api/admin/total-users'),
-          axios.get('http://localhost:8081/api/admin/pending-advances')
-        ]);
-        
-        setStats({
-          totalUsers: usersRes.data.count || 0,
-          pendingAdvances: advancesRes.data.count || 0
+        const response = await axios.get("http://localhost:8081/api/admin/fetch-pending-requests", {
+          withCredentials: true, // Include credentials if needed
         });
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching stats:', err);
-        setError('Failed to load dashboard data');
-        setLoading(false);
+        setPendingRequests(response.data.count); // Update state with the count of pending requests
+      } catch (error) {
+        console.error("Error fetching pending requests:", error);
       }
     };
 
-    fetchStats();
+    fetchPendingRequests();
+  }, []); // Empty dependency array ensures this runs only once on component mount
+
+  // Fetch total number of users from the backend
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8081/api/admin/fetch-total-users", {
+          withCredentials: true, // Include credentials if needed
+        });
+        setTotalUsers(response.data.totalUsers); // Update state with the total number of users
+      } catch (error) {
+        console.error("Error fetching total users:", error);
+      }
+    };
+
+    fetchTotalUsers();
+  }, []);
+
+  // Fetch total payments from the backend
+  useEffect(() => {
+    const fetchTotalPayments = async () => {
+      try {
+        const response = await axios.get("http://localhost:8081/api/admin/fetch-total-payments", {
+          withCredentials: true, // Include credentials if needed
+        });
+        setTotalPayments(response.data.totalPayments); // Update state with the total payments
+      } catch (error) {
+        console.error("Error fetching total payments:", error);
+      }
+    };
+
+    fetchTotalPayments();
   }, []);
 
   return (
-    <div className="admin-dashboard-container">
-      <div className="admin-sidebar">
-        {/* Your sidebar content */}
-      </div>
+    <div className="admin-dashboard">
+       <Navbar />
+       <Sidebar />
       
-      <div className="admin-main-content">
-        <div className="dashboard-title-section">
-          <h1 className="dashboard-main-title">Admin Dashboard</h1>
-          <p className="dashboard-sub-title">Overview and quick actions</p>
+      <div className="main-content">
+        <h1>Welcome to the Admin Dashboard</h1>
+        <div className="cards">
+          <div className="card">
+            <h2>Total Users</h2>
+            <p>{totalUsers}</p> {/* Display the fetched total users count */}
+          </div>
+          <div className="card">
+            <h2>Total Payments</h2>
+            <p>${totalPayments}</p> {/* Display the fetched total payments */}
+          </div>
+          <div className="card">
+            <h2>Advance Pending Requests</h2>
+            <p>{pendingRequests}</p> {/* Display the fetched pending requests count */}
+          </div>
         </div>
-        
-        {error && <div className="dashboard-error-alert">{error}</div>}
-        
-        {loading ? (
-          <div className="dashboard-loading-state">
-            <div className="loading-spinner-animation"></div>
-            <p>Loading dashboard data...</p>
-          </div>
-        ) : (
-          <div className="metrics-card-grid">
-            <div className="metric-card users-metric">
-              <div className="metric-icon-wrapper">
-                <FaUsers className="metric-icon" />
-              </div>
-              <div className="metric-content">
-                <h3 className="metric-title">Total Users</h3>
-                <p className="metric-value">{stats.totalUsers}</p>
-                <p className="metric-description">Registered in system</p>
-              </div>
-            </div>
-            
-            <div className="metric-card advances-metric">
-              <div className="metric-icon-wrapper">
-                <FaMoneyBillWave className="metric-icon" />
-              </div>
-              <div className="metric-content">
-                <h3 className="metric-title">Pending Advances</h3>
-                <p className="metric-value">{stats.pendingAdvances}</p>
-                <p className="metric-description">Requiring approval</p>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
 };
 
-export default AdminDashboard;
+export default DashboardAdmin;
