@@ -247,32 +247,37 @@ export const getPaymentsByUserId = (req, res) => {
 //------------------------------------------------------------
 
 // Get tea delivery summary for a specific month/year
+// Get tea delivery summary for a specific month/year
 export const getTeaDeliveries = async (req, res) => {
     try {
         const { userId, monthYear } = req.query;
-        
+
         const [year, month] = monthYear.split('-');
-        
+
         const query = `
             SELECT 
-                SUM(tea_sack_weight) as total_weight,
-                SUM(deduction_water) as total_water_deduction,
-                SUM(deduction_damage_tea) as total_damage_deduction,
-                SUM(deduction_sack_weight) as total_sack_deduction,
-                SUM(final_tea_sack_weight) as net_weight,
-                COUNT(*) as delivery_count
-            FROM tea_sack_updates
+                finalTeaKilos
+            FROM farmer_payments
             WHERE userId = ? 
-            AND YEAR(date) = ? 
-            AND MONTH(date) = ?
+            AND YEAR(created_at) = ? 
+            AND MONTH(created_at) = ?
+            ORDER BY created_at DESC
+            LIMIT 1
         `;
-        
+
         const [results] = await sqldb.promise().query(query, [userId, year, month]);
-        
+
+        if (results.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No payment record found for the given month and user'
+            });
+        }
+
         res.status(200).json({
             success: true,
             data: {
-                total: results[0].net_weight || 0,
+                total: results[0].finalTeaKilos || 0,
                 details: results[0]
             }
         });
@@ -284,6 +289,7 @@ export const getTeaDeliveries = async (req, res) => {
         });
     }
 };
+
 
 // Get tea delivery details for popup
 export const getTeaDeliveryDetails = async (req, res) => {
