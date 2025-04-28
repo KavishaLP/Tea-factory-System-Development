@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaUsers, FaMoneyBillWave } from 'react-icons/fa';
+import { FaUsers, FaWeightHanging } from 'react-icons/fa';
+import { FaMoneyBillWave } from 'react-icons/fa';
 import "./DashboardAdmin.css";
 
 const DashboardAdmin = () => {
@@ -10,7 +11,6 @@ const DashboardAdmin = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
 
-  // Helper function to format date as YYYY-MM-DD
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
   };
@@ -64,8 +64,8 @@ const DashboardAdmin = () => {
   const today = new Date();
   const daysDiff = Math.floor((today - selectedDate) / (1000 * 60 * 60 * 24));
 
-  const isPrevDisabled = daysDiff >= 7; // Can't go back more than 7 days
-  const isNextDisabled = selectedDate >= today; // Can't go into future
+  const isPrevDisabled = daysDiff >= 7;
+  const isNextDisabled = selectedDate >= today;
 
   return (
     <div className="dashboard-admin">
@@ -95,18 +95,22 @@ const DashboardAdmin = () => {
             </div>
 
             {/* Total Tea Weight */}
-            <div className="metric-card">
-              <div className="card-icon requests-icon">
-                <FaMoneyBillWave />
-              </div>
-              <div className="card-content">
+            <div className="metric-card tea-weight-card">
+              <div className="tea-weight-content">
                 <div className="date-navigation">
                   <button onClick={handlePrev} disabled={isPrevDisabled}>Prev</button>
                   <span>{formatDate(selectedDate)}</span>
                   <button onClick={handleNext} disabled={isNextDisabled}>Next</button>
                 </div>
-                <h3>Total Tea Weight</h3>
-                <p className="card-value">{totalTeaWeight} kg</p>
+                <div className="tea-weight-value">
+                  <div className="tea-weight-icon">
+                    <FaWeightHanging />
+                  </div>
+                  <div>
+                    <h3>Total Tea Weight</h3>
+                    <p className="card-value">{totalTeaWeight} kg</p>
+                  </div>
+                </div>
                 <p className="card-description">Final weight collected</p>
               </div>
             </div>
@@ -124,7 +128,6 @@ const DashboardAdmin = () => {
             </div>
           </div>
 
-          {/* Space for additional components below */}
           <div className="dashboard-content-area">
             {/* Additional components will go here */}
           </div>
