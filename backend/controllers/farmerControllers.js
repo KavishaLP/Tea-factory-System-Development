@@ -499,40 +499,7 @@ export const getAdvanceDetails = async (req, res) => {
 
 
 // Get fertilizer summary for a specific month/year
-export const getFertilizerRequests = async (req, res) => {
-    try {
-        const { userId, monthYear } = req.query;
-        const [year, month] = monthYear.split('-');
-        
-        const query = `
-            SELECT 
-                COUNT(*) as total_requests,
-                SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending_requests,
-                SUM(amount) as total_packets
-            FROM fertilizer_requests
-            WHERE userId = ?
-            AND YEAR(requestDate) = ?
-            AND MONTH(requestDate) = ?
-        `;
-        
-        const [results] = await sqldb.promise().query(query, [userId, year, month]);
-        
-        res.status(200).json({
-            success: true,
-            data: {
-                pending: results[0].pending_requests || 0,
-                total: results[0].total_requests || 0,
-                details: results[0]
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching fertilizer requests:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch fertilizer request data'
-        });
-    }
-};
+
 
 // Get fertilizer details for popup
 export const getFertilizerDetails = async (req, res) => {
