@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Ensure axios is installed for API requests
+import axios from 'axios';
 
 function ToPayments() {
   const [paymentsHistory, setPaymentsHistory] = useState([]);
@@ -8,49 +8,53 @@ function ToPayments() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [toPaymentsFilters, setToPaymentsFilters] = useState({
     year: currentYear,
-    month: currentMonth + 1, // JavaScript months are 0-indexed, so add 1
+    month: currentMonth + 1,
   });
-  const [confirmationMessage, setConfirmationMessage] = useState(""); // State for confirmation message
-  const [confirmationType, setConfirmationType] = useState(""); // State to determine the type of confirmation (success or error)
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [confirmationType, setConfirmationType] = useState("");
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
 
-  // Effect hook to fetch payment history when filters change
   useEffect(() => {
     fetchPaymentsHistory();
-  }, [toPaymentsFilters]); // Runs when filters change (month or year)
+  }, [toPaymentsFilters]);
 
-  // Fetch payment history based on selected filters (month and year)
   const fetchPaymentsHistory = async () => {
-    console.log("Fetching payments history for:"); // Log the filters for debugging
+    console.log("Fetching payments history for:", toPaymentsFilters);
     try {
-      setHistoryLoading(true); // Start loading
-
-      // Make API request to fetch payments history
+      setHistoryLoading(true);
+      
+      // Changed to use query parameters instead of request body
       const response = await axios.get(
-        `http://localhost:8081/api/manager/fetch-payments-history`,
-        { params: { month: toPaymentsFilters.month, year: toPaymentsFilters.year } }
+        `http://localhost:8081/api/manager/fetch-to-payments`,
+        {
+          params: {
+            month: toPaymentsFilters.month,
+            year: toPaymentsFilters.year
+          }
+        }
       );
-      console.log(response.data); // Log the response for debugging
+      
+      console.log(response.data);
 
-      // Check if data is returned
       if (response.data.length === 0) {
-        setPaymentsHistory([]); // If no data, show empty message
+        setPaymentsHistory([]);
       } else {
-        setPaymentsHistory(response.data); // Set data into state
+        setPaymentsHistory(response.data);
       }
 
-      setHistoryLoading(false); // End loading
+      setHistoryLoading(false);
     } catch (error) {
       console.error('Error fetching payment history:', error);
-      setHistoryLoading(false); // End loading on error
+      setHistoryLoading(false);
+      setConfirmationMessage("Error fetching payment history");
+      setConfirmationType("error");
     }
   };
 
-  // Navigate through months (previous or next)
   const navigateToPaymentsMonth = (direction) => {
     setToPaymentsFilters((prevFilters) => {
       let newMonth = prevFilters.month;
@@ -64,11 +68,11 @@ function ToPayments() {
           newMonth -= 1;
         }
       } else if (direction === "next") {
-        // Prevent navigation to future months
         const currentDate = new Date();
-        const nextMonthDate = new Date(newYear, newMonth); // Create a date object from newYear and newMonth
+        const nextMonthDate = new Date(newYear, newMonth, 1); // First day of next month
+        
         if (nextMonthDate > currentDate) {
-          return prevFilters; // If trying to navigate to future month, do nothing
+          return prevFilters;
         }
         
         if (newMonth === 12) {
@@ -88,7 +92,12 @@ function ToPayments() {
 
   return (
     <div className="payment-history">
-      {/* Month navigation buttons */}
+      {confirmationMessage && (
+        <div className={`confirmation-message ${confirmationType}`}>
+          {confirmationMessage}
+        </div>
+      )}
+      
       <div className="month-navigation">
         <button onClick={() => navigateToPaymentsMonth("prev")}>{"<"} Previous</button>
         <h3>
@@ -96,17 +105,18 @@ function ToPayments() {
         </h3>
         <button
           onClick={() => navigateToPaymentsMonth("next")}
-          disabled={new Date(toPaymentsFilters.year, toPaymentsFilters.month) > new Date()} // Disable next button if future month
+          disabled={
+            new Date(toPaymentsFilters.year, toPaymentsFilters.month, 1) >= 
+            new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
+          }
         >
           Next {">"}
         </button>
       </div>
 
-      {/* Conditional rendering based on loading state */}
       {historyLoading ? (
-        <p>Loading...</p> // Show loading message while fetching data
+        <p>Loading...</p>
       ) : paymentsHistory.length > 0 ? (
-        // Show payments table if records exist
         <table>
           <thead>
             <tr>
@@ -134,7 +144,6 @@ function ToPayments() {
           </tbody>
         </table>
       ) : (
-        // Show no records found message if there are no payments for this month
         <p>No records available for {monthNames[toPaymentsFilters.month - 1]} {toPaymentsFilters.year}.</p>
       )}
     </div>

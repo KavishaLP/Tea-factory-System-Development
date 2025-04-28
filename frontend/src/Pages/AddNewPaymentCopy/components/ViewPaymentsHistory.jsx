@@ -28,7 +28,7 @@ function ViewPaymentsHistory() {
     }, [paymentsHistory, filters, searchTerm]);
 
     const fetchViewHistory = async () => {
-        console.log("Fetching payments history for: "); // Log the filters for debugging
+        console.log("Fetching payments history for his: "); // Log the filters for debugging
         try {
             setHistoryLoading(true);
             const requestData = {};
@@ -36,7 +36,7 @@ function ViewPaymentsHistory() {
             if (filters.month) requestData.month = filters.month;
 
             const response = await axios.post(
-                'http://localhost:8081/api/manager/get-Farmer-Payment-History',
+                'http://localhost:8081/api/manager/fetch-Payment-History',
                 requestData,
                 { withCredentials: true }
             );

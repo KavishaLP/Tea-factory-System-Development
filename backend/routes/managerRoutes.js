@@ -1,9 +1,9 @@
 //routes/managerRoutes.js
 import express from 'express';
-import { addFarmer, addFarmerPayment, getFarmerPaymentHistory, addEmployee, addEmployeePayment, 
+import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmployeePayment, 
     getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer, 
     searchFarmersInDB, getDEtailsRelatedTOUser, getAllFarmers, getAllEmployers,searchEmployeesInDB,
-    fetchPaymentsHistory
+    fetchToPayments
 } from '../controllers/managerControllers.js';
 
 const router = express.Router();
@@ -25,9 +25,10 @@ router.post('/search-farmers-indb', searchFarmersInDB);
 router.post('/search-employees-indb', searchEmployeesInDB);
 
 //--------------------------------
-router.post('/fetch-payments-history', fetchPaymentsHistory);
+router.post('/fetch-to-payments', fetchToPayments);
+router.post('/fetch-Payment-History', fectchpaymentHistory);
+
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
-router.post('/get-Farmer-Payment-History', getFarmerPaymentHistory);
 
 
 

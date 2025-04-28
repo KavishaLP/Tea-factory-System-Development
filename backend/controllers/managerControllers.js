@@ -931,7 +931,8 @@ export const initializeMonthlyPayments = async (req, res) => {
 };
 
 // Fetch payments history function
-export const fetchPaymentsHistory = async (req, res) => {
+export const fetchToPayments = async (req, res) => {
+    console.log("Fetching payment history:", req.body);
     try {
       // Extract month and year from query parameters
       const { month, year } = req.query;
@@ -940,7 +941,7 @@ export const fetchPaymentsHistory = async (req, res) => {
       if (!month || !year) {
         return res.status(400).json({ message: 'Month and year are required' });
       }
-  
+
       // Query to get payments history for the specific month and year
       const query = `
         SELECT * FROM farmer_payments 
@@ -961,7 +962,7 @@ export const fetchPaymentsHistory = async (req, res) => {
 };
 
 // Get payment history function (Approved only)
-export const getFarmerPaymentHistory = (req, res) => {
+export const fectchpaymentHistory = (req, res) => {
     console.log("Fetching hhhhh payment history:", req.body);
     // SQL Query to fetch only approved payment history
     const sql = `

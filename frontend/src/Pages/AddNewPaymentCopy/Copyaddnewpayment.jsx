@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import "./Copyaddnewpayment.css";
-import AddNewPaymentForm from "./components/AddNewPaymentForm";
 import ToPayments from "./components/ToPayments";
 import ViewPaymentsHistory from "./components/ViewPaymentsHistory";
 
 function Copyaddnewpayment() {
-    const [activeTab, setActiveTab] = useState("addPayment");
+    const [activeTab, setActiveTab] = useState("toPayment");
 
     return (
         <div className="cfa-content">
@@ -22,12 +21,6 @@ function Copyaddnewpayment() {
                         To Payments
                     </button>
                     <button
-                        className={`tab-button ${activeTab === "addPayment" ? "active" : ""}`}
-                        onClick={() => setActiveTab("addPayment")}
-                    >
-                        Add New Payment
-                    </button>
-                    <button
                         className={`tab-button ${activeTab === "viewHistory" ? "active" : ""}`}
                         onClick={() => setActiveTab("viewHistory")}
                     >
@@ -37,7 +30,6 @@ function Copyaddnewpayment() {
 
                 {/* Conditional rendering of components */}
                 {activeTab === "toPayment" && <ToPayments />}
-                {activeTab === "addPayment" && <AddNewPaymentForm />}
                 {activeTab === "viewHistory" && <ViewPaymentsHistory />}
             </div>
         </div>
