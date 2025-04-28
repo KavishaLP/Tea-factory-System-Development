@@ -115,3 +115,13 @@ CREATE TABLE tea_inventory (
   UNIQUE KEY (tea_type, packet_size)
 );
 
+CREATE TABLE tea_price_per_kilo (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  price DECIMAL(10, 2) NOT NULL,
+  month_year VARCHAR(7) NOT NULL, -- Format: YYYY-MM (e.g., 2025-04)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE (month_year) -- Only one price entry per month
+);
+
+
