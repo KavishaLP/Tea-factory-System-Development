@@ -180,6 +180,18 @@ const DashboardFarmer = ({ userId }) => {
         <div className="dashboard-grid">
           {/* Row 1 */}
           <div className="dashboard-row">
+
+          <div className="dashboard-card">
+              <FaMoneyBillWave className="card-icon" />
+              <h3>Last Payment</h3>
+              {dashboardData.payments.amount > 0 ? (
+                <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
+              ) : (
+                <p className="card-value">Payment not finalized</p>
+              )}
+              <p className="card-description">Most recent approved payment</p>
+            </div>
+
             <div className="dashboard-card">
               <FaSeedling className="card-icon" />
               <h3>Tea Delivered</h3>
@@ -187,12 +199,6 @@ const DashboardFarmer = ({ userId }) => {
               <p className="card-description">Total tea delivered this month</p>
             </div>
 
-            <div className="dashboard-card">
-              <FaMoneyBillWave className="card-icon" />
-              <h3>Last Payment</h3>
-              <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
-              <p className="card-description">Most recent approved payment</p>
-            </div>
           </div>
 
           {/* Row 2 - Advances */}
