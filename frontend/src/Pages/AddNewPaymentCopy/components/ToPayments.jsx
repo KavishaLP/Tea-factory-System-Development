@@ -9,6 +9,9 @@ function ToPayments() {
     month: new Date().getMonth() + 1,
   });
   const [error, setError] = useState(null);
+  const [teaPrice, setTeaPrice] = useState('');
+  const [newTeaPrice, setNewTeaPrice] = useState('');
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -17,6 +20,7 @@ function ToPayments() {
 
   useEffect(() => {
     fetchPaymentsHistory();
+    fetchTeaPrice();
   }, [toPaymentsFilters.month, toPaymentsFilters.year]);
 
   const fetchPaymentsHistory = async () => {
@@ -44,6 +48,22 @@ function ToPayments() {
     }
   };
 
+  const fetchTeaPrice = async () => {
+    try {
+      const monthYear = `${toPaymentsFilters.year}-${toPaymentsFilters.month.toString().padStart(2, '0')}`;
+      const response = await axios.get(
+        `http://localhost:8081/api/manager/fetch-tea-price`,
+        { params: { month_year: monthYear } }
+      );
+      setTeaPrice(response.data.price || '');
+      setNewTeaPrice(response.data.price || '');
+    } catch (error) {
+      console.error('Error fetching tea price:', error);
+      setTeaPrice('');
+      setNewTeaPrice('');
+    }
+  };
+
   const navigateToPaymentsMonth = (direction) => {
     setToPaymentsFilters(prev => {
       let newMonth = prev.month;
@@ -56,12 +76,11 @@ function ToPayments() {
           newYear--;
         }
       } else if (direction === "next") {
-        // Check if trying to navigate to future month
         const currentDate = new Date();
-        const selectedDate = new Date(newYear, newMonth); // Next month
+        const selectedDate = new Date(newYear, newMonth);
         
         if (selectedDate > currentDate) {
-          return prev; // Don't update if future month
+          return prev;
         }
         
         newMonth++;
@@ -73,6 +92,34 @@ function ToPayments() {
 
       return { month: newMonth, year: newYear };
     });
+  };
+
+  const handlePriceUpdate = async () => {
+    try {
+      const monthYear = `${toPaymentsFilters.year}-${toPaymentsFilters.month.toString().padStart(2, '0')}`;
+      await axios.post(`http://localhost:8081/api/manager/update-tea-price`, {
+        price: parseFloat(newTeaPrice),
+        month_year: monthYear
+      });
+      setTeaPrice(newTeaPrice);
+      setIsEditingPrice(false);
+      fetchPaymentsHistory(); // Refresh payments with new price
+    } catch (error) {
+      console.error('Error updating tea price:', error);
+      setError('Failed to update tea price. Please try again.');
+    }
+  };
+
+  const handleApprovePayment = async (paymentId) => {
+    try {
+      await axios.put(`http://localhost:8081/api/manager/approve-payment`, {
+        paymentId
+      });
+      fetchPaymentsHistory(); // Refresh the list
+    } catch (error) {
+      console.error('Error approving payment:', error);
+      setError('Failed to approve payment. Please try again.');
+    }
   };
 
   return (
@@ -93,6 +140,27 @@ function ToPayments() {
         </button>
       </div>
 
+      <div className="tea-price-section">
+        {isEditingPrice ? (
+          <div className="price-edit-form">
+            <input
+              type="number"
+              step="0.01"
+              value={newTeaPrice}
+              onChange={(e) => setNewTeaPrice(e.target.value)}
+              placeholder="Enter price per kilo"
+            />
+            <button onClick={handlePriceUpdate}>Save Price</button>
+            <button onClick={() => setIsEditingPrice(false)}>Cancel</button>
+          </div>
+        ) : (
+          <div className="price-display">
+            <span>Current Tea Price: {teaPrice ? `$${teaPrice}` : 'Not set'}</span>
+            <button onClick={() => setIsEditingPrice(true)}>Edit Price</button>
+          </div>
+        )}
+      </div>
+
       {error && <p className="error-message">{error}</p>}
 
       {historyLoading ? (
@@ -108,18 +176,36 @@ function ToPayments() {
               <th>Advances</th>
               <th>Final Payment</th>
               <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {paymentsHistory.map((payment, index) => (
-              <tr key={index}>
+            {paymentsHistory.map((payment) => (
+              <tr key={payment.id}>
                 <td>{payment.userId}</td>
                 <td>{payment.finalTeaKilos}</td>
-                <td>{payment.paymentPerKilo}</td>
-                <td>{payment.finalAmount}</td>
+                <td>{teaPrice || payment.paymentPerKilo}</td>
+                <td>{(payment.finalTeaKilos * (teaPrice || payment.paymentPerKilo)).toFixed(2)}</td>
                 <td>{payment.advances}</td>
-                <td>{payment.finalPayment}</td>
+                <td>
+                  {(
+                    payment.finalTeaKilos * (teaPrice || payment.paymentPerKilo) - 
+                    payment.advances
+                  ).toFixed(2)}
+                </td>
                 <td>{new Date(payment.created_at).toLocaleDateString("en-US")}</td>
+                <td>{payment.status}</td>
+                <td>
+                  {payment.status === 'Pending' && (
+                    <button 
+                      onClick={() => handleApprovePayment(payment.id)}
+                      className="approve-btn"
+                    >
+                      Approve
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
