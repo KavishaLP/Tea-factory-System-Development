@@ -93,7 +93,7 @@ const DashboardFarmer = ({ userId }) => {
 
       switch (type) {
         case "tea":
-          response = await axios.get("/api/farmer/tea-delivery-details", {
+          response = await axios.get("http://localhost:8081/api/farmer/tea-delivery-details", {
             params: { userId, monthYear }
           });
           break;
