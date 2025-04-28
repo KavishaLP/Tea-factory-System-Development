@@ -88,7 +88,7 @@ const DashboardFarmer = ({ userId }) => {
 
   const fetchPayments = async (userId, monthYear) => {
     try {
-      const response = await axios.get("/api/farmer/last-payment", {
+      const response = await axios.get("http://localhost:8081/api/farmer/last-payment", {
         params: { userId, monthYear }
       });
       return response.data;
@@ -100,7 +100,7 @@ const DashboardFarmer = ({ userId }) => {
 
   const fetchAdvances = async (userId, monthYear) => {
     try {
-      const response = await axios.get("/api/farmer/advances", {
+      const response = await axios.get("http://localhost:8081/api/farmer/advances", {
         params: { userId, monthYear }
       });
       return response.data;
@@ -116,7 +116,7 @@ const DashboardFarmer = ({ userId }) => {
 
   const fetchFertilizerRequests = async (userId, monthYear) => {
     try {
-      const response = await axios.get("/api/farmer/fertilizer-requests", {
+      const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-requests", {
         params: { userId, monthYear }
       });
       return response.data;
@@ -145,16 +145,6 @@ const DashboardFarmer = ({ userId }) => {
           setCurrentMonth(currentMonth + 1);
         }
       }
-    }
-  };
-
-  const handleAction = async (type, action, id) => {
-    try {
-      await axios.put(`/api/farmer/${type}-requests/${id}`, { action });
-      fetchDashboardData();
-    } catch (error) {
-      console.error(`Error ${action} ${type} request:`, error);
-      setError(`Failed to ${action} ${type} request. Please try again.`);
     }
   };
 
@@ -193,59 +183,38 @@ const DashboardFarmer = ({ userId }) => {
             <div className="dashboard-card">
               <FaSeedling className="card-icon" />
               <h3>Tea Delivered</h3>
-              <p>{formatNumber(dashboardData.teaDeliveries.total)} Kg</p>
+              <p className="card-value">{formatNumber(dashboardData.teaDeliveries.total)} Kg</p>
+              <p className="card-description">Total tea delivered this month</p>
             </div>
 
             <div className="dashboard-card">
               <FaMoneyBillWave className="card-icon" />
               <h3>Last Payment</h3>
-              <p>Rs. {formatNumber(dashboardData.payments.amount)}</p>
+              <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
+              <p className="card-description">Most recent approved payment</p>
             </div>
           </div>
 
           {/* Row 2 - Advances */}
           <div className="dashboard-card full-width">
             <FaMoneyBillWave className="card-icon" />
-            <h3>Advances</h3>
-            <div className="status-container">
-              <div className="status-item">
-                <span className="status-label">Pending:</span>
-                <span className="status-value">
-                  {dashboardData.advances.pending.count} (Rs. {formatNumber(dashboardData.advances.pending.amount)})
-                </span>
+            <h3>Advances Summary</h3>
+            <div className="status-grid">
+              <div className="status-card pending">
+                <h4>Pending</h4>
+                <p className="status-count">{dashboardData.advances.pending.count}</p>
+                <p className="status-amount">Rs. {formatNumber(dashboardData.advances.pending.amount)}</p>
               </div>
-              <div className="status-item">
-                <span className="status-label">Approved:</span>
-                <span className="status-value">
-                  {dashboardData.advances.approved.count} (Rs. {formatNumber(dashboardData.advances.approved.amount)})
-                </span>
+              <div className="status-card approved">
+                <h4>Approved</h4>
+                <p className="status-count">{dashboardData.advances.approved.count}</p>
+                <p className="status-amount">Rs. {formatNumber(dashboardData.advances.approved.amount)}</p>
               </div>
-              <div className="status-item">
-                <span className="status-label">Rejected:</span>
-                <span className="status-value">
-                  {dashboardData.advances.rejected.count} (Rs. {formatNumber(dashboardData.advances.rejected.amount)})
-                </span>
+              <div className="status-card rejected">
+                <h4>Rejected</h4>
+                <p className="status-count">{dashboardData.advances.rejected.count}</p>
+                <p className="status-amount">Rs. {formatNumber(dashboardData.advances.rejected.amount)}</p>
               </div>
-            </div>
-            <div className="action-buttons">
-              <button 
-                className="action-btn approve"
-                onClick={() => handleAction('advance', 'approve', 'sample-id')}
-              >
-                Approve
-              </button>
-              <button 
-                className="action-btn delete"
-                onClick={() => handleAction('advance', 'delete', 'sample-id')}
-              >
-                Delete
-              </button>
-              <button 
-                className="action-btn reject"
-                onClick={() => handleAction('advance', 'reject', 'sample-id')}
-              >
-                Reject
-              </button>
             </div>
           </div>
 
@@ -253,39 +222,19 @@ const DashboardFarmer = ({ userId }) => {
           <div className="dashboard-card full-width">
             <FaHistory className="card-icon" />
             <h3>Fertilizer Requests</h3>
-            <div className="status-container">
-              <div className="status-item">
-                <span className="status-label">Pending:</span>
-                <span className="status-value">{dashboardData.fertilizerRequests.pending}</span>
+            <div className="status-grid">
+              <div className="status-card pending">
+                <h4>Pending</h4>
+                <p className="status-count">{dashboardData.fertilizerRequests.pending}</p>
               </div>
-              <div className="status-item">
-                <span className="status-label">Approved:</span>
-                <span className="status-value">{dashboardData.fertilizerRequests.approved}</span>
+              <div className="status-card approved">
+                <h4>Approved</h4>
+                <p className="status-count">{dashboardData.fertilizerRequests.approved}</p>
               </div>
-              <div className="status-item">
-                <span className="status-label">Rejected:</span>
-                <span className="status-value">{dashboardData.fertilizerRequests.rejected}</span>
+              <div className="status-card rejected">
+                <h4>Rejected</h4>
+                <p className="status-count">{dashboardData.fertilizerRequests.rejected}</p>
               </div>
-            </div>
-            <div className="action-buttons">
-              <button 
-                className="action-btn approve"
-                onClick={() => handleAction('fertilizer', 'approve', 'sample-id')}
-              >
-                Approve
-              </button>
-              <button 
-                className="action-btn delete"
-                onClick={() => handleAction('fertilizer', 'delete', 'sample-id')}
-              >
-                Delete
-              </button>
-              <button 
-                className="action-btn reject"
-                onClick={() => handleAction('fertilizer', 'reject', 'sample-id')}
-              >
-                Reject
-              </button>
             </div>
           </div>
         </div>
