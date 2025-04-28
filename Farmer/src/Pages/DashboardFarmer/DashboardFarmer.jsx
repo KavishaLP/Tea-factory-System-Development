@@ -98,7 +98,7 @@ const DashboardFarmer = ({ userId }) => {
           });
           break;
         case "payment":
-          response = await axios.get("/api/farmer/payment-details", {
+          response = await axios.get("http://localhost:8081/api/farmer/payment-details", {
             params: { userId, monthYear }
           });
           break;
