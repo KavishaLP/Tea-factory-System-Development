@@ -9,13 +9,11 @@ const DashboardFarmer = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dashboardData, setDashboardData] = useState({
-    teaKilos: 0,
-    lastPayment: 0,
-    pendingAdvances: 0,
-    pendingFertilizers: 0
+    teaDeliveries: { total: 0 },
+    payments: { amount: 0 },
+    advances: { pending: { count: 0, amount: 0 }, approved: { count: 0, amount: 0 } },
+    fertilizerRequests: { pending: 0, approved: 0 }
   });
-  const [activePopup, setActivePopup] = useState(null);
-  const [popupData, setPopupData] = useState([]);
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -35,17 +33,17 @@ const DashboardFarmer = ({ userId }) => {
       
       // Fetch all dashboard data in parallel
       const [teaData, paymentData, advanceData, fertilizerData] = await Promise.all([
-        fetchTeaKilos(userId, monthYear),
+        fetchTeaDeliveries(userId, monthYear),
         fetchPayments(userId, monthYear),
         fetchAdvances(userId, monthYear),
-        fetchFertilizers(userId, monthYear)
+        fetchFertilizerRequests(userId, monthYear)
       ]);
 
       setDashboardData({
-        teaKilos: teaData.total,
-        lastPayment: paymentData.amount,
-        pendingAdvances: advanceData.pending,
-        pendingFertilizers: fertilizerData.pending
+        teaDeliveries: teaData.data || { total: 0 },
+        payments: paymentData.data || { amount: 0 },
+        advances: advanceData.data || { pending: { count: 0, amount: 0 }, approved: { count: 0, amount: 0 } },
+        fertilizerRequests: fertilizerData.data || { pending: 0, approved: 0 }
       });
       
       setLoading(false);
@@ -57,72 +55,51 @@ const DashboardFarmer = ({ userId }) => {
   };
 
   // API call functions
-  const fetchTeaKilos = async (userId, monthYear) => {
-    const response = await axios.get("http://localhost:8081/api/farmer/tea-deliveries", {
-      params: { userId, monthYear }
-    });
-    return response.data;
+  const fetchTeaDeliveries = async (userId, monthYear) => {
+    try {
+      const response = await axios.get("http://localhost:8081/api/farmer/tea-deliveries", {
+        params: { userId, monthYear }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching tea deliveries:", error);
+      return { data: { total: 0 } };
+    }
   };
 
   const fetchPayments = async (userId, monthYear) => {
-    const response = await axios.get("http://localhost:8081/api/farmer/last-payment", {
-      params: { userId, monthYear }
-    });
-    return response.data;
+    try {
+      const response = await axios.get("/api/farmer/last-payment", {
+        params: { userId, monthYear }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+      return { data: { amount: 0 } };
+    }
   };
 
   const fetchAdvances = async (userId, monthYear) => {
-    const response = await axios.get("http://localhost:8081/api/farmer/advances", {
-      params: { userId, monthYear }
-    });
-    return response.data;
-  };
-
-  const fetchFertilizers = async (userId, monthYear) => {
-    const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-requests", {
-      params: { userId, monthYear }
-    });
-    return response.data;
-  };
-
-  const fetchPopupDetails = async (type) => {
     try {
-      setLoading(true);
-      const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
-      let response;
-
-      switch (type) {
-        case "tea":
-          response = await axios.get("http://localhost:8081/api/farmer/tea-delivery-details", {
-            params: { userId, monthYear }
-          });
-          break;
-        case "payment":
-          response = await axios.get("http://localhost:8081/api/farmer/payment-details", {
-            params: { userId, monthYear }
-          });
-          break;
-        case "advances":
-          response = await axios.get("http://localhost:8081/api/farmer/advance-details", {
-            params: { userId, monthYear }
-          });
-          break;
-        case "fertilizer":
-          response = await axios.get("http://localhost:8081/api/farmer/fertilizer-request-details", {
-            params: { userId, monthYear }
-          });
-          break;
-        default:
-          return;
-      }
-
-      setPopupData(response.data);
-      setActivePopup(type);
-      setLoading(false);
+      const response = await axios.get("/api/farmer/advances", {
+        params: { userId, monthYear }
+      });
+      return response.data;
     } catch (error) {
-      console.error("Error fetching details:", error);
-      setError("Failed to load details. Please try again.");
-      setLoading(false);
+      console.error("Error fetching advances:", error);
+      return { data: { pending: { count: 0, amount: 0 }, approved: { count: 0, amount: 0 } } };
+    }
+  };
+
+  const fetchFertilizerRequests = async (userId, monthYear) => {
+    try {
+      const response = await axios.get("/api/farmer/fertilizer-requests", {
+        params: { userId, monthYear }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching fertilizer requests:", error);
+      return { data: { pending: 0, approved: 0 } };
     }
   };
 
@@ -149,9 +126,14 @@ const DashboardFarmer = ({ userId }) => {
     }
   };
 
-  const closePopup = () => {
-    setActivePopup(null);
-    setPopupData([]);
+  const handleFertilizerAction = async (action, requestId) => {
+    try {
+      await axios.put(`/api/farmer/fertilizer-requests/${requestId}`, { action });
+      fetchDashboardData();
+    } catch (error) {
+      console.error(`Error ${action} fertilizer request:`, error);
+      setError(`Failed to ${action} fertilizer request. Please try again.`);
+    }
   };
 
   return (
@@ -178,208 +160,84 @@ const DashboardFarmer = ({ userId }) => {
       {error && <div className="error-message">{error}</div>}
 
       {loading ? (
-        <div className="loading-indicator">Loading...</div>
+        <div className="loading-indicator">
+          <div className="loading-spinner"></div>
+          Loading Dashboard...
+        </div>
       ) : (
-        <div className="dashboard-summary">
-          <div className="card" onClick={() => fetchPopupDetails("tea")}>
-            <FaSeedling className="card-icon" />
-            <h3>Total Tea Delivered</h3>
-            <p>{(dashboardData?.teaKilos ?? 0).toFixed(2)} Kg</p>
+        <div className="dashboard-grid">
+          {/* First Row */}
+          <div className="dashboard-row">
+            <div className="dashboard-card">
+              <FaSeedling className="card-icon" />
+              <h3>Tea Delivered</h3>
+              <p>{dashboardData.teaDeliveries.total.toFixed(2)} Kg</p>
+            </div>
+
+            <div className="dashboard-card">
+              <FaMoneyBillWave className="card-icon" />
+              <h3>Last Payment</h3>
+              <p>Rs. {dashboardData.payments.amount.toFixed(2)}</p>
+            </div>
           </div>
 
-          <div className="card" onClick={() => fetchPopupDetails("payment")}>
+          {/* Second Row - Advances */}
+          <div className="dashboard-card full-width">
             <FaMoneyBillWave className="card-icon" />
-            <h3>Last Payment</h3>
-            <p>Rs. {(dashboardData?.lastPayment ?? 0).toFixed(2)}</p>
+            <h3>Advances</h3>
+            <div className="advance-details">
+              <div className="advance-item">
+                <span className="advance-label">Pending:</span>
+                <span className="advance-value">
+                  {dashboardData.advances.pending.count} (Rs. {dashboardData.advances.pending.amount.toFixed(2)})
+                </span>
+              </div>
+              <div className="advance-item">
+                <span className="advance-label">Approved:</span>
+                <span className="advance-value">
+                  {dashboardData.advances.approved.count} (Rs. {dashboardData.advances.approved.amount.toFixed(2)})
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="card" onClick={() => fetchPopupDetails("advances")}>
-            <FaMoneyBillWave className="card-icon" />
-            <h3>Pending Advances</h3>
-            <p>{dashboardData.pendingAdvances}</p>
-          </div>
-
-          <div className="card" onClick={() => fetchPopupDetails("advances")}>
-            <FaMoneyBillWave className="card-icon" />
-            <h3>Comform Advances</h3>
-            <p>{dashboardData.pendingAdvances}</p>
-          </div>
-
-          <div className="card" onClick={() => fetchPopupDetails("fertilizer")}>
+          {/* Third Row - Fertilizer Requests with Actions */}
+          <div className="dashboard-card full-width">
             <FaHistory className="card-icon" />
             <h3>Fertilizer Requests</h3>
-            <p>Pending: {dashboardData.pendingFertilizers}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Popup Modals */}
-      {activePopup && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <button className="close-btn" onClick={closePopup}>
-              <FaTimes />
-            </button>
-
-            <h3>
-              {activePopup === "tea" && "Tea Delivery Details"}
-              {activePopup === "payment" && "Payment Details"}
-              {activePopup === "advances" && "Advance Details"}
-              {activePopup === "fertilizer" && "Fertilizer Requests"}
-            </h3>
-
-            {loading ? (
-              <div className="loading-indicator">Loading details...</div>
-            ) : (
-              <div className="popup-details">
-                {activePopup === "tea" && (
-                  <TeaDeliveryDetails data={popupData} monthYear={`${monthNames[currentMonth - 1]} ${currentYear}`} />
-                )}
-                {activePopup === "payment" && (
-                  <PaymentDetails data={popupData} />
-                )}
-                {activePopup === "advances" && (
-                  <AdvanceDetails data={popupData} />
-                )}
-                {activePopup === "fertilizer" && (
-                  <FertilizerDetails data={popupData} />
-                )}
+            <div className="fertilizer-details">
+              <div className="fertilizer-stats">
+                <span className="fertilizer-label">Pending:</span>
+                <span className="fertilizer-value">{dashboardData.fertilizerRequests.pending}</span>
+                
+                <span className="fertilizer-label">Approved:</span>
+                <span className="fertilizer-value">{dashboardData.fertilizerRequests.approved}</span>
               </div>
-            )}
+              
+              <div className="fertilizer-actions">
+                <button 
+                  className="action-btn approve"
+                  onClick={() => handleFertilizerAction('approve', 'sample-id')}
+                >
+                  Approve
+                </button>
+                <button 
+                  className="action-btn delete"
+                  onClick={() => handleFertilizerAction('delete', 'sample-id')}
+                >
+                  Delete
+                </button>
+                <button 
+                  className="action-btn reject"
+                  onClick={() => handleFertilizerAction('reject', 'sample-id')}
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-// Component for Tea Delivery Details
-const TeaDeliveryDetails = ({ data, monthYear }) => {
-  return (
-    <div>
-      <h4>Tea Deliveries for {monthYear}</h4>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Gross Weight</th>
-            <th>Deductions</th>
-            <th>Net Weight</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((delivery, index) => (
-            <tr key={index}>
-              <td>{new Date(delivery.date).toLocaleDateString()}</td>
-              <td>{delivery.tea_sack_weight} kg</td>
-              <td>
-                Water: {delivery.deduction_water} kg<br />
-                Damage: {delivery.deduction_damage_tea} kg<br />
-                Sack: {delivery.deduction_sack_weight} kg
-              </td>
-              <td>{delivery.final_tea_sack_weight} kg</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="total-summary">
-        <p>Total Net Weight: {data.reduce((sum, item) => sum + parseFloat(item.final_tea_sack_weight), 0).toFixed(2)} kg</p>
-      </div>
-    </div>
-  );
-};
-
-// Component for Payment Details
-const PaymentDetails = ({ data }) => {
-  return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Tea Kilos</th>
-            <th>Rate</th>
-            <th>Advances</th>
-            <th>Final Payment</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((payment, index) => (
-            <tr key={index}>
-              <td>{new Date(payment.created_at).toLocaleDateString()}</td>
-              <td>{payment.finalTeaKilos} kg</td>
-              <td>Rs. {payment.paymentPerKilo}</td>
-              <td>Rs. {payment.advances}</td>
-              <td>Rs. {payment.finalPayment}</td>
-              <td>{payment.status}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-// Component for Advance Details
-const AdvanceDetails = ({ data }) => {
-  return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((advance, index) => (
-            <tr key={index}>
-              <td>{new Date(advance.date).toLocaleDateString()}</td>
-              <td>Rs. {advance.amount}</td>
-              <td>{advance.action}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="total-summary">
-        <p>Total Pending: Rs. {
-          data.filter(a => a.action === 'Pending')
-            .reduce((sum, item) => sum + parseFloat(item.amount), 0)
-            .toFixed(2)
-        }</p>
-      </div>
-    </div>
-  );
-};
-
-// Component for Fertilizer Details
-const FertilizerDetails = ({ data }) => {
-  return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Fertilizer Type</th>
-            <th>Quantity</th>
-            <th>Payment Method</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((request, index) => (
-            <tr key={index}>
-              <td>{new Date(request.requestDate).toLocaleDateString()}</td>
-              <td>{request.fertilizerType} ({request.packetType})</td>
-              <td>{request.amount} packets</td>
-              <td>{request.paymentoption}</td>
-              <td>{request.status}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };
