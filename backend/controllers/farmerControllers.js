@@ -247,7 +247,6 @@ export const getPaymentsByUserId = (req, res) => {
 //------------------------------------------------------------
 
 // Get tea delivery summary for a specific month/year
-// Get tea delivery summary for a specific month/year
 export const getTeaDeliveries = async (req, res) => {
     try {
         const { userId, monthYear } = req.query;
@@ -534,7 +533,6 @@ export const getFertilizerRequests = async (req, res) => {
         });
     }
 };
-
 
 // Get fertilizer details for popup
 export const getFertilizerDetails = async (req, res) => {
