@@ -802,7 +802,7 @@ export const fetchTotalTeaWeight = (req, res) => {
 
   console.log("Executing query:", query, "with date:", date); // Add this line
 
-  db.query(query, [date], (err, results) => {
+  sqldb.query(query, [date], (err, results) => {
     if (err) {
       console.error("Error fetching total tea weight:", err);
       return res.status(500).json({ message: "Internal server error" });
