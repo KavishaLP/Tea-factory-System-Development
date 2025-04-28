@@ -199,6 +199,12 @@ const DashboardFarmer = ({ userId }) => {
             <p>{dashboardData.pendingAdvances}</p>
           </div>
 
+          <div className="card" onClick={() => fetchPopupDetails("advances")}>
+            <FaMoneyBillWave className="card-icon" />
+            <h3>Comform Advances</h3>
+            <p>{dashboardData.pendingAdvances}</p>
+          </div>
+
           <div className="card" onClick={() => fetchPopupDetails("fertilizer")}>
             <FaHistory className="card-icon" />
             <h3>Fertilizer Requests</h3>
