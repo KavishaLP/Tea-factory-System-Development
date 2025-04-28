@@ -91,6 +91,7 @@ const DashboardAdmin = () => {
   }, [selectedDate]);
 
   // Fetch chart data when time range changes
+  // Fetch chart data when time range changes
   useEffect(() => {
     const fetchChartData = async () => {
       try {
@@ -117,14 +118,26 @@ const DashboardAdmin = () => {
           { params, withCredentials: true }
         );
 
+        // Check if response data exists and is an array
+        if (!res.data || !Array.isArray(res.data)) {
+          throw new Error('Invalid data format received from server');
+        }
+
+        // Handle empty data case
+        if (res.data.length === 0) {
+          setChartData(null);
+          setChartLoading(false);
+          return;
+        }
+
         const labels = res.data.map(item => {
           if (timeRange === 'day') return item.date;
-          if (timeRange === 'week') return item.weekLabel;
-          if (timeRange === 'month') return item.monthLabel;
+          if (timeRange === 'week') return item.weekLabel || `Week ${item.week}`;
+          if (timeRange === 'month') return item.monthLabel || `${item.year}-${String(item.month).padStart(2, '0')}`;
           return item.year.toString();
         });
         
-        const data = res.data.map(item => item.totalWeight);
+        const data = res.data.map(item => item.totalWeight || 0);
 
         setChartData({
           labels,
@@ -137,9 +150,10 @@ const DashboardAdmin = () => {
             tension: 0.1
           }]
         });
-        setChartLoading(false);
       } catch (error) {
         console.error("Error fetching chart data:", error);
+        setChartData(null); // Clear any previous chart data
+      } finally {
         setChartLoading(false);
       }
     };
