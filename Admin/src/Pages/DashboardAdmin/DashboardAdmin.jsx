@@ -7,7 +7,7 @@ import "./DashboardAdmin.css";
 const DashboardAdmin = () => {
   const [pendingRequests, setPendingRequests] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [totalTeaWeight, setTotalTeaWeight] = useState(0);
+  const [totalTeaWeight, setTotalTeaWeight] = useState(null); // Changed initial state to null
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
 
@@ -39,18 +39,14 @@ const DashboardAdmin = () => {
     const fetchTeaWeight = async () => {
       try {
         const dateString = formatDate(selectedDate);
-        console.log("Fetching tea weight for date:", dateString); // Add this
         const res = await axios.get(
           `http://localhost:8081/api/admin/fetch-total-tea-weight?date=${dateString}`,
           { withCredentials: true }
         );
-        console.log("Received response:", res.data); // Add this
         setTotalTeaWeight(res.data.totalWeight || 0);
       } catch (error) {
-        console.error("Error details:", {
-          message: error.message,
-          response: error.response,
-        });
+        console.error("Error fetching tea weight:", error);
+        setTotalTeaWeight(null); // Set to null if there's an error
       }
     };
   
@@ -116,7 +112,9 @@ const DashboardAdmin = () => {
                   </div>
                   <div>
                     <h3>Total Tea Weight</h3>
-                    <p className="card-value">{totalTeaWeight} kg</p>
+                    <p className="card-value">
+                      {totalTeaWeight !== null ? `${totalTeaWeight} kg` : 'N/A'}
+                    </p>
                   </div>
                 </div>
                 <p className="card-description">Final weight collected</p>
