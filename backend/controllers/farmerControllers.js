@@ -332,39 +332,7 @@ export const getTeaDeliveryDetails = async (req, res) => {
 
 
 // Get payment summary for a specific month/year
-export const getPayments = async (req, res) => {
-    try {
-        const { userId, monthYear } = req.query;
-        const [year, month] = monthYear.split('-');
-        
-        const query = `
-            SELECT 
-                COALESCE(SUM(finalPayment), 0) as total_payment,
-                COUNT(*) as payment_count
-            FROM farmer_payments
-            WHERE userId = ?
-            AND YEAR(created_at) = ?
-            AND MONTH(created_at) = ?
-            AND status = 'Approved'
-        `;
-        
-        const [results] = await sqldb.promise().query(query, [userId, year, month]);
-        
-        res.status(200).json({
-            success: true,
-            data: {
-                amount: results[0].total_payment || 0,
-                details: results[0]
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching payments:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch payment data'
-        });
-    }
-};
+
 
 // Get payment details for popup
 export const getPaymentDetails = async (req, res) => {
