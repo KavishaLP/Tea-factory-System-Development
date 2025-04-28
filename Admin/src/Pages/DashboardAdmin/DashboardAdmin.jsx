@@ -6,7 +6,14 @@ import "./DashboardAdmin.css";
 const DashboardAdmin = () => {
   const [pendingRequests, setPendingRequests] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [totalTeaWeight, setTotalTeaWeight] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
+
+  // Helper function to format date as YYYY-MM-DD
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,12 +22,12 @@ const DashboardAdmin = () => {
           axios.get("http://localhost:8081/api/admin/fetch-total-users", { withCredentials: true }),
           axios.get("http://localhost:8081/api/admin/fetch-pending-requests", { withCredentials: true })
         ]);
-        
+
         setTotalUsers(usersRes.data.totalUsers);
         setPendingRequests(requestsRes.data.count);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching user/request data:", error);
         setLoading(false);
       }
     };
@@ -28,13 +35,45 @@ const DashboardAdmin = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchTeaWeight = async () => {
+      try {
+        const dateString = formatDate(selectedDate);
+        const res = await axios.get(`http://localhost:8081/api/admin/fetch-tea-weight?date=${dateString}`, { withCredentials: true });
+        setTotalTeaWeight(res.data.totalWeight || 0);
+      } catch (error) {
+        console.error("Error fetching tea weight:", error);
+      }
+    };
+
+    fetchTeaWeight();
+  }, [selectedDate]);
+
+  const handlePrev = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(selectedDate.getDate() - 1);
+    setSelectedDate(newDate);
+  };
+
+  const handleNext = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(selectedDate.getDate() + 1);
+    setSelectedDate(newDate);
+  };
+
+  const today = new Date();
+  const daysDiff = Math.floor((today - selectedDate) / (1000 * 60 * 60 * 24));
+
+  const isPrevDisabled = daysDiff >= 7; // Can't go back more than 7 days
+  const isNextDisabled = selectedDate >= today; // Can't go into future
+
   return (
     <div className="dashboard-admin">
       <div className="dashboard-header">
         <h1>Admin Dashboard</h1>
         <p className="dashboard-subtitle">System Overview</p>
       </div>
-      
+
       {loading ? (
         <div className="loading-state">
           <div className="spinner"></div>
@@ -43,6 +82,7 @@ const DashboardAdmin = () => {
       ) : (
         <>
           <div className="metrics-row">
+            {/* Total Users */}
             <div className="metric-card">
               <div className="card-icon users-icon">
                 <FaUsers />
@@ -53,7 +93,25 @@ const DashboardAdmin = () => {
                 <p className="card-description">Registered accounts</p>
               </div>
             </div>
-            
+
+            {/* Total Tea Weight */}
+            <div className="metric-card">
+              <div className="card-icon requests-icon">
+                <FaMoneyBillWave />
+              </div>
+              <div className="card-content">
+                <div className="date-navigation">
+                  <button onClick={handlePrev} disabled={isPrevDisabled}>Prev</button>
+                  <span>{formatDate(selectedDate)}</span>
+                  <button onClick={handleNext} disabled={isNextDisabled}>Next</button>
+                </div>
+                <h3>Total Tea Weight</h3>
+                <p className="card-value">{totalTeaWeight} kg</p>
+                <p className="card-description">Final weight collected</p>
+              </div>
+            </div>
+
+            {/* Pending Advance Requests */}
             <div className="metric-card">
               <div className="card-icon requests-icon">
                 <FaMoneyBillWave />
