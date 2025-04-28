@@ -148,6 +148,54 @@
   min-height: 300px;
 }
 
+/* Chart Controls */
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.chart-type-toggle, .time-range-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chart-type-toggle button, .time-range-toggle button {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.chart-type-toggle button:hover, 
+.time-range-toggle button:hover,
+.chart-type-toggle button.active, 
+.time-range-toggle button.active {
+  background-color: #f0f0f0;
+}
+
+.chart-type-toggle button.active, 
+.time-range-toggle button.active {
+  border-color: #27ae60;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+/* Chart Container */
+.chart-container {
+  height: 400px;
+  width: 100%;
+  position: relative;
+}
+
 /* Loading State */
 .loading-state {
   display: flex;
@@ -169,6 +217,13 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+  font-style: italic;
 }
 
 /* Responsive Design */
@@ -195,5 +250,13 @@
   
   .card-value {
     font-size: 1.5rem;
+  }
+
+  .chart-controls {
+    flex-direction: column;
+  }
+
+  .chart-type-toggle, .time-range-toggle {
+    justify-content: center;
   }
 }
