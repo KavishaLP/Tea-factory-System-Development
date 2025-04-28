@@ -344,6 +344,7 @@ export const getPayments = async (req, res) => {
             WHERE userId = ? 
             AND YEAR(created_at) = ? 
             AND MONTH(created_at) = ?
+            AND status = 'Approved'
             ORDER BY created_at DESC
             LIMIT 1
         `;
@@ -372,7 +373,6 @@ export const getPayments = async (req, res) => {
         });
     }
 };
-
 
 // Get payment details for popup
 export const getPaymentDetails = async (req, res) => {
