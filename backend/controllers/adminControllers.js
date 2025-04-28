@@ -811,4 +811,94 @@ export const fetchTotalTeaWeight = (req, res) => {
   });
 };
 
+export const fetchDailyTeaWeights = (req, res) => {
+  const { days = 7 } = req.query;
+  
+  const query = `
+    SELECT 
+      DATE_FORMAT(date, '%Y-%m-%d') AS date,
+      SUM(final_tea_sack_weight) AS totalWeight
+    FROM tea_sack_updates
+    WHERE date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+    GROUP BY date
+    ORDER BY date ASC
+  `;
 
+  sqldb.query(query, [days], (err, results) => {
+    if (err) {
+      console.error("Error fetching daily tea weights:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    res.json(results);
+  });
+};
+
+export const fetchWeeklyTeaWeights = (req, res) => {
+  const { weeks = 8 } = req.query;
+  
+  const query = `
+    SELECT 
+      YEAR(date) AS year,
+      WEEK(date) AS week,
+      CONCAT(YEAR(date), '-W', LPAD(WEEK(date), 2, '0')) AS weekLabel,
+      SUM(final_tea_sack_weight) AS totalWeight
+    FROM tea_sack_updates
+    WHERE date >= DATE_SUB(CURDATE(), INTERVAL ? WEEK)
+    GROUP BY year, week
+    ORDER BY year, week ASC
+  `;
+
+  sqldb.query(query, [weeks], (err, results) => {
+    if (err) {
+      console.error("Error fetching weekly tea weights:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    res.json(results);
+  });
+};
+
+export const fetchMonthlyTeaWeights = (req, res) => {
+  const { months = 12 } = req.query;
+  
+  const query = `
+    SELECT 
+      YEAR(date) AS year,
+      MONTH(date) AS month,
+      DATE_FORMAT(date, '%Y-%m') AS monthLabel,
+      SUM(final_tea_sack_weight) AS totalWeight
+    FROM tea_sack_updates
+    WHERE date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
+    GROUP BY year, month
+    ORDER BY year, month ASC
+  `;
+
+  sqldb.query(query, [months], (err, results) => {
+    if (err) {
+      console.error("Error fetching monthly tea weights:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    res.json(results);
+  });
+};
+
+export const fetchYearlyTeaWeights = (req, res) => {
+  const { years = 5 } = req.query;
+  
+  const query = `
+    SELECT 
+      YEAR(date) AS year,
+      SUM(final_tea_sack_weight) AS totalWeight
+    FROM tea_sack_updates
+    WHERE date >= DATE_SUB(CURDATE(), INTERVAL ? YEAR)
+    GROUP BY year
+    ORDER BY year ASC
+  `;
+
+  sqldb.query(query, [years], (err, results) => {
+    if (err) {
+      console.error("Error fetching yearly tea weights:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    res.json(results);
+  });
+};
