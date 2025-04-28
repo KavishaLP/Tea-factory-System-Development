@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaUsers, FaWeightHanging, FaChartBar, FaChartLine } from 'react-icons/fa';
-import { FaMoneyBillWave } from 'react-icons/fa';
+import { 
+  FaUsers, 
+  FaWeightHanging, 
+  FaMoneyBillWave, 
+  FaChartBar, 
+  FaChartLine,
+  FaChevronLeft,
+  FaChevronRight
+} from 'react-icons/fa';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -36,19 +43,20 @@ const DashboardAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState(null);
   const [chartType, setChartType] = useState('bar');
-  const [timeRange, setTimeRange] = useState('day');
+  const [timeRange, setTimeRange] = useState('week');
   const [chartLoading, setChartLoading] = useState(true);
 
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
   };
 
+  // Fetch basic dashboard data
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [usersRes, requestsRes] = await Promise.all([
-          axios.get("http://localhost:8081/api/admin/fetch-total-users", { withCredentials: true }),
-          axios.get("http://localhost:8081/api/admin/fetch-pending-requests", { withCredentials: true })
+          axios.get("/api/admin/fetch-total-users", { withCredentials: true }),
+          axios.get("/api/admin/fetch-pending-requests", { withCredentials: true })
         ]);
 
         setTotalUsers(usersRes.data.totalUsers);
@@ -63,12 +71,13 @@ const DashboardAdmin = () => {
     fetchData();
   }, []);
 
+  // Fetch tea weight for selected date
   useEffect(() => {
     const fetchTeaWeight = async () => {
       try {
         const dateString = formatDate(selectedDate);
         const res = await axios.get(
-          `http://localhost:8081/api/admin/fetch-total-tea-weight?date=${dateString}`,
+          `/api/admin/fetch-total-tea-weight?date=${dateString}`,
           { withCredentials: true }
         );
         setTotalTeaWeight(res.data?.totalWeight ?? null);
@@ -81,6 +90,7 @@ const DashboardAdmin = () => {
     fetchTeaWeight();
   }, [selectedDate]);
 
+  // Fetch chart data when time range changes
   useEffect(() => {
     const fetchChartData = async () => {
       try {
@@ -91,6 +101,9 @@ const DashboardAdmin = () => {
         if (timeRange === 'day') {
           endpoint = 'fetch-daily-tea-weights';
           params = { days: 7 };
+        } else if (timeRange === 'week') {
+          endpoint = 'fetch-weekly-tea-weights';
+          params = { weeks: 8 };
         } else if (timeRange === 'month') {
           endpoint = 'fetch-monthly-tea-weights';
           params = { months: 12 };
@@ -100,15 +113,16 @@ const DashboardAdmin = () => {
         }
 
         const res = await axios.get(
-          `http://localhost:8081/api/admin/${endpoint}`,
+          `/api/admin/${endpoint}`,
           { params, withCredentials: true }
         );
 
-        const labels = res.data.map(item => timeRange === 'day' 
-          ? item.date 
-          : timeRange === 'month' 
-            ? item.month 
-            : item.year);
+        const labels = res.data.map(item => {
+          if (timeRange === 'day') return item.date;
+          if (timeRange === 'week') return item.weekLabel;
+          if (timeRange === 'month') return item.monthLabel;
+          return item.year.toString();
+        });
         
         const data = res.data.map(item => item.totalWeight);
 
@@ -148,10 +162,10 @@ const DashboardAdmin = () => {
   const today = new Date();
   const daysDiff = Math.floor((today - selectedDate) / (1000 * 60 * 60 * 24));
 
-  const isPrevDisabled = daysDiff >= 7;
+  const isPrevDisabled = daysDiff >= 30; // Limit to 30 days in past
   const isNextDisabled = selectedDate >= today;
 
-  const options = {
+  const chartOptions = {
     responsive: true,
     plugins: {
       legend: {
@@ -161,6 +175,13 @@ const DashboardAdmin = () => {
         display: true,
         text: `Tea Weight by ${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}`,
       },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            return `${context.dataset.label}: ${context.raw.toFixed(2)} kg`;
+          }
+        }
+      }
     },
     scales: {
       y: {
@@ -210,9 +231,21 @@ const DashboardAdmin = () => {
             <div className="metric-card tea-weight-card">
               <div className="tea-weight-content">
                 <div className="date-navigation">
-                  <button onClick={handlePrev} disabled={isPrevDisabled}>Prev</button>
-                  <span>{formatDate(selectedDate)}</span>
-                  <button onClick={handleNext} disabled={isNextDisabled}>Next</button>
+                  <button 
+                    onClick={handlePrev} 
+                    disabled={isPrevDisabled}
+                    className={isPrevDisabled ? 'disabled' : ''}
+                  >
+                    <FaChevronLeft />
+                  </button>
+                  <span>{selectedDate.toLocaleDateString()}</span>
+                  <button 
+                    onClick={handleNext} 
+                    disabled={isNextDisabled}
+                    className={isNextDisabled ? 'disabled' : ''}
+                  >
+                    <FaChevronRight />
+                  </button>
                 </div>
                 <div className="tea-weight-value">
                   <div className="tea-weight-icon">
@@ -221,7 +254,7 @@ const DashboardAdmin = () => {
                   <div>
                     <h3>Total Tea Weight</h3>
                     <p className="card-value">
-                      {totalTeaWeight !== null ? `${totalTeaWeight} kg` : 'N/A'}
+                      {totalTeaWeight !== null ? `${totalTeaWeight.toFixed(2)} kg` : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -266,8 +299,8 @@ const DashboardAdmin = () => {
                   Daily
                 </button>
                 <button 
-                  className={timeRange === 'day' ? 'active' : ''}
-                  onClick={() => setTimeRange('day')}
+                  className={timeRange === 'week' ? 'active' : ''}
+                  onClick={() => setTimeRange('week')}
                 >
                   Weekly
                 </button>
@@ -294,9 +327,9 @@ const DashboardAdmin = () => {
                 </div>
               ) : chartData ? (
                 chartType === 'bar' ? (
-                  <Bar data={chartData} options={options} />
+                  <Bar data={chartData} options={chartOptions} />
                 ) : (
-                  <Line data={chartData} options={options} />
+                  <Line data={chartData} options={chartOptions} />
                 )
               ) : (
                 <div className="no-data-message">
