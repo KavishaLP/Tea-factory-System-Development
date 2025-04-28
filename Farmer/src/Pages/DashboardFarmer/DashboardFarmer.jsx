@@ -165,7 +165,7 @@ const DashboardFarmer = ({ userId }) => {
       const response = await axios.get("http://localhost:8081/api/farmer/tea-delivery-details", {
         params: { userId, monthYear }
       });
-      setModalData(response.data || []);
+      setModalData(response.data.data || []);
       setActiveModal('tea');
     } catch (error) {
       console.error("Error fetching tea delivery details:", error);
@@ -184,7 +184,7 @@ const DashboardFarmer = ({ userId }) => {
       const response = await axios.get("http://localhost:8081/api/farmer/advance-details", {
         params: { userId, monthYear }
       });
-      setModalData(response.data || []);
+      setModalData(response.data.data || []);
       setActiveModal('advances');
     } catch (error) {
       console.error("Error fetching advance details:", error);
@@ -203,7 +203,7 @@ const DashboardFarmer = ({ userId }) => {
       const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-request-details", {
         params: { userId, monthYear }
       });
-      setModalData(response.data || []);
+      setModalData(response.data.data || []);
       setActiveModal('fertilizer');
     } catch (error) {
       console.error("Error fetching fertilizer details:", error);
