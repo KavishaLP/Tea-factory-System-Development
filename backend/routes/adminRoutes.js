@@ -3,7 +3,7 @@
 import express from 'express';
 import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack, fetchRequestAdvance, fetchTotalUsers, getTeaPacketsRequests, confirmTeaPackets, deleteTeaPackets, searchUsers,
     fetchTeaInventory, addTeaProduction, distributeTea, addAdvancePayment,
-    fetchTotalTeaWeight
+    fetchTotalTeaWeight,  fetchDailyTeaWeights,fetchWeeklyTeaWeights,fetchMonthlyTeaWeights,fetchYearlyTeaWeights
  } from '../controllers/adminControllers.js'
 
 
@@ -30,7 +30,10 @@ router.post('/add-advance', addAdvancePayment);
 
 //dashboard data
 router.get('/fetch-total-tea-weight', fetchTotalTeaWeight);
-
+router.get('/fetch-daily-tea-weights', fetchDailyTeaWeights);
+router.get('/fetch-weekly-tea-weights', fetchWeeklyTeaWeights);
+router.get('/fetch-monthly-tea-weights', fetchMonthlyTeaWeights);
+router.get('/fetch-yearly-tea-weights', fetchYearlyTeaWeights);
 
 
 export default router;
