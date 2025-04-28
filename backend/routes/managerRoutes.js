@@ -33,10 +33,7 @@ router.post('/fetch-Payment-History', fectchpaymentHistory);
 router.get('/fetch-to-payments', fetchToPayments);  // Fetch TO payments for month/year
 router.get('/fetch-tea-price', fetchTeaPrice);      // Fetch tea price for month/year
 router.post('/update-tea-price', updateTeaPrice);   // Update tea price
-
-router.put('/approve-payment', approvePayment);
-
-
+router.put('/approve-payment', approvePayment);     // Approve payment
 
 
 
