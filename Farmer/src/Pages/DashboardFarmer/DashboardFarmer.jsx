@@ -3,6 +3,7 @@ import { FaMoneyBillWave, FaSeedling, FaHistory, FaTimes } from "react-icons/fa"
 import axios from "axios";
 import "./DashboardFarmer.css";
 
+// Error Boundary Component
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -104,6 +105,58 @@ const DashboardFarmer = ({ userId }) => {
     }
   };
 
+  const fetchTeaDeliveries = async (userId, monthYear) => {
+    try {
+      const response = await axios.get("http://localhost:8081/api/farmer/tea-deliveries", {
+        params: { userId, monthYear }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching tea deliveries:", error);
+      return { data: { total: 0 } };
+    }
+  };
+
+  const fetchPayments = async (userId, monthYear) => {
+    try {
+      const response = await axios.get("http://localhost:8081/api/farmer/last-payment", {
+        params: { userId, monthYear }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+      return { data: { amount: 0 } };
+    }
+  };
+
+  const fetchAdvances = async (userId, monthYear) => {
+    try {
+      const response = await axios.get("http://localhost:8081/api/farmer/advances", {
+        params: { userId, monthYear }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching advances:", error);
+      return { data: { 
+        pending: { count: 0, amount: 0 }, 
+        approved: { count: 0, amount: 0 },
+        rejected: { count: 0, amount: 0 }
+      } };
+    }
+  };
+
+  const fetchFertilizerRequests = async (userId, monthYear) => {
+    try {
+      const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-requests", {
+        params: { userId, monthYear }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching fertilizer requests:", error);
+      return { data: { pending: 0, approved: 0, rejected: 0 } };
+    }
+  };
+
   const fetchTeaDeliveryDetails = async () => {
     try {
       setModalLoading(true);
@@ -112,7 +165,7 @@ const DashboardFarmer = ({ userId }) => {
       const response = await axios.get("http://localhost:8081/api/farmer/tea-delivery-details", {
         params: { userId, monthYear }
       });
-      setModalData(response.data.data || []);
+      setModalData(response.data || []);
       setActiveModal('tea');
     } catch (error) {
       console.error("Error fetching tea delivery details:", error);
@@ -131,7 +184,7 @@ const DashboardFarmer = ({ userId }) => {
       const response = await axios.get("http://localhost:8081/api/farmer/advance-details", {
         params: { userId, monthYear }
       });
-      setModalData(response.data.data || []);
+      setModalData(response.data || []);
       setActiveModal('advances');
     } catch (error) {
       console.error("Error fetching advance details:", error);
@@ -150,7 +203,7 @@ const DashboardFarmer = ({ userId }) => {
       const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-request-details", {
         params: { userId, monthYear }
       });
-      setModalData(response.data.data || []);
+      setModalData(response.data || []);
       setActiveModal('fertilizer');
     } catch (error) {
       console.error("Error fetching fertilizer details:", error);
@@ -192,7 +245,102 @@ const DashboardFarmer = ({ userId }) => {
   return (
     <ErrorBoundary>
       <div className="dashboard-container">
-        {/* ... (previous header and navigation code remains the same) ... */}
+        <div className="page-header">
+          <h2>Welcome, {userId}</h2>
+          <div className="month-navigation">
+            <button onClick={() => navigateMonth("prev")}>{"<"} Previous</button>
+            <h3>
+              {monthNames[currentMonth - 1]} {currentYear}
+            </h3>
+            <button
+              onClick={() => navigateMonth("next")}
+              disabled={
+                new Date(currentYear, currentMonth) >=
+                new Date(new Date().getFullYear(), new Date().getMonth() + 1)
+              }
+            >
+              Next {">"}
+            </button>
+          </div>
+        </div>
+
+        {error && <div className="error-message">{error}</div>}
+
+        {loading ? (
+          <div className="loading-indicator">
+            <div className="loading-spinner"></div>
+            Loading Dashboard...
+          </div>
+        ) : (
+          <div className="dashboard-grid">
+            {/* Row 1 */}
+            <div className="dashboard-row">
+              <div className="dashboard-card clickable" onClick={fetchTeaDeliveryDetails}>
+                <FaSeedling className="card-icon" />
+                <h3>Tea Delivered</h3>
+                <p className="card-value">{formatNumber(dashboardData.teaDeliveries.total)} Kg</p>
+                <p className="card-description">Total tea delivered this month</p>
+                <div className="view-details">View Details →</div>
+              </div>
+
+              <div className="dashboard-card">
+                <FaMoneyBillWave className="card-icon" />
+                <h3>Last Payment</h3>
+                {dashboardData.payments.amount > 0 ? (
+                  <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
+                ) : (
+                  <p className="card-value">Payment not finalized</p>
+                )}
+                <p className="card-description">Most recent approved payment</p>
+              </div>
+            </div>
+
+            {/* Row 2 - Advances */}
+            <div className="dashboard-card full-width clickable" onClick={fetchAdvanceDetails}>
+              <FaMoneyBillWave className="card-icon" />
+              <h3>Advances Summary</h3>
+              <div className="status-grid">
+                <div className="status-card pending">
+                  <h4>Pending</h4>
+                  <p className="status-count">{dashboardData.advances.pending.count}</p>
+                  <p className="status-amount">Rs. {formatNumber(dashboardData.advances.pending.amount)}</p>
+                </div>
+                <div className="status-card approved">
+                  <h4>Approved</h4>
+                  <p className="status-count">{dashboardData.advances.approved.count}</p>
+                  <p className="status-amount">Rs. {formatNumber(dashboardData.advances.approved.amount)}</p>
+                </div>
+                <div className="status-card rejected">
+                  <h4>Rejected</h4>
+                  <p className="status-count">{dashboardData.advances.rejected.count}</p>
+                  <p className="status-amount">Rs. {formatNumber(dashboardData.advances.rejected.amount)}</p>
+                </div>
+              </div>
+              <div className="view-details">View Details →</div>
+            </div>
+
+            {/* Row 3 - Fertilizer Requests */}
+            <div className="dashboard-card full-width clickable" onClick={fetchFertilizerDetails}>
+              <FaHistory className="card-icon" />
+              <h3>Fertilizer Requests</h3>
+              <div className="status-grid">
+                <div className="status-card pending">
+                  <h4>Pending</h4>
+                  <p className="status-count">{dashboardData.fertilizerRequests.pending}</p>
+                </div>
+                <div className="status-card approved">
+                  <h4>Approved</h4>
+                  <p className="status-count">{dashboardData.fertilizerRequests.approved}</p>
+                </div>
+                <div className="status-card rejected">
+                  <h4>Rejected</h4>
+                  <p className="status-count">{dashboardData.fertilizerRequests.rejected}</p>
+                </div>
+              </div>
+              <div className="view-details">View Details →</div>
+            </div>
+          </div>
+        )}
 
         {/* Modal for Detailed Views */}
         {activeModal && (
