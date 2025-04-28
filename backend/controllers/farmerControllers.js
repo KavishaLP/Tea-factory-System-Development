@@ -449,7 +449,6 @@ export const getAdvances = async (req, res) => {
     }
 };
 
-
 // Get advance details for popup
 export const getAdvanceDetails = async (req, res) => {
     try {
