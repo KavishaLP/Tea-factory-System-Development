@@ -7,7 +7,7 @@
   min-height: 100vh;
 }
 
-/* Dashboard Header - More compact */
+/* Dashboard Header */
 .dashboard-header {
   margin-bottom: 1.5rem;
 }
@@ -23,7 +23,7 @@
   font-size: 0.95rem;
 }
 
-/* Metrics Row - More compact cards */
+/* Metrics Row */
 .metrics-row {
   display: flex;
   gap: 1.5rem;
@@ -36,11 +36,88 @@
   padding: 1.25rem;
   flex: 1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
   min-height: 100px;
 }
 
+/* Tea Weight Card Specific Styles */
+.tea-weight-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.tea-weight-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tea-weight-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  margin: 0.5rem 0;
+}
+
+.tea-weight-icon {
+  font-size: 2rem;
+  color: #27ae60;
+  margin-bottom: 0.5rem;
+}
+
+/* Date Navigation */
+.date-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.date-navigation button {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.date-navigation button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.date-navigation span {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Card Content */
+.card-content h3 {
+  font-size: 1rem;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.card-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0.25rem 0;
+  text-align: center;
+}
+
+.card-description {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* Icons */
 .card-icon {
   width: 48px;
   height: 48px;
@@ -62,27 +139,7 @@
   color: #e74c3c;
 }
 
-.card-content h3 {
-  font-size: 1rem;
-  color: #2c3e50;
-  margin-bottom: 0.25rem;
-  font-weight: 600;
-}
-
-.card-value {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0.25rem 0;
-}
-
-.card-description {
-  color: #7f8c8d;
-  font-size: 0.8rem;
-  margin: 0;
-}
-
-/* Content area for additional components */
+/* Content Area */
 .dashboard-content-area {
   background: white;
   border-radius: 10px;
@@ -91,7 +148,7 @@
   min-height: 300px;
 }
 
-/* Loading State - More compact */
+/* Loading State */
 .loading-state {
   display: flex;
   flex-direction: column;

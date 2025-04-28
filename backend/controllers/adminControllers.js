@@ -784,3 +784,30 @@ export const distributeTea = (req, res) => {
 };
 
 
+// dashboard data
+// Fetch total final tea sack weight for a specific date
+export const fetchTotalTeaWeight = (req, res) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ message: "Date is required" });
+  }
+
+  const query = `
+    SELECT COALESCE(SUM(final_tea_sack_weight), 0) AS totalTeaWeight
+    FROM tea_sack_updates
+    WHERE date = ?
+  `;
+
+  db.query(query, [date], (err, results) => {
+    if (err) {
+      console.error("Error fetching total tea weight:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+
+    const totalTeaWeight = results[0].totalTeaWeight;
+    res.json({ totalTeaWeight });
+  });
+};
+
+
