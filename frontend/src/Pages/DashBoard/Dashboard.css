@@ -243,13 +243,14 @@
 
 /* Chart Container */
 .chart-container {
-  height: 350px;
-  width: 100%;
+  height: 100%; /* Use full height of the parent container */
+  width: 100%; /* Use full width of the parent container */
+  max-height: 400px; /* Set a maximum height for the container */
   position: relative;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
+  padding: 0; /* Remove padding to avoid affecting canvas size */
   display: flex; /* Use flexbox for alignment */
   align-items: center; /* Center the canvas vertically */
   justify-content: center; /* Center the canvas horizontally */
@@ -258,11 +259,10 @@
 
 /* Chart Canvas */
 .chart-container canvas {
-  width: 100%; /* Make the canvas responsive */
-  height: 100%; /* Ensure it fills the container */
-  max-width: 100%; /* Prevent overflow */
-  max-height: 100%; /* Prevent overflow */
+  width: 100%; /* Make the canvas responsive to the container's width */
+  height: 100%; /* Ensure it fills the container's height */
   display: block; /* Prevent inline element spacing issues */
+  border-radius: inherit; /* Match the container's border radius */
 }
 
 /* Loading State */
@@ -364,6 +364,10 @@
   .dashboard-content-area {
     padding: 1.5rem;
   }
+
+  .chart-container {
+    max-height: 300px; /* Adjust height for smaller screens */
+  }
 }
 
 @media (max-width: 576px) {
@@ -385,6 +389,6 @@
   }
   
   .chart-container {
-    height: 300px;
+    max-height: 250px; /* Further reduce height for mobile devices */
   }
 }
