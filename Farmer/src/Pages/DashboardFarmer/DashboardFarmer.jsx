@@ -72,7 +72,7 @@ const DashboardFarmer = ({ userId }) => {
   };
 
   const fetchAdvances = async (userId, monthYear) => {
-    const response = await axios.get("/api/farmer/advances", {
+    const response = await axios.get("http://localhost:8081/api/farmer/advances", {
       params: { userId, monthYear }
     });
     return response.data;
