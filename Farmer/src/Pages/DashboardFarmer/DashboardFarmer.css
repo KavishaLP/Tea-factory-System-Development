@@ -99,4 +99,265 @@
   }
   
   .dashboard-card.full-width {
-   
+    width: 100%;
+  }
+  
+  .card-icon {
+    font-size: 2rem;
+    color: #2ecc71;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-card h3 {
+    margin: 0 0 1rem 0;
+    color: #495057;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+  }
+  
+  .card-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2ecc71;
+    margin: 1rem 0 0.5rem 0;
+  }
+  
+  .card-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+  }
+  
+  .view-details {
+    margin-top: 1rem;
+    color: #3498db;
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  /* Status Grid */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .status-card {
+    padding: 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+  
+  .status-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: white;
+  }
+  
+  .status-count {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: white;
+  }
+  
+  .status-amount {
+    font-size: 1rem;
+    margin: 0;
+    color: white;
+  }
+  
+  .status-card.pending {
+    background-color: #f39c12;
+  }
+  
+  .status-card.approved {
+    background-color: #2ecc71;
+  }
+  
+  .status-card.rejected {
+    background-color: #e74c3c;
+  }
+  
+  /* Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+  }
+  
+  .modal-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  .close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s ease;
+  }
+  
+  .close-modal:hover {
+    color: #333;
+  }
+  
+  .modal-content h3 {
+    color: #2ecc71;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .modal-subtitle {
+    color: #666;
+    font-weight: normal;
+  }
+  
+  .modal-table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
+  
+  .details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .details-table th {
+    background-color: #f0f0f0;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #444;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .details-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .details-table tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .status-pending {
+    color: #f39c12;
+    font-weight: 600;
+  }
+  
+  .status-approved {
+    color: #2ecc71;
+    font-weight: 600;
+  }
+  
+  .status-rejected {
+    color: #e74c3c;
+    font-weight: 600;
+  }
+  
+  .no-data-message {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-style: italic;
+  }
+  
+  /* Loading and Error States */
+  .loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(46, 204, 113, 0.3);
+    border-radius: 50%;
+    border-top-color: #2ecc71;
+    animation: spin 1s linear infinite;
+  }
+  
+  .error-message {
+    color: #d32f2f;
+    background-color: #fde0e0;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  /* Animations */
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .dashboard-row {
+      flex-direction: column;
+    }
+  
+    .status-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .modal-content {
+      width: 95%;
+      padding: 1.5rem 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .dashboard-container {
+      padding: 1rem;
+    }
+  
+    .month-navigation {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  
+    .month-navigation h3 {
+      min-width: auto;
+    }
+  
+    .details-table {
+      font-size: 0.9rem;
+    }
+  
+    .details-table th, 
+    .details-table td {
+      padding: 0.5rem;
+    }
+  }
