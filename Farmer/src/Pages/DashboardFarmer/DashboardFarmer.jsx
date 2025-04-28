@@ -15,6 +15,12 @@ const DashboardFarmer = ({ userId }) => {
     fertilizerRequests: { pending: 0, approved: 0 }
   });
 
+  // Helper function to safely format numbers
+  const formatNumber = (value, decimals = 2) => {
+    const num = parseFloat(value);
+    return isNaN(num) ? '0.00' : num.toFixed(decimals);
+  };
+
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -168,35 +174,37 @@ const DashboardFarmer = ({ userId }) => {
         <div className="dashboard-grid">
           {/* First Row */}
           <div className="dashboard-row">
+            {/* Updated Tea Delivered card */}
             <div className="dashboard-card">
               <FaSeedling className="card-icon" />
               <h3>Tea Delivered</h3>
-              <p>{dashboardData.teaDeliveries.total.toFixed(2)} Kg</p>
+              <p>{formatNumber(dashboardData.teaDeliveries.total)} Kg</p>
             </div>
 
+            {/* Updated Last Payment card */}
             <div className="dashboard-card">
               <FaMoneyBillWave className="card-icon" />
               <h3>Last Payment</h3>
-              <p>Rs. {dashboardData.payments.amount.toFixed(2)}</p>
+              <p>Rs. {formatNumber(dashboardData.payments.amount)}</p>
             </div>
-          </div>
 
-          {/* Second Row - Advances */}
-          <div className="dashboard-card full-width">
-            <FaMoneyBillWave className="card-icon" />
-            <h3>Advances</h3>
-            <div className="advance-details">
-              <div className="advance-item">
-                <span className="advance-label">Pending:</span>
-                <span className="advance-value">
-                  {dashboardData.advances.pending.count} (Rs. {dashboardData.advances.pending.amount.toFixed(2)})
-                </span>
-              </div>
-              <div className="advance-item">
-                <span className="advance-label">Approved:</span>
-                <span className="advance-value">
-                  {dashboardData.advances.approved.count} (Rs. {dashboardData.advances.approved.amount.toFixed(2)})
-                </span>
+            {/* Updated Advances card */}
+            <div className="dashboard-card full-width">
+              <FaMoneyBillWave className="card-icon" />
+              <h3>Advances</h3>
+              <div className="advance-details">
+                <div className="advance-item">
+                  <span className="advance-label">Pending:</span>
+                  <span className="advance-value">
+                    {dashboardData.advances.pending.count} (Rs. {formatNumber(dashboardData.advances.pending.amount)})
+                  </span>
+                </div>
+                <div className="advance-item">
+                  <span className="advance-label">Approved:</span>
+                  <span className="advance-value">
+                    {dashboardData.advances.approved.count} (Rs. {formatNumber(dashboardData.advances.approved.amount)})
+                  </span>
+                </div>
               </div>
             </div>
           </div>
