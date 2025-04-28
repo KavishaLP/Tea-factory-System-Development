@@ -25,6 +25,7 @@ const DashboardFarmer = ({ userId }) => {
   const [activeModal, setActiveModal] = useState(null);
   const [modalData, setModalData] = useState([]);
   const [modalLoading, setModalLoading] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -134,6 +135,7 @@ const DashboardFarmer = ({ userId }) => {
   const fetchTeaDeliveryDetails = async () => {
     try {
       setModalLoading(true);
+      setModalTitle("Tea Delivery Details");
       const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
       const response = await axios.get("http://localhost:8081/api/farmer/tea-delivery-details", {
         params: { userId, monthYear }
@@ -151,6 +153,7 @@ const DashboardFarmer = ({ userId }) => {
   const fetchAdvanceDetails = async () => {
     try {
       setModalLoading(true);
+      setModalTitle("Advance Payment Details");
       const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
       const response = await axios.get("http://localhost:8081/api/farmer/advance-details", {
         params: { userId, monthYear }
@@ -168,6 +171,7 @@ const DashboardFarmer = ({ userId }) => {
   const fetchFertilizerDetails = async () => {
     try {
       setModalLoading(true);
+      setModalTitle("Fertilizer Request Details");
       const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
       const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-request-details", {
         params: { userId, monthYear }
@@ -207,6 +211,7 @@ const DashboardFarmer = ({ userId }) => {
   const closeModal = () => {
     setActiveModal(null);
     setModalData([]);
+    setModalTitle("");
   };
 
   return (
@@ -259,7 +264,6 @@ const DashboardFarmer = ({ userId }) => {
               )}
               <p className="card-description">Most recent approved payment</p>
             </div>
-
           </div>
 
           {/* Row 2 - Advances */}
@@ -318,9 +322,7 @@ const DashboardFarmer = ({ userId }) => {
             </button>
             
             <h3>
-              {activeModal === 'tea' && 'Tea Delivery Details'}
-              {activeModal === 'advances' && 'Advance Payment Details'}
-              {activeModal === 'fertilizer' && 'Fertilizer Request Details'}
+              {modalTitle}
               <span className="modal-subtitle"> - {monthNames[currentMonth - 1]} {currentYear}</span>
             </h3>
 
