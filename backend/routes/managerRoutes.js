@@ -3,7 +3,10 @@ import express from 'express';
 import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmployeePayment, 
     getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer, 
     searchFarmersInDB, getDEtailsRelatedTOUser, getAllFarmers, getAllEmployers,searchEmployeesInDB,
-    fetchToPayments
+    fetchToPayments, 
+    fetchTeaPrice,
+    updateTeaPrice,
+    approvePayment
 } from '../controllers/managerControllers.js';
 
 const router = express.Router();
@@ -27,6 +30,15 @@ router.post('/search-employees-indb', searchEmployeesInDB);
 //--------------------------------
 router.get('/fetch-to-payments', fetchToPayments);
 router.post('/fetch-Payment-History', fectchpaymentHistory);
+router.get('/fetch-to-payments', fetchToPayments);  // Fetch TO payments for month/year
+router.get('/fetch-tea-price', fetchTeaPrice);      // Fetch tea price for month/year
+router.post('/update-tea-price', updateTeaPrice);   // Update tea price
+
+router.put('/approve-payment', approvePayment);
+
+
+
+
 
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
 

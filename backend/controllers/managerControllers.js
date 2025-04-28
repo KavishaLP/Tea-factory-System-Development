@@ -1014,6 +1014,120 @@ export const fectchpaymentHistory = (req, res) => {
     });
 };
 
+// Fetch tea price for specific month/year
+export const fetchTeaPrice = async (req, res) => {
+    try {
+        const { month_year } = req.query;
+
+        if (!month_year) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Month_year parameter is required' 
+            });
+        }
+
+        const query = `
+            SELECT price FROM tea_price_per_kilo 
+            WHERE month_year = ?
+        `;
+        
+        const [result] = await sqldb.promise().query(query, [month_year]);
+
+        if (result.length > 0) {
+            res.status(200).json({ price: result[0].price });
+        } else {
+            res.status(200).json({ price: null });
+        }
+    } catch (error) {
+        console.error('Error fetching tea price:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error while fetching tea price'
+        });
+    }
+};
+
+// Update or create tea price
+export const updateTeaPrice = async (req, res) => {
+    try {
+        const { price, month_year } = req.body;
+
+        if (!price || !month_year) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Price and month_year are required' 
+            });
+        }
+
+        const priceFloat = parseFloat(price);
+        if (isNaN(priceFloat) || priceFloat <= 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Price must be a positive number' 
+            });
+        }
+
+        const query = `
+            INSERT INTO tea_price_per_kilo (price, month_year)
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE price = ?
+        `;
+        
+        await sqldb.promise().query(query, [priceFloat, month_year, priceFloat]);
+
+        res.status(200).json({ 
+            success: true,
+            message: 'Tea price updated successfully'
+        });
+    } catch (error) {
+        console.error('Error updating tea price:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error while updating tea price'
+        });
+    }
+};
+
+// Approve a payment
+export const approvePayment = async (req, res) => {
+    try {
+        const { paymentId } = req.body;
+
+        if (!paymentId) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Payment ID is required' 
+            });
+        }
+
+        const query = `
+            UPDATE farmer_payments
+            SET status = 'Approved'
+            WHERE id = ?
+        `;
+        
+        const [result] = await sqldb.promise().query(query, [paymentId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Payment not found' 
+            });
+        }
+
+        res.status(200).json({ 
+            success: true,
+            message: 'Payment approved successfully'
+        });
+    } catch (error) {
+        console.error('Error approving payment:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error while approving payment'
+        });
+    }
+};
+
 
   
 
