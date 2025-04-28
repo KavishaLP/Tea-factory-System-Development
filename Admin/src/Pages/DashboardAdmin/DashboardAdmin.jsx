@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaUsers, FaMoneyBillWave, FaClock } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -35,45 +35,45 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <div className="admin-dashboard">
-      <div className="sidebar">
+    <div className="admin-dashboard-container">
+      <div className="admin-sidebar">
         {/* Your sidebar content */}
       </div>
       
-      <div className="main-content">
-        <div className="dashboard-header">
-          <h1>Admin Dashboard</h1>
-          <p className="dashboard-subtitle">Overview and quick actions</p>
+      <div className="admin-main-content">
+        <div className="dashboard-title-section">
+          <h1 className="dashboard-main-title">Admin Dashboard</h1>
+          <p className="dashboard-sub-title">Overview and quick actions</p>
         </div>
         
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="dashboard-error-alert">{error}</div>}
         
         {loading ? (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
+          <div className="dashboard-loading-state">
+            <div className="loading-spinner-animation"></div>
             <p>Loading dashboard data...</p>
           </div>
         ) : (
-          <div className="stats-grid">
-            <div className="stat-card user-card">
-              <div className="card-icon">
-                <FaUsers size={28} />
+          <div className="metrics-card-grid">
+            <div className="metric-card users-metric">
+              <div className="metric-icon-wrapper">
+                <FaUsers className="metric-icon" />
               </div>
-              <div className="card-content">
-                <h3>Total Users</h3>
-                <p className="stat-value">{stats.totalUsers}</p>
-                <p className="stat-description">Registered in system</p>
+              <div className="metric-content">
+                <h3 className="metric-title">Total Users</h3>
+                <p className="metric-value">{stats.totalUsers}</p>
+                <p className="metric-description">Registered in system</p>
               </div>
             </div>
             
-            <div className="stat-card advance-card">
-              <div className="card-icon">
-                <FaMoneyBillWave size={28} />
+            <div className="metric-card advances-metric">
+              <div className="metric-icon-wrapper">
+                <FaMoneyBillWave className="metric-icon" />
               </div>
-              <div className="card-content">
-                <h3>Pending Advances</h3>
-                <p className="stat-value">{stats.pendingAdvances}</p>
-                <p className="stat-description">Requiring approval</p>
+              <div className="metric-content">
+                <h3 className="metric-title">Pending Advances</h3>
+                <p className="metric-value">{stats.pendingAdvances}</p>
+                <p className="metric-description">Requiring approval</p>
               </div>
             </div>
           </div>
