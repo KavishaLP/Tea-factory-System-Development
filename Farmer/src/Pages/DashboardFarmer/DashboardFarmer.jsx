@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaMoneyBillWave, FaSeedling, FaHistory } from "react-icons/fa";
+import { FaMoneyBillWave, FaSeedling, FaHistory, FaTimes } from "react-icons/fa";
 import axios from "axios";
 import "./DashboardFarmer.css";
 
@@ -22,6 +22,9 @@ const DashboardFarmer = ({ userId }) => {
       rejected: 0 
     }
   });
+  const [activeModal, setActiveModal] = useState(null);
+  const [modalData, setModalData] = useState([]);
+  const [modalLoading, setModalLoading] = useState(false);
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -74,6 +77,7 @@ const DashboardFarmer = ({ userId }) => {
     }
   };
 
+  // Fetch summary data functions
   const fetchTeaDeliveries = async (userId, monthYear) => {
     try {
       const response = await axios.get("http://localhost:8081/api/farmer/tea-deliveries", {
@@ -126,6 +130,58 @@ const DashboardFarmer = ({ userId }) => {
     }
   };
 
+  // Fetch detailed data functions
+  const fetchTeaDeliveryDetails = async () => {
+    try {
+      setModalLoading(true);
+      const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
+      const response = await axios.get("http://localhost:8081/api/farmer/tea-delivery-details", {
+        params: { userId, monthYear }
+      });
+      setModalData(response.data);
+      setActiveModal('tea');
+    } catch (error) {
+      console.error("Error fetching tea delivery details:", error);
+      setError("Failed to load tea delivery details.");
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const fetchAdvanceDetails = async () => {
+    try {
+      setModalLoading(true);
+      const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
+      const response = await axios.get("http://localhost:8081/api/farmer/advance-details", {
+        params: { userId, monthYear }
+      });
+      setModalData(response.data);
+      setActiveModal('advances');
+    } catch (error) {
+      console.error("Error fetching advance details:", error);
+      setError("Failed to load advance details.");
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const fetchFertilizerDetails = async () => {
+    try {
+      setModalLoading(true);
+      const monthYear = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
+      const response = await axios.get("http://localhost:8081/api/farmer/fertilizer-request-details", {
+        params: { userId, monthYear }
+      });
+      setModalData(response.data);
+      setActiveModal('fertilizer');
+    } catch (error) {
+      console.error("Error fetching fertilizer details:", error);
+      setError("Failed to load fertilizer request details.");
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
   const navigateMonth = (direction) => {
     if (direction === "prev") {
       if (currentMonth === 1) {
@@ -146,6 +202,11 @@ const DashboardFarmer = ({ userId }) => {
         }
       }
     }
+  };
+
+  const closeModal = () => {
+    setActiveModal(null);
+    setModalData([]);
   };
 
   return (
@@ -180,29 +241,24 @@ const DashboardFarmer = ({ userId }) => {
         <div className="dashboard-grid">
           {/* Row 1 */}
           <div className="dashboard-row">
-
-          <div className="dashboard-card">
-              <FaMoneyBillWave className="card-icon" />
-              <h3>Last Payment</h3>
-              {dashboardData.payments.amount > 0 ? (
-                <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
-              ) : (
-                <p className="card-value">Payment not finalized</p>
-              )}
-              <p className="card-description">Most recent approved payment</p>
-            </div>
-
-            <div className="dashboard-card">
+            <div className="dashboard-card clickable" onClick={fetchTeaDeliveryDetails}>
               <FaSeedling className="card-icon" />
               <h3>Tea Delivered</h3>
               <p className="card-value">{formatNumber(dashboardData.teaDeliveries.total)} Kg</p>
               <p className="card-description">Total tea delivered this month</p>
+              <div className="view-details">View Details →</div>
             </div>
 
+            <div className="dashboard-card">
+              <FaMoneyBillWave className="card-icon" />
+              <h3>Last Payment</h3>
+              <p className="card-value">Rs. {formatNumber(dashboardData.payments.amount)}</p>
+              <p className="card-description">Most recent approved payment</p>
+            </div>
           </div>
 
           {/* Row 2 - Advances */}
-          <div className="dashboard-card full-width">
+          <div className="dashboard-card full-width clickable" onClick={fetchAdvanceDetails}>
             <FaMoneyBillWave className="card-icon" />
             <h3>Advances Summary</h3>
             <div className="status-grid">
@@ -222,10 +278,11 @@ const DashboardFarmer = ({ userId }) => {
                 <p className="status-amount">Rs. {formatNumber(dashboardData.advances.rejected.amount)}</p>
               </div>
             </div>
+            <div className="view-details">View Details →</div>
           </div>
 
           {/* Row 3 - Fertilizer Requests */}
-          <div className="dashboard-card full-width">
+          <div className="dashboard-card full-width clickable" onClick={fetchFertilizerDetails}>
             <FaHistory className="card-icon" />
             <h3>Fertilizer Requests</h3>
             <div className="status-grid">
@@ -242,6 +299,117 @@ const DashboardFarmer = ({ userId }) => {
                 <p className="status-count">{dashboardData.fertilizerRequests.rejected}</p>
               </div>
             </div>
+            <div className="view-details">View Details →</div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Detailed Views */}
+      {activeModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-modal" onClick={closeModal}>
+              <FaTimes />
+            </button>
+            
+            <h3>
+              {activeModal === 'tea' && 'Tea Delivery Details'}
+              {activeModal === 'advances' && 'Advance Payment Details'}
+              {activeModal === 'fertilizer' && 'Fertilizer Request Details'}
+              <span className="modal-subtitle"> - {monthNames[currentMonth - 1]} {currentYear}</span>
+            </h3>
+
+            {modalLoading ? (
+              <div className="loading-indicator">
+                <div className="loading-spinner"></div>
+                Loading details...
+              </div>
+            ) : (
+              <div className="modal-table-container">
+                {activeModal === 'tea' && (
+                  <table className="details-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Gross Weight (kg)</th>
+                        <th>Water Deduction</th>
+                        <th>Damage Deduction</th>
+                        <th>Sack Deduction</th>
+                        <th>Net Weight (kg)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {modalData.map((delivery, index) => (
+                        <tr key={index}>
+                          <td>{new Date(delivery.date).toLocaleDateString()}</td>
+                          <td>{delivery.tea_sack_weight}</td>
+                          <td>{delivery.deduction_water}</td>
+                          <td>{delivery.deduction_damage_tea}</td>
+                          <td>{delivery.deduction_sack_weight}</td>
+                          <td>{delivery.final_tea_sack_weight}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                {activeModal === 'advances' && (
+                  <table className="details-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Amount (Rs)</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {modalData.map((advance, index) => (
+                        <tr key={index}>
+                          <td>{new Date(advance.date).toLocaleDateString()}</td>
+                          <td>{advance.amount.toLocaleString()}</td>
+                          <td className={`status-${advance.action.toLowerCase()}`}>
+                            {advance.action}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                {activeModal === 'fertilizer' && (
+                  <table className="details-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Fertilizer Type</th>
+                        <th>Packet Size</th>
+                        <th>Quantity</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {modalData.map((request, index) => (
+                        <tr key={index}>
+                          <td>{new Date(request.requestDate).toLocaleDateString()}</td>
+                          <td>{request.fertilizerType}</td>
+                          <td>{request.packetType}</td>
+                          <td>{request.amount}</td>
+                          <td>{request.paymentoption === 'cash' ? 'Cash' : 'Deduct from Payment'}</td>
+                          <td className={`status-${request.status.toLowerCase()}`}>
+                            {request.status}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                {modalData.length === 0 && (
+                  <div className="no-data-message">No records found for this period</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
