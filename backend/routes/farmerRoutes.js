@@ -1,7 +1,16 @@
 //routes/farmerRoutes
 
 import express from 'express';
-import { requestAdvance, requestFertilizer, FetchFertilizerPrices, getPaymentsByUserId } from '../controllers/farmerControllers.js';
+import { requestAdvance, requestFertilizer, FetchFertilizerPrices, getPaymentsByUserId,
+        getTeaDeliveries,
+    getTeaDeliveryDetails,
+    getPayments,
+    getPaymentDetails,
+    getAdvances,
+    getAdvanceDetails,
+    getFertilizerRequests,
+    getFertilizerDetails
+ } from '../controllers/farmerControllers.js';
 
 const router = express.Router();
 

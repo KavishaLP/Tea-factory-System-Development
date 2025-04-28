@@ -244,5 +244,302 @@ export const getPaymentsByUserId = (req, res) => {
   });
 };
 
+//------------------------------------------------------------
+
+/ Get tea delivery summary for a specific month/year
+export const getTeaDeliveries = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                SUM(tea_sack_weight) as total_weight,
+                SUM(deduction_water) as total_water_deduction,
+                SUM(deduction_damage_tea) as total_damage_deduction,
+                SUM(deduction_sack_weight) as total_sack_deduction,
+                SUM(final_tea_sack_weight) as net_weight,
+                COUNT(*) as delivery_count
+            FROM tea_sack_updates
+            WHERE userId = ? 
+            AND YEAR(date) = ? 
+            AND MONTH(date) = ?
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: {
+                total: results[0].net_weight || 0,
+                details: results[0]
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching tea deliveries:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch tea delivery data'
+        });
+    }
+};
+
+// Get tea delivery details for popup
+export const getTeaDeliveryDetails = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                id,
+                date,
+                tea_sack_weight,
+                deduction_water,
+                deduction_damage_tea,
+                deduction_sack_weight,
+                deduction_sharped_tea,
+                deduction_other,
+                final_tea_sack_weight
+            FROM tea_sack_updates
+            WHERE userId = ?
+            AND YEAR(date) = ?
+            AND MONTH(date) = ?
+            ORDER BY date DESC
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: results
+        });
+    } catch (error) {
+        console.error('Error fetching tea delivery details:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch tea delivery details'
+        });
+    }
+};
+
+// Get payment summary for a specific month/year
+export const getPayments = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                COALESCE(SUM(finalPayment), 0) as total_payment,
+                COUNT(*) as payment_count
+            FROM farmer_payments
+            WHERE userId = ?
+            AND YEAR(created_at) = ?
+            AND MONTH(created_at) = ?
+            AND status = 'Approved'
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: {
+                amount: results[0].total_payment || 0,
+                details: results[0]
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching payments:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch payment data'
+        });
+    }
+};
+
+// Get payment details for popup
+export const getPaymentDetails = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                id,
+                created_at,
+                finalTeaKilos,
+                paymentPerKilo,
+                advances,
+                finalPayment,
+                status
+            FROM farmer_payments
+            WHERE userId = ?
+            AND YEAR(created_at) = ?
+            AND MONTH(created_at) = ?
+            ORDER BY created_at DESC
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: results
+        });
+    } catch (error) {
+        console.error('Error fetching payment details:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch payment details'
+        });
+    }
+};
+
+// Get advance summary for a specific month/year
+export const getAdvances = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                COUNT(*) as total_requests,
+                SUM(CASE WHEN action = 'Pending' THEN 1 ELSE 0 END) as pending_requests,
+                SUM(CASE WHEN action = 'Approved' THEN amount ELSE 0 END) as approved_amount,
+                SUM(CASE WHEN action = 'Pending' THEN amount ELSE 0 END) as pending_amount
+            FROM advance_payment
+            WHERE userId = ?
+            AND YEAR(date) = ?
+            AND MONTH(date) = ?
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: {
+                pending: results[0].pending_requests || 0,
+                total: results[0].approved_amount || 0,
+                details: results[0]
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching advances:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch advance data'
+        });
+    }
+};
+
+// Get advance details for popup
+export const getAdvanceDetails = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                advn_id as id,
+                date,
+                amount,
+                action as status
+            FROM advance_payment
+            WHERE userId = ?
+            AND YEAR(date) = ?
+            AND MONTH(date) = ?
+            ORDER BY date DESC
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: results
+        });
+    } catch (error) {
+        console.error('Error fetching advance details:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch advance details'
+        });
+    }
+};
+
+// Get fertilizer summary for a specific month/year
+export const getFertilizerRequests = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                COUNT(*) as total_requests,
+                SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) as pending_requests,
+                SUM(amount) as total_packets
+            FROM fertilizer_requests
+            WHERE userId = ?
+            AND YEAR(requestDate) = ?
+            AND MONTH(requestDate) = ?
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: {
+                pending: results[0].pending_requests || 0,
+                total: results[0].total_requests || 0,
+                details: results[0]
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching fertilizer requests:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch fertilizer request data'
+        });
+    }
+};
+
+// Get fertilizer details for popup
+export const getFertilizerDetails = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+        
+        const query = `
+            SELECT 
+                fr.request_id as id,
+                fr.requestDate as date,
+                fp.fertilizerType,
+                fp.packetType,
+                fr.amount,
+                fr.paymentoption as paymentMethod,
+                fr.status
+            FROM fertilizer_requests fr
+            JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
+            WHERE fr.userId = ?
+            AND YEAR(fr.requestDate) = ?
+            AND MONTH(fr.requestDate) = ?
+            ORDER BY fr.requestDate DESC
+        `;
+        
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        
+        res.status(200).json({
+            success: true,
+            data: results
+        });
+    } catch (error) {
+        console.error('Error fetching fertilizer details:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch fertilizer details'
+        });
+    }
+};
+
 
 
