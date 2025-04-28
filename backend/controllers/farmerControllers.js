@@ -498,7 +498,42 @@ export const getAdvanceDetails = async (req, res) => {
 
 
 
-// Get fertilizer summary for a specific month/year
+// Get fertilizer request summary for a specific month/year (only counts)
+export const getFertilizerRequests = async (req, res) => {
+    try {
+        const { userId, monthYear } = req.query;
+        const [year, month] = monthYear.split('-');
+
+        const query = `
+            SELECT 
+                COUNT(CASE WHEN status = 'Pending' THEN 1 ELSE NULL END) AS pending_count,
+                COUNT(CASE WHEN status = 'Approved' THEN 1 ELSE NULL END) AS approved_count,
+                COUNT(CASE WHEN status = 'Rejected' THEN 1 ELSE NULL END) AS rejected_count
+            FROM fertilizer_requests
+            WHERE userId = ?
+            AND YEAR(requestDate) = ?
+            AND MONTH(requestDate) = ?
+        `;
+
+        const [results] = await sqldb.promise().query(query, [userId, year, month]);
+        const data = results[0];
+
+        res.status(200).json({
+            success: true,
+            data: {
+                pending: data.pending_count || 0,
+                approved: data.approved_count || 0,
+                rejected: data.rejected_count || 0
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching fertilizer requests:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch fertilizer request data'
+        });
+    }
+};
 
 
 // Get fertilizer details for popup
