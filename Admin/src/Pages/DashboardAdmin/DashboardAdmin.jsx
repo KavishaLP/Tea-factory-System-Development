@@ -35,19 +35,7 @@ const DashboardAdmin = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchTeaWeight = async () => {
-      try {
-        const dateString = formatDate(selectedDate);
-        const res = await axios.get(`http://localhost:8081/api/admin/fetch-total-tea-weight'?date=${dateString}`, { withCredentials: true });
-        setTotalTeaWeight(res.data.totalWeight || 0);
-      } catch (error) {
-        console.error("Error fetching tea weight:", error);
-      }
-    };
 
-    fetchTeaWeight();
-  }, [selectedDate]);
 
   const handlePrev = () => {
     const newDate = new Date(selectedDate);
