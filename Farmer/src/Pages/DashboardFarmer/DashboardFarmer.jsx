@@ -58,14 +58,14 @@ const DashboardFarmer = ({ userId }) => {
 
   // API call functions
   const fetchTeaKilos = async (userId, monthYear) => {
-    const response = await axios.get("/api/farmer/tea-deliveries", {
+    const response = await axios.get("http://localhost:8081/api/farmer/tea-deliveries", {
       params: { userId, monthYear }
     });
     return response.data;
   };
 
   const fetchPayments = async (userId, monthYear) => {
-    const response = await axios.get("/api/farmer/last-payment", {
+    const response = await axios.get("http://localhost:8081/api/farmer/last-payment", {
       params: { userId, monthYear }
     });
     return response.data;
