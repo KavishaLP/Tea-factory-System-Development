@@ -788,7 +788,7 @@ export const distributeTea = (req, res) => {
 // Fetch total final tea sack weight for a specific date
 export const fetchTotalTeaWeight = (req, res) => {
   const { date } = req.query;
-  console.log("Received date:", date); // Add this line
+  console.log("Received date:", date);
 
   if (!date) {
     return res.status(400).json({ message: "Date is required" });
@@ -800,17 +800,14 @@ export const fetchTotalTeaWeight = (req, res) => {
     WHERE date = ?
   `;
 
-  console.log("Executing query:", query, "with date:", date); // Add this line
-
   sqldb.query(query, [date], (err, results) => {
     if (err) {
       console.error("Error fetching total tea weight:", err);
       return res.status(500).json({ message: "Internal server error" });
     }
 
-    console.log("Query results:", results); // Add this line
-    const totalTeaWeight = results[0].totalTeaWeight;
-    res.json({ totalTeaWeight });
+    const totalWeight = results[0].totalTeaWeight; // Rename the field here
+    res.json({ totalWeight }); // Send the renamed field
   });
 };
 

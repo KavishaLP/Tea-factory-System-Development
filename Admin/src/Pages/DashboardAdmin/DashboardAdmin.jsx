@@ -7,7 +7,7 @@ import "./DashboardAdmin.css";
 const DashboardAdmin = () => {
   const [pendingRequests, setPendingRequests] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [totalTeaWeight, setTotalTeaWeight] = useState(null); // Changed initial state to null
+  const [totalTeaWeight, setTotalTeaWeight] = useState(null); // Initialize as null
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
 
@@ -38,18 +38,23 @@ const DashboardAdmin = () => {
   useEffect(() => {
     const fetchTeaWeight = async () => {
       try {
-        const dateString = formatDate(selectedDate);
+        const dateString = formatDate(selectedDate); // Format the selected date
         const res = await axios.get(
           `http://localhost:8081/api/admin/fetch-total-tea-weight?date=${dateString}`,
           { withCredentials: true }
         );
-        setTotalTeaWeight(res.data.totalWeight || 0);
+
+        // Log the response for debugging
+        console.log("Tea Weight API Response:", res.data);
+
+        // Ensure we set the total weight or fallback to null if not present
+        setTotalTeaWeight(res.data?.totalWeight ?? null);
       } catch (error) {
         console.error("Error fetching tea weight:", error);
-        setTotalTeaWeight(null); // Set to null if there's an error
+        setTotalTeaWeight(null); // Explicitly set to null on error
       }
     };
-  
+
     fetchTeaWeight();
   }, [selectedDate]);
 
