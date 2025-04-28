@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import "./RequestAdvance.css";
+import "./RequestAdvance.css"; // Import the CSS file
 
 const RequestAdvance = ({ userId }) => {
   const [formData, setFormData] = useState({
@@ -9,59 +9,50 @@ const RequestAdvance = ({ userId }) => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-
-  // Ensure farmerId is always set from props
-  useEffect(() => {
-    if (userId) {
-      setFormData(prev => ({ ...prev, farmerId: userId }));
-    }
-  }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Enhanced validation
-    if (!formData.farmerId) {
-      setError("Farmer ID is missing. Please try refreshing the page.");
-      return;
-    }
-
-    const amountValue = parseFloat(formData.amount);
-    if (isNaN(amountValue) || amountValue <= 0) {
+    // Validation
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
       setError("Please enter a valid amount greater than 0.");
       return;
     }
 
     setError("");
     setIsLoading(true);
-    setSuccessMessage("");
 
-    // Prepare data with parsed amount
-    const requestData = {
-      farmerId: formData.farmerId,
-      amount: amountValue
-    };
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/farmer/request-advance",
+        formData,
+        { withCredentials: true }
+      );
 
-    axios.post("http://localhost:8081/api/farmer/request-advance", requestData, {
-      withCredentials: true,
-    })
-    .then((response) => {
-      setSuccessMessage("Advance request submitted successfully!");
-      setFormData(prev => ({ ...prev, amount: "" }));
-    })
-    .catch((error) => {
-      const errorMsg = error.response?.data?.message || 
-                      error.message || 
-                      "Failed to submit advance request";
-      setError(errorMsg);
-    })
-    .finally(() => setIsLoading(false));
+      console.log("Advance request submitted:", response.data);
+      alert("Advance request submitted successfully!");
+
+      // Reset only amount, keep farmerId
+      setFormData((prevData) => ({
+        ...prevData,
+        amount: "",
+      }));
+    } catch (error) {
+      console.error("Error submitting advance request:", error);
+      setError(
+        error.response?.data?.message || "An error occurred while submitting the request."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -78,20 +69,15 @@ const RequestAdvance = ({ userId }) => {
             value={formData.amount}
             onChange={handleChange}
             required
-            min="0.01"
-            step="0.01"
             placeholder="Enter Amount"
+            min="1"
+            step="0.01"
           />
         </div>
 
         {error && <p className="error">{error}</p>}
-        {successMessage && <p className="success">{successMessage}</p>}
 
-        <button 
-          type="submit" 
-          disabled={isLoading || !formData.farmerId} 
-          className={isLoading ? "loading" : ""}
-        >
+        <button type="submit" disabled={isLoading} className={isLoading ? "loading" : ""}>
           {isLoading ? "Submitting..." : "Request Advance"}
         </button>
       </form>
