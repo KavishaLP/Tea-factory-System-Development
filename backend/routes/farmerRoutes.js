@@ -2,7 +2,7 @@
 
 import express from 'express';
 import { requestAdvance, requestFertilizer, FetchFertilizerPrices, getPaymentsByUserId,
-        getTeaDeliveries,
+    getTeaDeliveries,
     getTeaDeliveryDetails,
     getPayments,
     getPaymentDetails,
@@ -18,5 +18,6 @@ router.post('/request-advance', requestAdvance);
 router.post('/fertilizer-request', requestFertilizer);
 router.get('/fertilizer-prices', FetchFertilizerPrices);
 router.get('/payments/:userId', getPaymentsByUserId);
+
 
 export default router;
