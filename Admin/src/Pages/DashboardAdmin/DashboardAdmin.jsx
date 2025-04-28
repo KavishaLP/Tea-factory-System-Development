@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaUsers, FaMoneyBillWave } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaClock } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -14,7 +14,6 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        // Replace with your actual API endpoints
         const [usersRes, advancesRes] = await Promise.all([
           axios.get('http://localhost:8081/api/admin/total-users'),
           axios.get('http://localhost:8081/api/admin/pending-advances')
@@ -42,31 +41,39 @@ const AdminDashboard = () => {
       </div>
       
       <div className="main-content">
-        <h1>Admin Dashboard</h1>
+        <div className="dashboard-header">
+          <h1>Admin Dashboard</h1>
+          <p className="dashboard-subtitle">Overview and quick actions</p>
+        </div>
         
         {error && <div className="error-message">{error}</div>}
         
         {loading ? (
-          <div className="loading-spinner">Loading...</div>
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading dashboard data...</p>
+          </div>
         ) : (
-          <div className="stats-cards">
-            <div className="stat-card">
+          <div className="stats-grid">
+            <div className="stat-card user-card">
               <div className="card-icon">
-                <FaUsers size={32} />
+                <FaUsers size={28} />
               </div>
               <div className="card-content">
                 <h3>Total Users</h3>
-                <p>{stats.totalUsers}</p>
+                <p className="stat-value">{stats.totalUsers}</p>
+                <p className="stat-description">Registered in system</p>
               </div>
             </div>
             
-            <div className="stat-card">
+            <div className="stat-card advance-card">
               <div className="card-icon">
-                <FaMoneyBillWave size={32} />
+                <FaMoneyBillWave size={28} />
               </div>
               <div className="card-content">
                 <h3>Pending Advances</h3>
-                <p>{stats.pendingAdvances}</p>
+                <p className="stat-value">{stats.pendingAdvances}</p>
+                <p className="stat-description">Requiring approval</p>
               </div>
             </div>
           </div>
