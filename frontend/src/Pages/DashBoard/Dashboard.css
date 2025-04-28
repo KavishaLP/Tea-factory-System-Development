@@ -47,7 +47,7 @@
 /* Metrics Row */
 .metrics-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted for smaller cards */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
   gap: 1rem; /* Space between cards */
   margin-bottom: 2rem;
 }
@@ -62,7 +62,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between; /* Ensure content is spaced properly */
-  height: 150px; /* Reduced height */
+  height: auto; /* Allow dynamic height */
   overflow: hidden; /* Prevent content overflow */
 }
 
@@ -90,8 +90,9 @@
 .tea-weight-content {
   display: flex;
   flex-direction: column;
-  height: 100%;
   justify-content: space-between; /* Space out content vertically */
+  height: 100%; /* Ensure it fills the card */
+  gap: 0.5rem; /* Add spacing between elements */
 }
 
 .tea-weight-value {
@@ -105,7 +106,7 @@
 }
 
 .tea-weight-icon {
-  font-size: 2rem; /* Reduced size */
+  font-size: 2rem; /* Adjusted size */
   color: #27ae60;
   margin-bottom: 0.5rem; /* Reduced margin */
 }
@@ -115,7 +116,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem; /* Reduced margin */
   font-size: 0.85rem; /* Adjust font size for better fit */
 }
 
@@ -147,7 +148,7 @@
 
 /* Card Content */
 .card-content h3 {
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1rem; /* Adjusted font size */
   color: #2c3e50;
   margin-bottom: 0.25rem; /* Reduced margin */
   font-weight: 600;
@@ -155,7 +156,7 @@
 }
 
 .card-value {
-  font-size: 1.5rem; /* Reduced font size */
+  font-size: 1.5rem; /* Adjusted font size */
   font-weight: 700;
   color: #2c3e50;
   margin: 0.25rem 0; /* Reduced margin */
@@ -164,7 +165,7 @@
 
 .card-description {
   color: #7f8c8d;
-  font-size: 0.8rem; /* Reduced font size */
+  font-size: 0.8rem; /* Adjusted font size */
   margin: 0;
   text-align: center;
 }
