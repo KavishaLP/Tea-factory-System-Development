@@ -1128,6 +1128,8 @@ export const approvePayment = async (req, res) => {
     }
 };
 
+
+//dashboard related functions
 export const fetchTeaPriceHistory = async (req, res) => {
   try {
     const query = `
