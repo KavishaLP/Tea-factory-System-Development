@@ -8,7 +8,8 @@ import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmpl
     updateTeaPrice,
     approvePayment,
     fetchTeaPriceHistory,
-    fetchTotalEmployees
+    fetchTotalEmployees,
+    fetchFertilizerDetails
 } from '../controllers/managerControllers.js';
 
 const router = express.Router();
@@ -38,6 +39,7 @@ router.post('/update-tea-price', updateTeaPrice);   // Update tea price
 router.put('/approve-payment', approvePayment);     // Approve payment
 router.get('/fetch-tea-price-history', fetchTeaPriceHistory);
 router.get('/fetch-total-employees', fetchTotalEmployees);
+router.get('/fetch-fertilizer-details', fetchFertilizerDetails);
 
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
 
