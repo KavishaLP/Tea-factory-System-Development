@@ -230,17 +230,21 @@ const Dashboard = () => {
       },
       title: {
         display: true,
-        text: `Tea Weight by ${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}`,
+        text: 'Total Tea Weight Collection History',
+        font: {
+          size: 20,
+          weight: 'bold',
+        },
         padding: {
           bottom: 10
         }
       },
       subtitle: {
         display: true,
-        text: 'Overview of tea collection weights over time',
+        text: `Overview of tea collection weights over time (${timeRange})`,
         color: '#666666',
         font: {
-          size: 12,
+          size: 14,
           family: 'Inter',
           weight: '400',
         },
@@ -274,17 +278,21 @@ const Dashboard = () => {
       },
       title: {
         display: true,
-        text: 'Tea Price History',
+        text: 'Monthly Tea Price History',
+        font: {
+          size: 20,
+          weight: 'bold',
+        },
         padding: {
           bottom: 10
         }
       },
       subtitle: {
         display: true,
-        text: 'Monthly tea price per kilogram',
+        text: 'Overview of tea price changes per kilogram',
         color: '#666666',
         font: {
-          size: 12,
+          size: 14,
           family: 'Inter',
           weight: '400',
         },

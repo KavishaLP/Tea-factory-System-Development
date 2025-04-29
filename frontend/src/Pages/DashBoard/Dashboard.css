@@ -468,33 +468,40 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  margin-top: 1rem;
 }
 
 .tea-inventory-table th {
   background: #f8f9fa;
   color: #2c3e50;
   font-weight: 600;
-  padding: 1rem;
+  padding: 1.2rem;
   text-align: left;
   border-bottom: 2px solid #dee2e6;
 }
 
 .tea-inventory-table td {
-  padding: 1rem;
+  padding: 1.2rem;
   border-bottom: 1px solid #eee;
+  vertical-align: top;
 }
 
 .tea-type {
   font-weight: 600;
   color: #2c3e50;
   background-color: #f8f9fa;
-  width: 20%;
+  width: 25%;
+}
+
+.packet-details {
+  width: 50%;
 }
 
 .last-updated {
   color: #666;
   font-size: 0.9rem;
   width: 25%;
+  text-align: right;
 }
 
 .packet-grid {
@@ -511,6 +518,19 @@
   padding: 0.75rem 1rem;
   border-radius: 6px;
   border: 1px solid #eee;
+  transition: transform 0.2s ease;
+}
+
+.packet-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: #fff;
+  border-color: #dee2e6;
+}
+
+.packet-size {
+  font-weight: 500;
+  color: #444;
 }
 
 .packet-count {
@@ -596,6 +616,27 @@
   
   .fertilizer-section {
     padding: 1rem;
+  }
+
+  .tea-inventory-table td {
+    padding: 1rem;
+  }
+  
+  .packet-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tea-type {
+    width: 30%;
+  }
+  
+  .packet-details {
+    width: 45%;
+  }
+  
+  .last-updated {
+    width: 25%;
+    font-size: 0.8rem;
   }
 }
 
