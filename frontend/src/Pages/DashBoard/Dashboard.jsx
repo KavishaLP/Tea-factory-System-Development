@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaUsers, FaWeightHanging, FaChartBar, FaChartLine } from 'react-icons/fa';
-import { FaMoneyBillWave } from 'react-icons/fa';
+import { FaMoneyBillWave, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -349,9 +349,21 @@ const Dashboard = () => {
             <div className="metric-card tea-weight-card">
               <div className="tea-weight-content">
                 <div className="date-navigation">
-                  <button onClick={handlePrev} disabled={isPrevDisabled}>Prev</button>
+                  <button 
+                    onClick={handlePrev} 
+                    disabled={isPrevDisabled}
+                    className="nav-button"
+                  >
+                    <FaChevronLeft />
+                  </button>
                   <span>{formatDate(selectedDate)}</span>
-                  <button onClick={handleNext} disabled={isNextDisabled}>Next</button>
+                  <button 
+                    onClick={handleNext} 
+                    disabled={isNextDisabled}
+                    className="nav-button"
+                  >
+                    <FaChevronRight />
+                  </button>
                 </div>
                 <div className="tea-weight-value">
                   <div className="tea-weight-icon">
