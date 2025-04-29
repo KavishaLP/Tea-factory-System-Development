@@ -322,6 +322,61 @@
   font-size: 1.1rem;
 }
 
+/* Fertilizer Section */
+.fertilizer-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.fertilizer-section h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.fertilizer-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.fertilizer-card {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  transition: transform 0.2s ease;
+}
+
+.fertilizer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.fertilizer-card h3 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.5rem;
+}
+
+.fertilizer-details {
+  margin-top: 0.5rem;
+}
+
+.fertilizer-details p {
+  color: #495057;
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
   .dashboard-admin {
