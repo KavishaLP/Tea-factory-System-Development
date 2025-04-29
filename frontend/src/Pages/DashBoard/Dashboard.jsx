@@ -405,8 +405,8 @@ const Dashboard = () => {
                   Daily
                 </button>
                 <button 
-                  className={timeRange === 'day' ? 'active' : ''}
-                  onClick={() => setTimeRange('day')}
+                  className={timeRange === 'week' ? 'active' : ''} // Fixed from 'day' to 'week'
+                  onClick={() => setTimeRange('week')}
                 >
                   Weekly
                 </button>
