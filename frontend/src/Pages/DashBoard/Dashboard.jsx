@@ -165,7 +165,23 @@ const Dashboard = () => {
       title: {
         display: true,
         text: `Tea Weight by ${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}`,
+        padding: {
+          bottom: 10
+        }
       },
+      subtitle: {
+        display: true,
+        text: 'Overview of tea collection weights over time',
+        color: '#666666',
+        font: {
+          size: 12,
+          family: 'Inter',
+          weight: '400',
+        },
+        padding: {
+          bottom: 20
+        }
+      }
     },
     scales: {
       y: {
