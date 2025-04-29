@@ -325,18 +325,18 @@
 /* Fertilizer Section */
 .fertilizer-section {
   background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
 }
 
 .fertilizer-section h2 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 1rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
   border-bottom: 2px solid #eee;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.75rem;
 }
 
 .fertilizer-cards {
@@ -377,34 +377,74 @@
   font-size: 0.9rem;
 }
 
-/* Fertilizer Table */
-.fertilizer-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-top: 1rem;
+.table-responsive {
+  overflow-x: auto;
 }
 
-.fertilizer-table th,
-.fertilizer-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+.fertilizer-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 8px;
 }
 
 .fertilizer-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
+  background: #f8f9fa;
   color: #2c3e50;
-}
-
-.fertilizer-table tr:hover {
-  background-color: #f5f6f7;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
 }
 
 .fertilizer-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.fertilizer-type {
+  font-weight: 600;
+  color: #2c3e50;
+  background-color: #f8f9fa;
+}
+
+.packet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.packet-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  transition: all 0.2s ease;
+}
+
+.packet-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: #fff;
+  border-color: #dee2e6;
+}
+
+.packet-size {
+  font-weight: 500;
   color: #444;
+}
+
+.packet-price {
+  color: #2ecc71;
+  font-weight: 600;
+}
+
+.fertilizer-group:hover {
+  background-color: #f8f9fa;
 }
 
 /* Responsive Design */
@@ -473,6 +513,14 @@
 
   .chart-container {
     max-height: 300px; /* Adjust height for smaller screens */
+  }
+
+  .packet-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .fertilizer-section {
+    padding: 1rem;
   }
 }
 

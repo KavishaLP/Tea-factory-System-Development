@@ -431,24 +431,45 @@ const Dashboard = () => {
             <div className="fertilizer-section">
               <h2>Fertilizer Details</h2>
               {fertilizerData ? (
-                <table className="fertilizer-table">
-                  <thead>
-                    <tr>
-                      <th>Fertilizer Type</th>
-                      <th>Packet Size</th>
-                      <th>Price (Rs)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {fertilizerData.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.fertilizerType}</td>
-                        <td>{item.packetType}</td>
-                        <td>Rs. {Number(item.price).toFixed(2)}</td>
+                <div className="table-responsive">
+                  <table className="fertilizer-table">
+                    <thead>
+                      <tr>
+                        <th>Fertilizer Type</th>
+                        <th>Packet Details</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {Object.values(fertilizerData.reduce((acc, item) => {
+                        if (!acc[item.fertilizerType]) {
+                          acc[item.fertilizerType] = {
+                            type: item.fertilizerType,
+                            packets: []
+                          };
+                        }
+                        acc[item.fertilizerType].packets.push({
+                          size: item.packetType,
+                          price: item.price
+                        });
+                        return acc;
+                      }, {})).map((group, index) => (
+                        <tr key={index} className="fertilizer-group">
+                          <td className="fertilizer-type">{group.type}</td>
+                          <td className="packet-details">
+                            <div className="packet-grid">
+                              {group.packets.map((packet, pIndex) => (
+                                <div key={pIndex} className="packet-item">
+                                  <span className="packet-size">{packet.size}</span>
+                                  <span className="packet-price">Rs. {Number(packet.price).toFixed(2)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
                 <div className="loading-state">
                   <div className="spinner"></div>
