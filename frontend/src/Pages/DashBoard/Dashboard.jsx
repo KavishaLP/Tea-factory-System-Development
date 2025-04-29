@@ -46,6 +46,7 @@ const Dashboard = () => {
   const [teaPriceData, setTeaPriceData] = useState(null);
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [fertilizerData, setFertilizerData] = useState(null);
+  const [teaInventory, setTeaInventory] = useState(null);
 
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
@@ -185,6 +186,22 @@ const Dashboard = () => {
     };
 
     fetchFertilizerDetails();
+  }, []);
+
+  useEffect(() => {
+    const fetchTeaInventory = async () => {
+      try {
+        const res = await axios.get(
+          'http://localhost:8081/api/manager/fetch-tea-inventory',
+          { withCredentials: true }
+        );
+        setTeaInventory(res.data);
+      } catch (error) {
+        console.error("Error fetching tea inventory:", error);
+      }
+    };
+
+    fetchTeaInventory();
   }, []);
 
   const handlePrev = () => {
@@ -474,6 +491,71 @@ const Dashboard = () => {
                 <div className="loading-state">
                   <div className="spinner"></div>
                   <p>Loading fertilizer data...</p>
+                </div>
+              )}
+            </div>
+            <div className="tea-inventory-section">
+              <h2>Tea Inventory</h2>
+              {teaInventory ? (
+                <div className="table-responsive">
+                  <table className="tea-inventory-table">
+                    <thead>
+                      <tr>
+                        <th>Tea Type</th>
+                        <th>Available Packets</th>
+                        <th>Last Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.values(teaInventory.reduce((acc, item) => {
+                        if (!acc[item.tea_type]) {
+                          acc[item.tea_type] = {
+                            type: item.tea_type,
+                            packets: [],
+                            lastUpdated: new Date(item.last_updated)
+                          };
+                        }
+                        acc[item.tea_type].packets.push({
+                          size: item.packet_size,
+                          count: item.packet_count
+                        });
+                        // Keep the most recent update date
+                        const itemDate = new Date(item.last_updated);
+                        if (itemDate > acc[item.tea_type].lastUpdated) {
+                          acc[item.tea_type].lastUpdated = itemDate;
+                        }
+                        return acc;
+                      }, {})).map((group, index) => (
+                        <tr key={index} className="inventory-group">
+                          <td className="tea-type">{group.type}</td>
+                          <td className="packet-details">
+                            <div className="packet-grid">
+                              {group.packets.map((packet, pIndex) => (
+                                <div key={pIndex} className="packet-item">
+                                  <span className="packet-size">{packet.size}</span>
+                                  <span className="packet-count">{packet.count} packets</span>
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="last-updated">
+                            {new Date(group.lastUpdated).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="loading-state">
+                  <div className="spinner"></div>
+                  <p>Loading tea inventory...</p>
                 </div>
               )}
             </div>
