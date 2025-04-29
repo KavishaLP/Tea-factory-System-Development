@@ -1186,6 +1186,29 @@ export const fetchFertilizerDetails = async (req, res) => {
   }
 };
 
+export const fetchTeaInventory = async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        tea_type,
+        packet_size,
+        packet_count,
+        last_updated
+      FROM tea_inventory
+      ORDER BY tea_type, packet_size
+    `;
+    
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 
 
 
