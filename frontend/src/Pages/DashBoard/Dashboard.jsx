@@ -437,7 +437,7 @@ const Dashboard = () => {
                       <h3>{item.fertilizerType}</h3>
                       <div className="fertilizer-details">
                         <p>Packet Size: {item.packetType}</p>
-                        <p>Price: Rs. {item.price.toFixed(2)}</p>
+                        <p>Price: Rs. {Number(item.price).toFixed(2)}</p>
                       </div>
                     </div>
                   ))
