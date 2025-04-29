@@ -6,7 +6,9 @@ import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmpl
     fetchToPayments, 
     fetchTeaPrice,
     updateTeaPrice,
-    approvePayment
+    approvePayment,
+    fetchTeaPriceHistory,
+    fetchTotalEmployees
 } from '../controllers/managerControllers.js';
 
 const router = express.Router();
@@ -34,14 +36,9 @@ router.get('/fetch-to-payments', fetchToPayments);  // Fetch TO payments for mon
 router.get('/fetch-tea-price', fetchTeaPrice);      // Fetch tea price for month/year
 router.post('/update-tea-price', updateTeaPrice);   // Update tea price
 router.put('/approve-payment', approvePayment);     // Approve payment
-
-
+router.get('/fetch-tea-price-history', fetchTeaPriceHistory);
+router.get('/fetch-total-employees', fetchTotalEmployees);
 
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
-
-
-
-
-
 
 export default router;

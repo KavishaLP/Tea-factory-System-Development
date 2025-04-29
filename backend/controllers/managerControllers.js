@@ -1128,8 +1128,64 @@ export const approvePayment = async (req, res) => {
     }
 };
 
+export const fetchTeaPriceHistory = async (req, res) => {
+  try {
+    const query = `
+      SELECT month_year, price 
+      FROM tea_price_per_kilo 
+      ORDER BY month_year ASC 
+      LIMIT 12
+    `;
+    
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
-  
+export const fetchTotalEmployees = async (req, res) => {
+  try {
+    const query = "SELECT COUNT(*) as totalEmployees FROM employeeaccounts";
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      res.json({ totalEmployees: results[0].totalEmployees });
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const fetchFertilizerDetails = async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        fertilizerType,
+        packetType,
+        price
+      FROM fertilizer_prices
+      ORDER BY fertilizerType, packetType
+    `;
+    
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+
 
 
 

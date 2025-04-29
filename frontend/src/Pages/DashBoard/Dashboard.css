@@ -192,6 +192,16 @@
   color: #e74c3c;
 }
 
+.employees-icon {
+  background-color: #3498db;
+  color: white;
+  padding: 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Content Area */
 .dashboard-content-area {
   background: white;
@@ -199,6 +209,9 @@
   padding: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 /* Chart Controls */
@@ -254,14 +267,15 @@
   width: 100%; /* Use full width of the parent container */
   max-height: 400px; /* Set a maximum height for the container */
   position: relative;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 0; /* Remove padding to avoid affecting canvas size */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1rem;
   display: flex; /* Use flexbox for alignment */
   align-items: center; /* Center the canvas vertically */
   justify-content: center; /* Center the canvas horizontally */
   overflow: hidden; /* Prevent overflow issues */
+  margin-bottom: 2rem;
 }
 
 /* Chart Canvas */

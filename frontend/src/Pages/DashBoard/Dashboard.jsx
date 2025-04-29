@@ -43,6 +43,8 @@ const Dashboard = () => {
   const [chartType, setChartType] = useState('bar');
   const [timeRange, setTimeRange] = useState('day');
   const [chartLoading, setChartLoading] = useState(true);
+  const [teaPriceData, setTeaPriceData] = useState(null);
+  const [totalEmployees, setTotalEmployees] = useState(0);
 
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
@@ -51,16 +53,16 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersRes, requestsRes] = await Promise.all([
+        const [usersRes, employeesRes] = await Promise.all([
           axios.get("http://localhost:8081/api/admin/fetch-total-users", { withCredentials: true }),
-          axios.get("http://localhost:8081/api/admin/fetch-pending-requests", { withCredentials: true })
+          axios.get("http://localhost:8081/api/manager/fetch-total-employees", { withCredentials: true })
         ]);
 
         setTotalUsers(usersRes.data.totalUsers);
-        setPendingRequests(requestsRes.data.count);
+        setTotalEmployees(employeesRes.data.totalEmployees);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching user/request data:", error);
+        console.error("Error fetching data:", error);
         setLoading(false);
       }
     };
@@ -138,6 +140,36 @@ const Dashboard = () => {
     fetchChartData();
   }, [timeRange]);
 
+  useEffect(() => {
+    const fetchTeaPriceHistory = async () => {
+      try {
+        const res = await axios.get(
+          'http://localhost:8081/api/manager/fetch-tea-price-history',
+          { withCredentials: true }
+        );
+
+        const labels = res.data.map(item => item.month_year);
+        const prices = res.data.map(item => item.price);
+
+        setTeaPriceData({
+          labels,
+          datasets: [{
+            label: 'Tea Price per Kilo (Rs)',
+            data: prices,
+            borderColor: '#e74c3c',
+            backgroundColor: '#e74c3c',
+            borderWidth: 2,
+            tension: 0.1
+          }]
+        });
+      } catch (error) {
+        console.error("Error fetching tea price history:", error);
+      }
+    };
+
+    fetchTeaPriceHistory();
+  }, []);
+
   const handlePrev = () => {
     const newDate = new Date(selectedDate);
     newDate.setDate(selectedDate.getDate() - 1);
@@ -200,6 +232,50 @@ const Dashboard = () => {
     },
   };
 
+  const priceChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Tea Price History',
+        padding: {
+          bottom: 10
+        }
+      },
+      subtitle: {
+        display: true,
+        text: 'Monthly tea price per kilogram',
+        color: '#666666',
+        font: {
+          size: 12,
+          family: 'Inter',
+          weight: '400',
+        },
+        padding: {
+          bottom: 20
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        title: {
+          display: true,
+          text: 'Price (Rs)'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Month'
+        }
+      }
+    },
+  };
+
   return (
     <div className="dashboard-admin">
       <div className="dashboard-header">
@@ -250,15 +326,15 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Pending Advance Requests */}
+            {/* Employee Accounts */}
             <div className="metric-card">
-              <div className="card-icon requests-icon">
-                <FaMoneyBillWave />
+              <div className="card-icon employees-icon">
+                <FaUsers /> {/* You can keep using FaUsers or choose a different icon */}
               </div>
               <div className="card-content">
-                <h3>Pending Advance Requests</h3>
-                <p className="card-value">{pendingRequests}</p>
-                <p className="card-description">Awaiting approval</p>
+                <h3>Employee Accounts</h3>
+                <p className="card-value">{totalEmployees}</p>
+                <p className="card-description">Total employees</p>
               </div>
             </div>
           </div>
@@ -322,6 +398,16 @@ const Dashboard = () => {
               ) : (
                 <div className="no-data-message">
                   No tea weight data available
+                </div>
+              )}
+            </div>
+            <div className="chart-container">
+              {teaPriceData ? (
+                <Line data={teaPriceData} options={priceChartOptions} />
+              ) : (
+                <div className="loading-state">
+                  <div className="spinner"></div>
+                  <p>Loading price history...</p>
                 </div>
               )}
             </div>
