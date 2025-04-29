@@ -5,8 +5,14 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaUsers, FaWeightHanging, FaChartBar, FaChartLine } from 'react-icons/fa';
-import { FaMoneyBillWave, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { 
+  FaUsers, 
+  FaWeightHanging, 
+  FaChevronLeft, 
+  FaChevronRight,
+  FaChartBar,
+  FaChartLine 
+} from 'react-icons/fa';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -400,13 +406,15 @@ const Dashboard = () => {
                   className={chartType === 'bar' ? 'active' : ''}
                   onClick={() => setChartType('bar')}
                 >
-                  <FaChartBar /> Bar Chart
+                  <FaChartBar className="chart-icon" />
+                  Bar Chart
                 </button>
                 <button 
                   className={chartType === 'line' ? 'active' : ''}
                   onClick={() => setChartType('line')}
                 >
-                  <FaChartLine /> Line Chart
+                  <FaChartLine className="chart-icon" />
+                  Line Chart
                 </button>
               </div>
               <div className="time-range-toggle">
