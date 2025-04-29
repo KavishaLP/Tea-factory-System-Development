@@ -345,7 +345,7 @@ const Dashboard = () => {
                 <FaUsers />
               </div>
               <div className="card-content">
-                <h3>Total Users</h3>
+                <h3>Total Farmers</h3>
                 <p className="card-value">{totalUsers}</p>
                 <p className="card-description">Registered accounts</p>
               </div>
@@ -523,7 +523,7 @@ const Dashboard = () => {
               )}
             </div>
             <div className="tea-inventory-section">
-              <h2>Tea Inventory</h2>
+              <h2>Tea Packets Inventory</h2>
               {teaInventory ? (
                 <div className="table-responsive">
                   <table className="tea-inventory-table">

@@ -73,13 +73,13 @@ const CreateEmployeeAccount = () => {
 
   // Validate mobile number format
   const validateMobileNumber = (number, fieldName) => {
-    if (!number) return ""; // Empty is valid (only required for mobile1)
+    if (!number) return fieldName === "mobile1" ? "Mobile number is required" : "";
     
-    // Sri Lankan mobile number regex (starts with 0 or +94 followed by 9 digits)
-    const regex = /^(?:\+94|0)(7[0-9]|71|72|75|76|77|78|21|23|24|25|26|27|28|31|32|33|34|35|36|37|38|41|45|47|51|52|54|55|57|63|65|66|67|81|91|11|70|60|40)([0-9]{6})$/;
+    // Sri Lankan mobile number regex (accepts 0 or +94 prefix)
+    const regex = /^(?:\+94|0)(7[01245678]|71|72|75|76|77|78|21|23|24|25|26|27|28|31|32|33|34|35|36|37|38|41|45|47|51|52|54|55|57|63|65|66|67|81|91)(\d{7})$/;
     
     if (!regex.test(number)) {
-      return "Please enter a valid Sri Lankan mobile number";
+      return "Please enter a valid Sri Lankan mobile number (e.g., 0771234567 or +94771234567)";
     }
     return "";
   };
@@ -88,7 +88,9 @@ const CreateEmployeeAccount = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    // For mobile fields, validate on change
+    setFormData({ ...formData, [name]: value });
+    
+    // Validate mobile numbers immediately on change
     if (name === "mobile1" || name === "mobile2") {
       const errorMessage = validateMobileNumber(value, name);
       setMobileErrors(prev => ({
@@ -96,8 +98,6 @@ const CreateEmployeeAccount = () => {
         [name]: errorMessage
       }));
     }
-    
-    setFormData({ ...formData, [name]: value });
   };
 
   // Handle search input change
@@ -109,13 +109,7 @@ const CreateEmployeeAccount = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate required fields
-    if (!formData.userId || !formData.firstName || !formData.lastName || !formData.mobile1) {
-      setError("Please fill in all required fields");
-      return;
-    }
-
-    // Validate mobile numbers before submission
+    // Run validation for all fields before submission
     const mobile1Error = validateMobileNumber(formData.mobile1, "mobile1");
     const mobile2Error = formData.mobile2 ? validateMobileNumber(formData.mobile2, "mobile2") : "";
     
@@ -124,8 +118,12 @@ const CreateEmployeeAccount = () => {
       mobile2: mobile2Error
     });
 
-    if (mobile1Error || mobile2Error) {
-      setError("Please correct the mobile number errors");
+    // Check for any validation errors
+    const hasErrors = !formData.userId || !formData.firstName || !formData.lastName || 
+                     mobile1Error || mobile2Error;
+
+    if (hasErrors) {
+      setError("Please fill in all required fields correctly");
       return;
     }
 
@@ -228,7 +226,7 @@ const CreateEmployeeAccount = () => {
                   value={formData.mobile1}
                   onChange={handleChange}
                   required
-                  placeholder="Enter mobile number 1 (e.g., 0771234567)"
+                  placeholder="e.g., 0771234567 or +94771234567"
                 />
                 {mobileErrors.mobile1 && (
                   <span className="error-message">{mobileErrors.mobile1}</span>
@@ -241,7 +239,7 @@ const CreateEmployeeAccount = () => {
                   name="mobile2"
                   value={formData.mobile2}
                   onChange={handleChange}
-                  placeholder="Enter mobile number 2 (e.g., 0771234567)"
+                  placeholder="e.g., 0771234567 or +94771234567"
                 />
                 {mobileErrors.mobile2 && (
                   <span className="error-message">{mobileErrors.mobile2}</span>
@@ -251,7 +249,11 @@ const CreateEmployeeAccount = () => {
 
             {error && <p className="error">{error}</p>}
 
-            <button type="submit" disabled={isLoading || mobileErrors.mobile1 || mobileErrors.mobile2} className={isLoading ? "loading" : ""}>
+            <button 
+              type="submit" 
+              disabled={isLoading || mobileErrors.mobile1 || mobileErrors.mobile2} 
+              className={isLoading ? "loading" : ""}
+            >
               {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </form>

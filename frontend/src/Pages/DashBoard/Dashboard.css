@@ -127,8 +127,8 @@
   background: #ffffff;
   border: 1px solid #dee2e6;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,8 +152,8 @@
 }
 
 .nav-button svg {
-  width: 16px;
-  height: 16px;
+  width: 25px;
+  height: 25px;
 }
 
 .date-navigation span {
@@ -587,35 +587,39 @@
   font-weight: 600;
   color: #2c3e50;
   background-color: #f8f9fa;
-  width: 25%;
+  width: 20%;
 }
 
 .packet-details {
-  width: 50%;
+  width: 60%; /* Increased width for more space */
 }
 
 .last-updated {
+  width: 20%;
   color: #666;
   font-size: 0.9rem;
-  width: 25%;
   text-align: right;
 }
 
 .packet-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
+  padding: 0.5rem 0;
 }
 
 .packet-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex: 1 1 auto;
+  min-width: 150px;
+  max-width: calc(33.33% - 0.75rem); /* Show 3 items per row with gap */
   background: #f8f9fa;
   padding: 0.75rem 1rem;
   border-radius: 6px;
   border: 1px solid #eee;
   transition: transform 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .packet-item:hover {
@@ -714,6 +718,10 @@
   .dashboard-grid {
     padding: 1.5rem;
   }
+
+  .packet-item {
+    max-width: calc(50% - 0.75rem); /* Show 2 items per row on medium screens */
+  }
 }
 
 @media (max-width: 768px) {
@@ -774,16 +782,15 @@
   }
   
   .tea-type {
-    width: 30%;
+    width: 25%;
   }
   
   .packet-details {
-    width: 45%;
+    width: 55%;
   }
   
   .last-updated {
-    width: 25%;
-    font-size: 0.8rem;
+    width: 20%;
   }
 
   .date-navigation {
@@ -851,5 +858,21 @@
   
   .chart-container {
     max-height: 250px; /* Further reduce height for mobile devices */
+  }
+
+  .packet-item {
+    max-width: 100%; /* Show 1 item per row on small screens */
+  }
+  
+  .tea-type {
+    width: 25%;
+  }
+  
+  .packet-details {
+    width: 55%;
+  }
+  
+  .last-updated {
+    width: 20%;
   }
 }

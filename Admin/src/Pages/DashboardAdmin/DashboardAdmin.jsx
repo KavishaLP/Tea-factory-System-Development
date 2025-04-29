@@ -200,7 +200,7 @@ const DashboardAdmin = () => {
                 <FaUsers />
               </div>
               <div className="card-content">
-                <h3>Total Users</h3>
+                <h3>Total Farmers</h3>
                 <p className="card-value">{totalUsers}</p>
                 <p className="card-description">Registered accounts</p>
               </div>
