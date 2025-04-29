@@ -430,24 +430,31 @@ const Dashboard = () => {
             </div>
             <div className="fertilizer-section">
               <h2>Fertilizer Details</h2>
-              <div className="fertilizer-cards">
-                {fertilizerData ? (
-                  fertilizerData.map((item, index) => (
-                    <div key={index} className="fertilizer-card">
-                      <h3>{item.fertilizerType}</h3>
-                      <div className="fertilizer-details">
-                        <p>Packet Size: {item.packetType}</p>
-                        <p>Price: Rs. {Number(item.price).toFixed(2)}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="loading-state">
-                    <div className="spinner"></div>
-                    <p>Loading fertilizer data...</p>
-                  </div>
-                )}
-              </div>
+              {fertilizerData ? (
+                <table className="fertilizer-table">
+                  <thead>
+                    <tr>
+                      <th>Fertilizer Type</th>
+                      <th>Packet Size</th>
+                      <th>Price (Rs)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fertilizerData.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.fertilizerType}</td>
+                        <td>{item.packetType}</td>
+                        <td>Rs. {Number(item.price).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="loading-state">
+                  <div className="spinner"></div>
+                  <p>Loading fertilizer data...</p>
+                </div>
+              )}
             </div>
           </div>
         </>
