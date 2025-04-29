@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [chartLoading, setChartLoading] = useState(true);
   const [teaPriceData, setTeaPriceData] = useState(null);
   const [totalEmployees, setTotalEmployees] = useState(0);
+  const [fertilizerData, setFertilizerData] = useState(null);
 
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
@@ -168,6 +169,22 @@ const Dashboard = () => {
     };
 
     fetchTeaPriceHistory();
+  }, []);
+
+  useEffect(() => {
+    const fetchFertilizerDetails = async () => {
+      try {
+        const res = await axios.get(
+          'http://localhost:8081/api/manager/fetch-fertilizer-details',
+          { withCredentials: true }
+        );
+        setFertilizerData(res.data);
+      } catch (error) {
+        console.error("Error fetching fertilizer details:", error);
+      }
+    };
+
+    fetchFertilizerDetails();
   }, []);
 
   const handlePrev = () => {
@@ -410,6 +427,27 @@ const Dashboard = () => {
                   <p>Loading price history...</p>
                 </div>
               )}
+            </div>
+            <div className="fertilizer-section">
+              <h2>Fertilizer Details</h2>
+              <div className="fertilizer-cards">
+                {fertilizerData ? (
+                  fertilizerData.map((item, index) => (
+                    <div key={index} className="fertilizer-card">
+                      <h3>{item.fertilizerType}</h3>
+                      <div className="fertilizer-details">
+                        <p>Packet Size: {item.packetType}</p>
+                        <p>Price: Rs. {item.price.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="loading-state">
+                    <div className="spinner"></div>
+                    <p>Loading fertilizer data...</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </>
