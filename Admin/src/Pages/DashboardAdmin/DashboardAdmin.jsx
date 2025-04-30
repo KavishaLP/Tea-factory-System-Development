@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaUsers, FaWeightHanging, FaChartBar, FaChartLine } from 'react-icons/fa';
-import { FaMoneyBillWave } from 'react-icons/fa';
+import { 
+  FaUsers, FaWeightHanging, FaChartBar, FaChartLine, FaCalendarAlt,
+  FaArrowLeft, FaArrowRight, FaMoneyBillWave 
+} from 'react-icons/fa';
 import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -41,6 +43,14 @@ const DashboardAdmin = () => {
 
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
+  };
+
+  const formatDisplayDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   useEffect(() => {
@@ -117,10 +127,14 @@ const DashboardAdmin = () => {
           datasets: [{
             label: 'Tea Weight (kg)',
             data,
-            backgroundColor: '#27ae60',
+            backgroundColor: 'rgba(39, 174, 96, 0.6)',
             borderColor: '#27ae60',
             borderWidth: 2,
-            tension: 0.1
+            tension: 0.3,
+            fill: chartType === 'line' ? 'origin' : undefined,
+            pointBackgroundColor: '#27ae60',
+            pointRadius: 4,
+            pointHoverRadius: 6
           }]
         });
         setChartLoading(false);
@@ -131,7 +145,7 @@ const DashboardAdmin = () => {
     };
 
     fetchChartData();
-  }, [timeRange]);
+  }, [timeRange, chartType]);
 
   const handlePrev = () => {
     const newDate = new Date(selectedDate);
@@ -145,6 +159,10 @@ const DashboardAdmin = () => {
     setSelectedDate(newDate);
   };
 
+  const handleDateChange = (e) => {
+    setSelectedDate(new Date(e.target.value));
+  };
+
   const today = new Date();
   const daysDiff = Math.floor((today - selectedDate) / (1000 * 60 * 60 * 24));
 
@@ -153,30 +171,109 @@ const DashboardAdmin = () => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          usePointStyle: true,
+          boxWidth: 10,
+          padding: 20,
+          font: {
+            size: 13
+          }
+        }
       },
       title: {
         display: true,
-        text: `Tea Weight by ${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}`,
+        text: 'Tea Weight Collection History',
+        font: {
+          size: 18,
+          weight: 'bold',
+        },
+        padding: {
+          top: 10,
+          bottom: 5
+        }
       },
+      subtitle: {
+        display: true,
+        text: `${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)} Overview`,
+        color: '#666666',
+        font: {
+          size: 14,
+          weight: 'normal',
+        },
+        padding: {
+          bottom: 20
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleFont: {
+          size: 14
+        },
+        bodyFont: {
+          size: 13
+        },
+        padding: 12,
+        cornerRadius: 6,
+        displayColors: false
+      }
     },
     scales: {
       y: {
         beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)',
+          borderDash: [5, 5],
+        },
+        ticks: {
+          font: {
+            size: 12
+          },
+          padding: 8
+        },
         title: {
           display: true,
-          text: 'Weight (kg)'
+          text: 'Weight (kg)',
+          font: {
+            size: 13,
+            weight: 'bold'
+          },
+          padding: {
+            bottom: 10
+          }
         }
       },
       x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            size: 12
+          },
+          maxRotation: 45,
+          minRotation: 45
+        },
         title: {
           display: true,
-          text: timeRange.charAt(0).toUpperCase() + timeRange.slice(1)
+          text: timeRange.charAt(0).toUpperCase() + timeRange.slice(1),
+          font: {
+            size: 13,
+            weight: 'bold'
+          },
+          padding: {
+            top: 10
+          }
         }
       }
     },
+    animation: {
+      duration: 1000,
+      easing: 'easeOutQuart'
+    }
   };
 
   return (
@@ -208,23 +305,49 @@ const DashboardAdmin = () => {
 
             {/* Total Tea Weight */}
             <div className="metric-card tea-weight-card">
+              <div className="tea-weight-header">
+                <h3><FaWeightHanging /> Total Tea Weight</h3>
+              </div>
               <div className="tea-weight-content">
                 <div className="date-navigation">
-                  <button onClick={handlePrev} disabled={isPrevDisabled}>Prev</button>
-                  <span>{formatDate(selectedDate)}</span>
-                  <button onClick={handleNext} disabled={isNextDisabled}>Next</button>
-                </div>
-                <div className="tea-weight-value">
-                  <div className="tea-weight-icon">
-                    <FaWeightHanging />
+                  <button 
+                    className="nav-button" 
+                    onClick={handlePrev} 
+                    disabled={isPrevDisabled}
+                    title="Previous Day"
+                  >
+                    <FaArrowLeft />
+                  </button>
+                  
+                  <div className="date-picker-container">
+                    <FaCalendarAlt className="calendar-icon" />
+                    <input 
+                      type="date" 
+                      value={formatDate(selectedDate)}
+                      onChange={handleDateChange}
+                      max={formatDate(today)}
+                      className="date-input"
+                    />
+                    <span className="formatted-date">{formatDisplayDate(selectedDate)}</span>
                   </div>
-                  <div>
-                    <h3>Total Tea Weight</h3>
-                    <p className="card-value">
-                      {totalTeaWeight !== null ? `${totalTeaWeight} kg` : 'N/A'}
-                    </p>
-                  </div>
+                  
+                  <button 
+                    className="nav-button" 
+                    onClick={handleNext} 
+                    disabled={isNextDisabled}
+                    title="Next Day"
+                  >
+                    <FaArrowRight />
+                  </button>
                 </div>
+                
+                <p className="tea-weight-display">
+                  {totalTeaWeight !== null ? (
+                    <><span className="tea-weight-value">{totalTeaWeight}</span> <span className="tea-weight-unit">kg</span></>
+                  ) : (
+                    <span className="no-data">No data available</span>
+                  )}
+                </p>
                 <p className="card-description">Final weight collected</p>
               </div>
             </div>
@@ -235,7 +358,7 @@ const DashboardAdmin = () => {
                 <FaMoneyBillWave />
               </div>
               <div className="card-content">
-                <h3>Pending Advance Requests</h3>
+                <h3>Pending Requests</h3>
                 <p className="card-value">{pendingRequests}</p>
                 <p className="card-description">Awaiting approval</p>
               </div>
@@ -246,13 +369,13 @@ const DashboardAdmin = () => {
             <div className="chart-controls">
               <div className="chart-type-toggle">
                 <button 
-                  className={chartType === 'bar' ? 'active' : ''}
+                  className={`chart-btn ${chartType === 'bar' ? 'active' : ''}`}
                   onClick={() => setChartType('bar')}
                 >
                   <FaChartBar /> Bar Chart
                 </button>
                 <button 
-                  className={chartType === 'line' ? 'active' : ''}
+                  className={`chart-btn ${chartType === 'line' ? 'active' : ''}`}
                   onClick={() => setChartType('line')}
                 >
                   <FaChartLine /> Line Chart
@@ -260,25 +383,25 @@ const DashboardAdmin = () => {
               </div>
               <div className="time-range-toggle">
                 <button 
-                  className={timeRange === 'day' ? 'active' : ''}
+                  className={`time-btn ${timeRange === 'day' ? 'active' : ''}`}
                   onClick={() => setTimeRange('day')}
                 >
                   Daily
                 </button>
                 <button 
-                  className={timeRange === 'day' ? 'active' : ''}
-                  onClick={() => setTimeRange('day')}
+                  className={`time-btn ${timeRange === 'week' ? 'active' : ''}`}
+                  onClick={() => setTimeRange('week')}
                 >
                   Weekly
                 </button>
                 <button 
-                  className={timeRange === 'month' ? 'active' : ''}
+                  className={`time-btn ${timeRange === 'month' ? 'active' : ''}`}
                   onClick={() => setTimeRange('month')}
                 >
                   Monthly
                 </button>
                 <button 
-                  className={timeRange === 'year' ? 'active' : ''}
+                  className={`time-btn ${timeRange === 'year' ? 'active' : ''}`}
                   onClick={() => setTimeRange('year')}
                 >
                   Yearly
@@ -300,7 +423,8 @@ const DashboardAdmin = () => {
                 )
               ) : (
                 <div className="no-data-message">
-                  No tea weight data available
+                  <FaChartBar className="no-data-icon" />
+                  <p>No tea weight data available</p>
                 </div>
               )}
             </div>

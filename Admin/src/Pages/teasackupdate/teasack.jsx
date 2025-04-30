@@ -3,6 +3,11 @@ import axios from 'axios';
 import './teasack.css';
 import Navbar from '../../Component/Navbar/Navbar2';
 import Sidebar from '../../Component/sidebar/sidebar2';
+import { 
+  FaSearch, FaUser, FaWeight, FaCalendarAlt, FaTimes,
+  FaMinusCircle, FaCheckCircle, FaExclamationTriangle,
+  FaLeaf, FaMoneyBill, FaSave
+} from 'react-icons/fa';
 
 function TeaSackUpdate() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -146,24 +151,31 @@ function TeaSackUpdate() {
 
   return (
     <div className="tea-sack-update-container">
-      <Navbar />
-      <Sidebar />
       <div className="tea-sack-update-content-wrapper">
         <div className="tea-sack-update-content">
           <div className="tea-sack-update-page-header">
-            <h1>Tea Sack Update</h1>
+            <h1><FaLeaf /> Tea Sack Update</h1>
           </div>
 
           <div className="tea-sack-update-search-bar">
             <label htmlFor="searchUserId">Search User by ID or Name</label>
-            <input 
-              type="text" 
-              id="searchUserId" 
-              placeholder="Enter user ID or name" 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {isSearching && <div className="search-loading">Searching...</div>}
+            <div className="tea-sack-update-search-input-wrapper">
+              <FaSearch className="tea-sack-update-search-icon" />
+              <input 
+                type="text" 
+                id="searchUserId" 
+                placeholder="Enter user ID or name" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            
+            {isSearching && (
+              <div className="search-loading">
+                <div className="search-loading-spinner"></div>
+                <span>Searching...</span>
+              </div>
+            )}
             
             {/* Search results dropdown */}
             {searchResults.length > 0 && (
@@ -174,7 +186,7 @@ function TeaSackUpdate() {
                     className="search-result-item"
                     onClick={() => handleUserSelect(user)}
                   >
-                    <span>{user.userId}</span>
+                    <span>#{user.userId}</span>
                     <span>{user.name}</span>
                     <span>{user.nic}</span>
                   </div>
@@ -185,87 +197,39 @@ function TeaSackUpdate() {
 
           {selectedUser && (
             <div className="selected-user-info">
-              <h3>Selected User:</h3>
-              <p>ID: {selectedUser.userId}</p>
-              <p>Name: {selectedUser.name}</p>
-              <p>NIC: {selectedUser.nic}</p>
+              <h3><FaUser /> Selected User:</h3>
+              <p><span className="selected-user-info-label">ID:</span> {selectedUser.userId}</p>
+              <p><span className="selected-user-info-label">Name:</span> {selectedUser.name}</p>
+              <p><span className="selected-user-info-label">NIC:</span> {selectedUser.nic}</p>
             </div>
           )}
 
           <form className="tea-sack-update-form" onSubmit={handleSubmit}>
-            <label>Date</label>
-            <input 
-              type="date" 
-              value={date} 
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
+            <div className="tea-sack-update-form-row">
+              <div className="tea-sack-update-form-group">
+                <label htmlFor="date">Date</label>
+                <div className="tea-sack-update-input-wrapper">
+                  <FaCalendarAlt className="tea-sack-update-input-icon" />
+                  <input 
+                    id="date"
+                    type="date" 
+                    value={date} 
+                    onChange={(e) => setDate(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
 
-            <label>Tea Sack Weight (kg)</label>
-            <input 
-              type="number" 
-              placeholder="Enter weight in kg" 
-              value={teaSackWeight} 
-              onChange={handleTeaSackWeightChange}
-              required
-              step="0.01"
-              min="0"
-            />
-
-            <div className="tea-sack-update-deduction-section">
-              <label>Deductions (kg)</label>
-              <div className="tea-sack-update-deduction-fields">
-                <div>
-                  <span>For water:</span>
+              <div className="tea-sack-update-form-group">
+                <label htmlFor="teaSackWeight">Tea Sack Weight (kg)</label>
+                <div className="tea-sack-update-input-wrapper">
                   <input 
+                    id="teaSackWeight"
                     type="number" 
-                    name="water" 
-                    value={deductions.water} 
-                    onChange={handleDeductionChange}
-                    step="0.01"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <span>For damage tea leaves:</span>
-                  <input 
-                    type="number" 
-                    name="damageTea" 
-                    value={deductions.damageTea} 
-                    onChange={handleDeductionChange}
-                    step="0.01"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <span>For sack weight:</span>
-                  <input 
-                    type="number" 
-                    name="sackWeight" 
-                    value={deductions.sackWeight} 
-                    onChange={handleDeductionChange}
-                    step="0.01"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <span>For sharped tea:</span>
-                  <input 
-                    type="number" 
-                    name="sharpedTea" 
-                    value={deductions.sharpedTea} 
-                    onChange={handleDeductionChange}
-                    step="0.01"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <span>Other:</span>
-                  <input 
-                    type="number" 
-                    name="other" 
-                    value={deductions.other} 
-                    onChange={handleDeductionChange}
+                    placeholder="Enter weight in kg" 
+                    value={teaSackWeight} 
+                    onChange={handleTeaSackWeightChange}
+                    required
                     step="0.01"
                     min="0"
                   />
@@ -273,25 +237,122 @@ function TeaSackUpdate() {
               </div>
             </div>
 
-            <div className="tea-sack-update-teasack-amount">
-              <label>Net Tea Amount (kg):</label>
-              <input 
-                type="number" 
-                value={totalTeaSackAmount} 
-                readOnly 
-                step="0.01"
-              />
+            <div className="tea-sack-update-deduction-section">
+              <label><FaMinusCircle /> Deductions (kg)</label>
+              <div className="tea-sack-update-deduction-fields">
+                <div className="deduction-field">
+                  <span>For water:</span>
+                  <div className="deduction-input-wrapper">
+                    <input 
+                      type="number" 
+                      name="water" 
+                      value={deductions.water} 
+                      onChange={handleDeductionChange}
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                
+                <div className="deduction-field">
+                  <span>For damage tea leaves:</span>
+                  <div className="deduction-input-wrapper">
+                    <input 
+                      type="number" 
+                      name="damageTea" 
+                      value={deductions.damageTea} 
+                      onChange={handleDeductionChange}
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                
+                <div className="deduction-field">
+                  <span>For sack weight:</span>
+                  <div className="deduction-input-wrapper">
+                    <input 
+                      type="number" 
+                      name="sackWeight" 
+                      value={deductions.sackWeight} 
+                      onChange={handleDeductionChange}
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                
+                <div className="deduction-field">
+                  <span>For sharped tea:</span>
+                  <div className="deduction-input-wrapper">
+                    <input 
+                      type="number" 
+                      name="sharpedTea" 
+                      value={deductions.sharpedTea} 
+                      onChange={handleDeductionChange}
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+                
+                <div className="deduction-field">
+                  <span>Other:</span>
+                  <div className="deduction-input-wrapper">
+                    <input 
+                      type="number" 
+                      name="other" 
+                      value={deductions.other} 
+                      onChange={handleDeductionChange}
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {error && <p className="tea-sack-update-error">{error}</p>}
+            <div className="tea-sack-update-teasack-amount">
+              <label><FaWeight /> Net Tea Amount:</label>
+              <div className="tea-sack-update-teasack-amount-wrapper">
+                <input 
+                  type="text" 
+                  value={totalTeaSackAmount} 
+                  readOnly 
+                />
+                <span className="net-amount-unit">kg</span>
+              </div>
+            </div>
 
-            <button 
-              type="submit" 
-              className="tea-sack-update-submit-button" 
-              disabled={isLoading || !selectedUser}
-            >
-              {isLoading ? "Submitting..." : "Submit Tea Sack Data"}
-            </button>
+            {error && (
+              <p className="tea-sack-update-error">
+                <FaExclamationTriangle /> {error}
+              </p>
+            )}
+
+            <div className="tea-sack-update-form-actions">
+              <button 
+                type="submit" 
+                className="tea-sack-update-submit-button" 
+                disabled={isLoading || !selectedUser}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loading-spinner"></span>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <FaSave /> Submit Tea Sack Data
+                  </>
+                )}
+              </button>
+            </div>
           </form>
         </div>
       </div>

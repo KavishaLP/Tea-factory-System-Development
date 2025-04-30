@@ -79,7 +79,144 @@ export const requestAdvance = async (req, res) => {
     });
 };
 
+export const requestFertilizer = async (req, res) => {
+    console.log("Received Data:", req.body);
 
+    const { userId, paymentOption, items, totalAmount } = req.body;
+
+    if (!userId || !paymentOption || !items || !Array.isArray(items) || items.length === 0) {
+        console.log("All required fields must be provided.");
+        return res.status(400).json({ message: 'All required fields must be provided.' });
+    }
+
+    for (const item of items) {
+        if (!item.fertilizer_veriance_id || !item.amount || item.amount <= 0) {
+            return res.status(400).json({ 
+                message: 'All items must have a valid fertilizer variance ID and positive amount' 
+            });
+        }
+    }
+
+    const requestDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const status = paymentOption.toLowerCase() === "cash" ? "Approved" : "Pending";
+
+    try {
+        const userCheck = await new Promise((resolve, reject) => {
+            const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ?";
+            sqldb.query(sqlCheck, [userId], (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+
+        if (userCheck.length === 0) {
+            return res.status(400).json({ message: 'User with this ID does not exist.' });
+        }
+
+        await new Promise((resolve, reject) => {
+            sqldb.query("START TRANSACTION", (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        for (const item of items) {
+            const fertilizerDetails = await new Promise((resolve, reject) => {
+                const sqlDetails = `
+                    SELECT fertilizerType, packetType, price 
+                    FROM fertilizer_prices 
+                    WHERE fertilizer_veriance_id = ?
+                `;
+                sqldb.query(sqlDetails, [item.fertilizer_veriance_id], (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results[0]);
+                });
+            });
+
+            if (!fertilizerDetails) {
+                await new Promise((resolve) => sqldb.query("ROLLBACK", () => resolve()));
+                return res.status(400).json({ 
+                    message: `Invalid fertilizer variance ID: ${item.fertilizer_veriance_id}` 
+                });
+            }
+
+            await new Promise((resolve, reject) => {
+                const sqlInsert = `
+                    INSERT INTO fertilizer_requests 
+                    (userId, fertilizer_veriance_id, amount, paymentoption, requestDate, status)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                sqldb.query(sqlInsert, [
+                    userId,
+                    item.fertilizer_veriance_id,
+                    item.amount,
+                    paymentOption,
+                    requestDate,
+                    status,
+                ], (err) => {
+                    if (err) return reject(err);
+                    resolve();
+                });
+            });
+        }
+
+        // Commit transaction
+        await new Promise((resolve, reject) => {
+            sqldb.query("COMMIT", (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        // Send notification only if paymentOption is "deductpayment"
+        if (paymentOption.toLowerCase() === "deductpayment") {
+            const admins = await new Promise((resolve, reject) => {
+                const getAdminsSql = "SELECT ID FROM adminaccounts"; // Adjust table/column name if needed
+                sqldb.query(getAdminsSql, (err, results) => {
+                    if (err) return reject(err);
+                    resolve(results);
+                });
+            });
+
+            const title = "Fertilizer Deduction Request";
+            const message = `Farmer ID ${userId} requested fertilizer with deduction. Total: Rs. ${totalAmount}.`;
+
+            const insertNotificationSql = `
+                INSERT INTO notifications (receiver_id, receiver_type, title, message)
+                VALUES ?
+            `;
+            const values = admins.map(admin => [admin.ID, 'admin', title, message]);
+
+            if (values.length > 0) {
+                await new Promise((resolve, reject) => {
+                    sqldb.query(insertNotificationSql, [values], (err) => {
+                        if (err) {
+                            console.error("Notification Insert Error:", err);
+                            return reject(err);
+                        }
+                        resolve();
+                    });
+                });
+            }
+        }
+
+        return res.status(200).json({
+            message: 'Fertilizer request submitted successfully.',
+            status: status,
+            itemsCount: items.length,
+            totalAmount: totalAmount
+        });
+
+    } catch (error) {
+        await new Promise((resolve) => sqldb.query("ROLLBACK", () => resolve()));
+
+        console.error("Database Error:", error);
+        return res.status(500).json({ 
+            message: 'Error processing fertilizer request', 
+            error: error.message 
+        });
+    }
+};
 
 export const FetchFertilizerPrices = async (req, res) => {
     console.log("Fetching fertilizer prices...");

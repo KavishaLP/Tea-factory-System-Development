@@ -1,6 +1,5 @@
-/* Tea Sack Update CSS - Simple Version with One Scrollbar */
+/* Enhanced Tea Sack Update CSS with Better Alignment */
 
-/* Remove all scrollbars by default */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,13 +11,14 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f5f7f9;
 }
 
-/* Content wrapper - THIS is the only scrollable element */
+/* Content wrapper - scrollable content */
 .tea-sack-update-content-wrapper {
   margin-left: 150px; /* Space for sidebar */
   margin-top: 70px; /* Space for navbar */
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
 }
 
@@ -26,21 +26,36 @@
 .tea-sack-update-content {
   background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   padding: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 /* Page Header */
+.tea-sack-update-page-header {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
 .tea-sack-update-page-header h1 {
-  font-size: 28px;
-  color: #67ae8d;
-  margin-bottom: 20px;
+  font-size: 24px;
+  color: #2c3e50;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tea-sack-update-page-header h1 svg {
+  color: #28a745;
 }
 
 /* Search Bar */
 .tea-sack-update-search-bar {
-  margin-bottom: 25px;
+  margin-bottom: 24px;
+  position: relative;
 }
 
 .tea-sack-update-search-bar label {
@@ -48,131 +63,38 @@
   font-weight: 600;
   margin-bottom: 8px;
   color: #333;
+  font-size: 14px;
+}
+
+.tea-sack-update-search-input-wrapper {
+  position: relative;
+}
+
+.tea-sack-update-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 18px;
 }
 
 .tea-sack-update-search-bar input {
   width: 100%;
-  padding: 12px;
+  padding: 12px 12px 12px 40px;
   border: 1px solid #ddd;
   border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
 }
 
-/* Form Styling */
-.tea-sack-update-form {
-  background-color: #f9f9f9;
-  padding: 25px;
-  border-radius: 10px;
-  border: 1px solid #e9ecef;
+.tea-sack-update-search-bar input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
 }
 
-.tea-sack-update-form label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  margin-top: 15px;
-}
-
-.tea-sack-update-form input[type="text"],
-.tea-sack-update-form input[type="date"] {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  background-color: #fff;
-}
-
-/* Deduction Section */
-.tea-sack-update-deduction-section {
-  margin-top: 20px;
-}
-
-.tea-sack-update-deduction-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.tea-sack-update-deduction-fields div {
-  display: flex;
-  align-items: center;
-}
-
-.tea-sack-update-deduction-fields span {
-  min-width: 120px;
-  font-size: 0.95em;
-}
-
-.tea-sack-update-deduction-fields input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-}
-
-/* Tea Sack Amount */
-.tea-sack-update-teasack-amount {
-  display: flex;
-  align-items: center;
-  margin-top: 20px;
-  background-color: #f0f8ff;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.tea-sack-update-teasack-amount label {
-  min-width: 140px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.tea-sack-update-teasack-amount input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-  font-weight: 600;
-  color: #27ae60;
-}
-
-/* Submit Button */
-.tea-sack-update-submit-button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-size: 1em;
-  font-weight: 600;
-  width: 200px;
-  margin: 25px auto 0;
-  display: block;
-  cursor: pointer;
-}
-
-.tea-sack-update-submit-button:hover {
-  background-color: #218838;
-}
-
-/* Error Message */
-.tea-sack-update-error {
-  color: #dc3545;
-  font-size: 0.9em;
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f8d7da;
-  border-radius: 5px;
-}
-
-/* Search bar styles */
-.tea-sack-update-search-bar {
-  position: relative;
-  margin-bottom: 20px;
-}
-
+/* Search results dropdown */
 .search-results-dropdown {
   position: absolute;
   width: 100%;
@@ -180,77 +102,377 @@
   overflow-y: auto;
   background: white;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   z-index: 100;
 }
 
 .search-result-item {
-  padding: 10px;
+  padding: 12px 16px;
   cursor: pointer;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 0.8fr 2fr 1.5fr;
+  gap: 8px;
   border-bottom: 1px solid #eee;
+  transition: background-color 0.15s;
+}
+
+.search-result-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .search-result-item:hover {
-  background-color: #f5f5f5;
+  background-color: #f5f9ff;
 }
 
 .search-loading {
-  padding: 10px;
+  padding: 12px 16px;
   color: #666;
   font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #28a745;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Selected user info */
 .selected-user-info {
   background: #f8f9fa;
-  padding: 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
   border-left: 4px solid #28a745;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .selected-user-info h3 {
   margin-top: 0;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  grid-column: 1 / -1;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.selected-user-info h3 svg {
   color: #28a745;
 }
 
-/* Form input styles */
-.tea-sack-update-form input[type="number"] {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.selected-user-info p {
+  margin: 4px 0;
+  font-size: 14px;
 }
 
-/* Error message */
+.selected-user-info-label {
+  font-weight: 600;
+  color: #6c757d;
+  margin-right: 4px;
+}
+
+/* Form */
+.tea-sack-update-form {
+  background-color: #f9f9f9;
+  padding: 24px;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.tea-sack-update-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.tea-sack-update-form-group {
+  margin-bottom: 16px;
+}
+
+.tea-sack-update-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+}
+
+.tea-sack-update-input-wrapper {
+  position: relative;
+}
+
+.tea-sack-update-input-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.tea-sack-update-form input[type="text"],
+.tea-sack-update-form input[type="date"],
+.tea-sack-update-form input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.tea-sack-update-form input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+.tea-sack-update-form input[type="date"] {
+  padding-left: 36px;
+}
+
+/* Deduction Section */
+.tea-sack-update-deduction-section {
+  margin-top: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.tea-sack-update-deduction-section label {
+  margin-bottom: 12px;
+  color: #2c3e50;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tea-sack-update-deduction-section label svg {
+  color: #d35400;
+  font-size: 16px;
+}
+
+.tea-sack-update-deduction-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.deduction-field {
+  position: relative;
+}
+
+.deduction-field span {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.deduction-input-wrapper {
+  position: relative;
+}
+
+.deduction-unit {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.tea-sack-update-deduction-fields input {
+  width: 100%;
+  padding: 8px 30px 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Net Tea Amount */
+.tea-sack-update-teasack-amount {
+  margin-top: 24px;
+  background-color: #eaf7ee;
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #c3e6cb;
+}
+
+.tea-sack-update-teasack-amount label {
+  font-weight: 700;
+  margin: 0;
+  margin-right: 16px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tea-sack-update-teasack-amount label svg {
+  color: #28a745;
+}
+
+.tea-sack-update-teasack-amount-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.tea-sack-update-teasack-amount input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  background-color: #fff;
+  font-weight: 600;
+  color: #27ae60;
+  font-size: 16px;
+  text-align: right;
+}
+
+.net-amount-unit {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #27ae60;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* Error Message */
 .tea-sack-update-error {
   color: #dc3545;
-  margin: 15px 0;
+  font-size: 0.9em;
+  margin: 16px 0;
+  padding: 10px 16px;
+  background-color: #f8d7da;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tea-sack-update-error svg {
+  flex-shrink: 0;
+}
+
+/* Submit Button */
+.tea-sack-update-form-actions {
+  margin-top: 28px;
+  text-align: center;
+}
+
+.tea-sack-update-submit-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tea-sack-update-submit-button:hover:not(:disabled) {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.tea-sack-update-submit-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
 }
 
 /* Mobile Responsiveness */
+@media (max-width: 992px) {
+  .tea-sack-update-form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
 @media (max-width: 768px) {
   .tea-sack-update-content-wrapper {
     margin-left: 0;
-  }
-  
-  .tea-sack-update-deduction-fields {
-    grid-template-columns: 1fr;
+    padding: 16px;
   }
   
   .tea-sack-update-content {
     padding: 20px;
   }
   
-  .tea-sack-update-form {
-    padding: 20px;
+  .tea-sack-update-deduction-fields {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   
-  .tea-sack-update-submit-button {
-    width: 100%;
+  .selected-user-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .tea-sack-update-teasack-amount {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .tea-sack-update-teasack-amount label {
+    margin-bottom: 8px;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .tea-sack-update-content {
+    padding: 16px;
+  }
+  
+  .tea-sack-update-form {
+    padding: 16px;
+  }
+  
+  .search-result-item {
+    grid-template-columns: 1fr 2fr;
+  }
+  
+  .search-result-item span:last-child {
+    grid-column: 1 / -1;
   }
 }
