@@ -127,7 +127,7 @@ CREATE TABLE tea_price_per_kilo (
 CREATE TABLE notifications (
   id INT AUTO_INCREMENT PRIMARY KEY,
   receiver_id INT NOT NULL,
-  receiver_type ENUM('admin', 'manager', 'user') NOT NULL,
+  receiver_type ENUM('admin', 'manager', 'farmer') NOT NULL,
   title VARCHAR(255) NOT NULL,
   message TEXT NOT NULL,
   is_read BOOLEAN DEFAULT FALSE,
