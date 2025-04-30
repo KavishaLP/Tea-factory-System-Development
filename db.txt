@@ -124,4 +124,16 @@ CREATE TABLE tea_price_per_kilo (
   UNIQUE (month_year) -- Only one price entry per month
 );
 
-
+CREATE TABLE notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  receiver_id INT NOT NULL,
+  receiver_type ENUM('admin', 'manager', 'user') NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  related_entity_type VARCHAR(50),
+  related_entity_id INT,
+  INDEX (receiver_id, receiver_type),
+  INDEX (is_read)
+);

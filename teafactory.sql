@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 28, 2025 at 09:29 AM
+-- Generation Time: Apr 30, 2025 at 09:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -65,7 +65,12 @@ CREATE TABLE `advance_payment` (
 
 INSERT INTO `advance_payment` (`advn_id`, `userId`, `amount`, `date`, `action`) VALUES
 (26, 'namal', 30000.00, '2025-04-27', 'Rejected'),
-(27, 'namal', 20000.00, '2025-04-27', 'Approved');
+(27, 'namal', 20000.00, '2025-04-27', 'Approved'),
+(28, 'namal', 5000.00, '2025-04-28', 'Approved'),
+(29, 'namal', 5.00, '2025-04-28', 'Pending'),
+(30, 'namal', 10.00, '2025-04-28', 'Pending'),
+(31, 'namal', 50000.00, '2025-04-29', 'Pending'),
+(32, 'namal', 6000.00, '2025-04-29', 'Approved');
 
 -- --------------------------------------------------------
 
@@ -98,7 +103,8 @@ INSERT INTO `employeeaccounts` (`id`, `userId`, `firstName`, `lastName`, `mobile
 (8, 'Wenu@9284u979g', 'tyy', 'u', '0775555555', NULL, '2025-04-24 06:56:02'),
 (9, 'Wenu@9284u979gi', 'tyy', 'u', '077555566666555', NULL, '2025-04-24 06:56:29'),
 (10, 'Wenu@9284u97955555', 'hh', 'kk', '01111111111111', NULL, '2025-04-25 15:41:28'),
-(11, 'w0000000010', 'j', 'kmmmmm', '011111111', NULL, '2025-04-26 06:42:09');
+(11, 'w0000000010', 'j', 'kmmmmm', '011111111', NULL, '2025-04-26 06:42:09'),
+(12, 'namal7777', 'KAVISHaaaa', 'LIYANAPATHIRANAhh', '0776876202', '0775555555', '2025-04-29 09:54:46');
 
 -- --------------------------------------------------------
 
@@ -132,7 +138,8 @@ INSERT INTO `employee_payments` (`id`, `userId`, `salaryAmount`, `additionalPaym
 (9, 'namal', 4444.00, 55.00, 50.00, 4449.00, '2025-04-07 09:10:35'),
 (10, 'namal2222', 4444.00, 55.00, 50.00, 4449.00, '2025-04-09 07:16:16'),
 (13, 'namal2222', 3.00, 5.00, 1.00, 7.00, '2025-04-09 07:17:05'),
-(14, 'Wenu@9284u979', 4500000.00, 52000.00, 2.00, 4551998.00, '2025-04-25 15:42:05');
+(14, 'Wenu@9284u979', 4500000.00, 52000.00, 2.00, 4551998.00, '2025-04-25 15:42:05'),
+(15, 'namal2222', 400000.00, 11.00, 40000.00, 360011.00, '2025-04-29 09:56:35');
 
 -- --------------------------------------------------------
 
@@ -197,7 +204,8 @@ CREATE TABLE `farmer_payments` (
 INSERT INTO `farmer_payments` (`id`, `userId`, `paymentPerKilo`, `finalTeaKilos`, `paymentForFinalTeaKilos`, `additionalPayments`, `transport`, `directPayments`, `finalAmount`, `advances`, `teaPackets`, `fertilizer`, `finalPayment`, `created_at`, `status`) VALUES
 (8, 'nawein', 0.00, 600.00, 2.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 1200.00, '2025-04-27 10:06:50', 'Approved'),
 (9, 'saman', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2025-04-27 10:06:50', 'Approved'),
-(10, 'namal', 500.00, 80.00, 40000.00, 0.00, 960.00, 0.00, 40960.00, 20000.00, 0.00, 0.00, 20960.00, '2025-04-27 14:19:09', 'Pending');
+(10, 'namal', 0.00, 80.00, 40000.00, 0.00, 960.00, 0.00, 40960.00, 31000.00, 0.00, 0.00, 20960.00, '2025-04-27 14:19:09', 'Pending'),
+(11, 'namal', 0.00, 48.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2001-01-01 18:30:00', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -259,7 +267,11 @@ INSERT INTO `fertilizer_requests` (`request_id`, `userId`, `fertilizer_veriance_
 (34, 'namal', 4, 3, '2025-04-27', 'Approved', 'deductpayment'),
 (35, 'namal', 5, 4, '2025-04-27', 'Approved', 'deductpayment'),
 (36, 'namal', 5, 1, '2025-04-27', 'Approved', 'deductpayment'),
-(37, 'namal', 6, 5, '2025-04-27', 'Approved', 'deductpayment');
+(37, 'namal', 6, 5, '2025-04-27', 'Approved', 'deductpayment'),
+(38, 'namal', 4, 22, '2025-04-29', 'Approved', 'cash'),
+(39, 'namal', 4, 5, '2025-04-29', 'Approved', 'cash'),
+(40, 'namal', 1, 5, '2025-04-29', 'Approved', 'cash'),
+(41, 'namal', 1, 3, '2025-04-29', 'Rejected', 'deductpayment');
 
 -- --------------------------------------------------------
 
@@ -288,6 +300,24 @@ INSERT INTO `manageraccounts` (`ID`, `USERNAME`, `PASSWORD`, `F_NAME`, `L_NAME`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `receiver_type` enum('admin','manager','user') NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `related_entity_type` varchar(50) DEFAULT NULL,
+  `related_entity_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tea_inventory`
 --
 
@@ -304,12 +334,12 @@ CREATE TABLE `tea_inventory` (
 --
 
 INSERT INTO `tea_inventory` (`id`, `tea_type`, `packet_size`, `packet_count`, `last_updated`) VALUES
-(1, 'Black Tea', '100g', 190, '2025-04-26 11:04:33'),
+(1, 'Black Tea', '100g', 178, '2025-04-29 11:31:18'),
 (2, 'Green Tea', '250g', 140, '2025-04-26 08:40:34'),
-(3, 'Earl Grey', '500g', 100, '2025-04-26 08:40:34'),
-(4, 'Chamomile', '100g', 80, '2025-04-26 08:40:34'),
+(3, 'Earl Grey', '500g', 107, '2025-04-29 11:31:29'),
+(4, 'Chamomile', '100g', 95, '2025-04-29 09:40:43'),
 (5, 'Oolong Tea', '250g', 60, '2025-04-26 08:40:34'),
-(6, 'Black Tea', '500g', 118, '2025-04-26 15:48:27'),
+(6, 'Black Tea', '500g', 178, '2025-04-29 11:31:26'),
 (7, 'Green Tea', '100g', 90, '2025-04-26 08:40:34'),
 (8, 'Chamomile', '250g', 75, '2025-04-26 08:40:34'),
 (9, 'Earl Grey', '100g', 110, '2025-04-26 08:40:34'),
@@ -331,6 +361,33 @@ CREATE TABLE `tea_packet_requests` (
   `status` enum('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
   `paymentoption` enum('cash','deductpayment') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tea_price_per_kilo`
+--
+
+CREATE TABLE `tea_price_per_kilo` (
+  `id` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `month_year` varchar(7) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tea_price_per_kilo`
+--
+
+INSERT INTO `tea_price_per_kilo` (`id`, `price`, `month_year`, `created_at`, `updated_at`) VALUES
+(1, 140.00, '2024-10', '2025-04-28 09:27:10', '2025-04-28 09:27:10'),
+(2, 142.00, '2024-11', '2025-04-28 09:27:10', '2025-04-28 09:27:10'),
+(3, 143.50, '2024-12', '2025-04-28 09:27:10', '2025-04-28 09:27:10'),
+(4, 145.00, '2025-01', '2025-04-28 09:27:10', '2025-04-28 09:27:10'),
+(5, 147.00, '2025-02', '2025-04-28 09:27:10', '2025-04-28 09:27:10'),
+(6, 149.00, '2025-03', '2025-04-28 09:27:10', '2025-04-28 09:27:10'),
+(7, 300.00, '2025-04', '2025-04-28 09:27:10', '2025-04-28 09:51:12');
 
 -- --------------------------------------------------------
 
@@ -357,7 +414,8 @@ CREATE TABLE `tea_sack_updates` (
 
 INSERT INTO `tea_sack_updates` (`id`, `userId`, `date`, `tea_sack_weight`, `deduction_water`, `deduction_damage_tea`, `deduction_sack_weight`, `deduction_sharped_tea`, `deduction_other`, `final_tea_sack_weight`) VALUES
 (8, 'namal', '2025-04-27', 60.00, 10.00, 5.00, 5.00, 5.00, 5.00, 30.00),
-(9, 'namal', '2025-04-26', 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00);
+(9, 'namal', '2025-04-26', 50.00, 0.00, 0.00, 0.00, 0.00, 0.00, 50.00),
+(10, 'namal', '2001-01-02', 55.00, 4.00, 3.00, 0.00, 0.00, 0.00, 48.00);
 
 -- --------------------------------------------------------
 
@@ -437,6 +495,14 @@ ALTER TABLE `fertilizer_requests`
   ADD KEY `fertilizer_veriance_id` (`fertilizer_veriance_id`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `receiver_id` (`receiver_id`,`receiver_type`),
+  ADD KEY `is_read` (`is_read`);
+
+--
 -- Indexes for table `tea_inventory`
 --
 ALTER TABLE `tea_inventory`
@@ -449,6 +515,13 @@ ALTER TABLE `tea_inventory`
 ALTER TABLE `tea_packet_requests`
   ADD PRIMARY KEY (`request_id`),
   ADD KEY `userId` (`userId`);
+
+--
+-- Indexes for table `tea_price_per_kilo`
+--
+ALTER TABLE `tea_price_per_kilo`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `month_year` (`month_year`);
 
 --
 -- Indexes for table `tea_sack_updates`
@@ -471,19 +544,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `advance_payment`
 --
 ALTER TABLE `advance_payment`
-  MODIFY `advn_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `advn_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `employeeaccounts`
 --
 ALTER TABLE `employeeaccounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `employee_payments`
 --
 ALTER TABLE `employee_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `farmeraccounts`
@@ -495,7 +568,7 @@ ALTER TABLE `farmeraccounts`
 -- AUTO_INCREMENT for table `farmer_payments`
 --
 ALTER TABLE `farmer_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `fertilizer_prices`
@@ -507,7 +580,13 @@ ALTER TABLE `fertilizer_prices`
 -- AUTO_INCREMENT for table `fertilizer_requests`
 --
 ALTER TABLE `fertilizer_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tea_inventory`
@@ -522,10 +601,16 @@ ALTER TABLE `tea_packet_requests`
   MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `tea_price_per_kilo`
+--
+ALTER TABLE `tea_price_per_kilo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT for table `tea_sack_updates`
 --
 ALTER TABLE `tea_sack_updates`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `user`
