@@ -56,7 +56,7 @@
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 15px;
 }
 
 .ri-notification-3-fill {
@@ -90,9 +90,17 @@
 .profile {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding-left: 1.5rem;
-  border-left: 1px solid #e2e8f0;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.profile:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .profile-img {
@@ -110,7 +118,8 @@
 
 .admin-name {
   font-weight: 500;
-  color: #2d3748;
+  font-size: 14px;
+  color: #333;
 }
 
 /* Responsive Design */
@@ -167,4 +176,134 @@ html {
 /* Optional: Add a body margin to prevent content from going under navbar */
 body {
   margin-top: 70px;
+}
+
+/* Enhanced notification styling */
+
+.notification-container {
+  position: relative;
+  margin-right: 20px;
+}
+
+.notification-icon {
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.notification-icon:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  transform: scale(1.05);
+}
+
+.notification-icon i {
+  font-size: 22px;
+  color: #505050;
+  transition: color 0.2s ease;
+}
+
+.notification-icon:hover i {
+  color: #2e7d32;
+}
+
+/* Animated icon for unread notifications */
+.animated-icon {
+  color: #2e7d32;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.notification-icon .animated-icon {
+  animation: pulse 2s infinite;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: #e53935;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid #fff;
+}
+
+/* Profile section improvements */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.profile:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.profile-pic {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #2e7d32;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.profile-pic i {
+  font-size: 18px;
+}
+
+.admin-name {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Optional: Add a profile picture placeholder */
+.profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-pic i {
+  font-size: 18px;
+  color: #757575;
+}
+
+/* If you need to adjust the icon sizes */
+.notification-icon .animated-icon,
+.notification-icon svg,
+.profile-pic svg {
+  font-size: 20px; /* Adjust size as needed */
 }

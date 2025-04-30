@@ -132,8 +132,6 @@ CREATE TABLE notifications (
   message TEXT NOT NULL,
   is_read BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  related_entity_type VARCHAR(50),
-  related_entity_id INT,
   INDEX (receiver_id, receiver_type),
   INDEX (is_read)
 );

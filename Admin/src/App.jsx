@@ -1,4 +1,7 @@
 import './App.css';
+
+import ProtectedRoute from './Pages/ProtectedRoute';
+
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import DashboardAdmin from './Pages/DashboardAdmin/DashboardAdmin';
 import AdvanceUpdate from './Pages/AdvanceUpdate/AdvanceUpdate';
@@ -30,7 +33,7 @@ function App() {
 
   return (
     <div className="container">
-      {shouldDisplayNavbar() && <Navbar />}
+      {shouldDisplayNavbar() && ( <ProtectedRoute> <Navbar /> </ProtectedRoute>)}
       <div className="content-wrapper">
         {shouldDisplaySidebar() && <Sidebar />}
         
@@ -42,10 +45,11 @@ function App() {
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
             
-            <Route path="/admin-dashboard-admin" element={<DashboardAdmin />} /> 
-            <Route path="/tea-sack-update" element={<TeaSackUpdate />} />
-            <Route path="/advance-update" element={<AdvanceUpdate />} />
-            <Route path="/tea-packet-distribution" element={<TeaPacketDistribution />} />
+            {/* Protected Routes */}
+            <Route path="/admin-dashboard-admin" element={<ProtectedRoute><DashboardAdmin /></ProtectedRoute>} /> 
+            <Route path="/tea-sack-update" element={<ProtectedRoute><TeaSackUpdate /></ProtectedRoute>} />
+            <Route path="/advance-update" element={<ProtectedRoute><AdvanceUpdate /></ProtectedRoute>} />
+            <Route path="/tea-packet-distribution" element={<ProtectedRoute><TeaPacketDistribution /></ProtectedRoute>} />
           </Routes>
         </main>
       </div>

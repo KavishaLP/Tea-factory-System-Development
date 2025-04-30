@@ -37,6 +37,7 @@ export const admnLogin = (req, res) => {
         }
 
         const user = results[0];
+        console.log(user)
         const hashedPassword = user.PASSWORD;
 
         // Compare passwords
@@ -51,11 +52,16 @@ export const admnLogin = (req, res) => {
             }
 
             // Generate JWT token
+            const fullName = `${user.F_NAME || ''} ${user.L_NAME || ''}`.trim();
             const token = jwt.sign(
-                { id: user.id, username: user.username },
+                { 
+                    userId: user.ID, 
+                    name: fullName || 'Admin' // Default to 'Admin' if fullName is empty
+                },
                 SECRET_KEY,
                 { expiresIn: '1D' }
             );
+            
 
             // Set token in cookie
             res.cookie('token', token, {
@@ -118,7 +124,6 @@ export const admnForgotPassword = (req, res) => {
         });
     });
 };
-
 
 export const admnSendAgain = (req, res) => {
     const { email } = req.body;

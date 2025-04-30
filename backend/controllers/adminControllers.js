@@ -902,3 +902,157 @@ export const fetchYearlyTeaWeights = (req, res) => {
     res.json(results);
   });
 };
+
+// Add these functions to handle notifications
+
+// Get notifications for admin
+export const getNotifications = async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        id,
+        title,
+        message,
+        is_read,
+        created_at
+      FROM notifications
+      WHERE receiver_type = 'admin' 
+      ORDER BY created_at DESC
+      LIMIT 20
+    `;
+
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        console.error("Error fetching notifications:", err);
+        return res.status(500).json({ 
+          status: "Error", 
+          message: "Failed to fetch notifications" 
+        });
+      }
+      
+      return res.status(200).json({
+        status: "Success",
+        notifications: results
+      });
+    });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ 
+      status: "Error", 
+      message: "An unexpected error occurred" 
+    });
+  }
+};
+
+// Get unread notification count
+export const getUnreadCount = async (req, res) => {
+  try {
+    const query = `
+      SELECT COUNT(*) as count
+      FROM notifications
+      WHERE receiver_type = 'admin' AND is_read = FALSE
+    `;
+
+    sqldb.query(query, (err, results) => {
+      if (err) {
+        console.error("Error fetching unread count:", err);
+        return res.status(500).json({ 
+          status: "Error", 
+          message: "Failed to fetch unread count" 
+        });
+      }
+      
+      return res.status(200).json({
+        status: "Success",
+        count: results[0].count
+      });
+    });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ 
+      status: "Error", 
+      message: "An unexpected error occurred" 
+    });
+  }
+};
+
+// Mark notification as read
+export const markAsRead = async (req, res) => {
+  const { notificationId } = req.body;
+  
+  if (!notificationId) {
+    return res.status(400).json({ 
+      status: "Error", 
+      message: "Notification ID is required" 
+    });
+  }
+
+  try {
+    const query = `
+      UPDATE notifications
+      SET is_read = TRUE
+      WHERE id = ?
+    `;
+
+    sqldb.query(query, [notificationId], (err, result) => {
+      if (err) {
+        console.error("Error updating notification:", err);
+        return res.status(500).json({ 
+          status: "Error", 
+          message: "Failed to mark notification as read" 
+        });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          status: "Error",
+          message: "Notification not found"
+        });
+      }
+      
+      return res.status(200).json({
+        status: "Success",
+        message: "Notification marked as read"
+      });
+    });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ 
+      status: "Error", 
+      message: "An unexpected error occurred" 
+    });
+  }
+};
+
+// Mark all notifications as read
+export const markAllAsRead = async (req, res) => {
+  try {
+    const query = `
+      UPDATE notifications
+      SET is_read = TRUE
+      WHERE receiver_type = 'admin' AND is_read = FALSE
+    `;
+
+    sqldb.query(query, (err, result) => {
+      if (err) {
+        console.error("Error updating notifications:", err);
+        return res.status(500).json({ 
+          status: "Error", 
+          message: "Failed to mark notifications as read" 
+        });
+      }
+      
+      return res.status(200).json({
+        status: "Success",
+        message: "All notifications marked as read",
+        updatedCount: result.affectedRows
+      });
+    });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ 
+      status: "Error", 
+      message: "An unexpected error occurred" 
+    });
+  }
+};

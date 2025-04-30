@@ -3,7 +3,8 @@
 import express from 'express';
 import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack, fetchRequestAdvance, fetchTotalUsers, getTeaPacketsRequests, confirmTeaPackets, deleteTeaPackets, searchUsers,
     fetchTeaInventory, addTeaProduction, distributeTea, addAdvancePayment,
-    fetchTotalTeaWeight,  fetchDailyTeaWeights,fetchWeeklyTeaWeights,fetchMonthlyTeaWeights,fetchYearlyTeaWeights
+    fetchTotalTeaWeight,  fetchDailyTeaWeights,fetchWeeklyTeaWeights,fetchMonthlyTeaWeights,fetchYearlyTeaWeights,
+    getNotifications, getUnreadCount, markAsRead, markAllAsRead
  } from '../controllers/adminControllers.js'
 
 
@@ -35,5 +36,10 @@ router.get('/fetch-weekly-tea-weights', fetchWeeklyTeaWeights);
 router.get('/fetch-monthly-tea-weights', fetchMonthlyTeaWeights);
 router.get('/fetch-yearly-tea-weights', fetchYearlyTeaWeights);
 
+// Notification routes
+router.get('/notifications', getNotifications);
+router.get('/notifications/unread-count', getUnreadCount);
+router.post('/notifications/mark-read', markAsRead);
+router.post('/notifications/mark-all-read', markAllAsRead);
 
 export default router;
