@@ -1,4 +1,4 @@
-/* Enhanced Tea Sack Update CSS with Better Alignment */
+/* Enhanced Tea Sack Update CSS with Better Alignment - Fixed for Sidebar/Navbar */
 
 * {
   box-sizing: border-box;
@@ -6,20 +6,18 @@
   padding: 0;
 }
 
-/* Main container */
+/* Main container - adjusted to work with the existing layout */
 .tea-sack-update-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - 70px); /* Account for navbar height */
   background-color: #f5f7f9;
 }
 
-/* Content wrapper - scrollable content */
+/* Content wrapper - adjusted for the fixed sidebar */
 .tea-sack-update-content-wrapper {
-  margin-left: 150px; /* Space for sidebar */
-  margin-top: 70px; /* Space for navbar */
-  padding: 24px;
-  overflow-y: auto;
+  /* No need for margin-left/margin-top as App.jsx already handles this with .main-content.with-sidebar */
+  padding: 20px;
+  width: 100%;
 }
 
 /* Content area */
@@ -27,8 +25,8 @@
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  padding: 30px;
-  max-width: 1000px;
+  padding: 24px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -50,6 +48,7 @@
 
 .tea-sack-update-page-header h1 svg {
   color: #28a745;
+  flex-shrink: 0;
 }
 
 /* Search Bar */
@@ -158,6 +157,7 @@
   border-left: 4px solid #28a745;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .selected-user-info h3 {
@@ -173,11 +173,15 @@
 
 .selected-user-info h3 svg {
   color: #28a745;
+  flex-shrink: 0;
 }
 
 .selected-user-info p {
   margin: 4px 0;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .selected-user-info-label {
@@ -223,13 +227,14 @@
   top: 50%;
   transform: translateY(-50%);
   color: #6c757d;
+  font-size: 16px;
 }
 
 .tea-sack-update-form input[type="text"],
 .tea-sack-update-form input[type="date"],
 .tea-sack-update-form input[type="number"] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #fff;
@@ -245,6 +250,8 @@
 
 .tea-sack-update-form input[type="date"] {
   padding-left: 36px;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* Deduction Section */
@@ -252,28 +259,30 @@
   margin-top: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  padding: 16px;
+  padding: 20px;
   border: 1px solid #e9ecef;
 }
 
-.tea-sack-update-deduction-section label {
-  margin-bottom: 12px;
+.tea-sack-update-deduction-section > label {
+  margin-bottom: 16px;
   color: #2c3e50;
-  font-size: 15px;
+  font-size: 16px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  font-weight: 600;
 }
 
-.tea-sack-update-deduction-section label svg {
+.tea-sack-update-deduction-section > label svg {
   color: #d35400;
-  font-size: 16px;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .tea-sack-update-deduction-fields {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
 .deduction-field {
@@ -282,8 +291,8 @@
 
 .deduction-field span {
   display: block;
-  font-size: 13px;
-  margin-bottom: 6px;
+  font-size: 14px;
+  margin-bottom: 8px;
   font-weight: 500;
   color: #495057;
 }
@@ -303,17 +312,18 @@
 
 .tea-sack-update-deduction-fields input {
   width: 100%;
-  padding: 8px 30px 8px 10px;
+  padding: 10px 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
+  background-color: white;
 }
 
 /* Net Tea Amount */
 .tea-sack-update-teasack-amount {
-  margin-top: 24px;
+  margin-top: 28px;
   background-color: #eaf7ee;
-  padding: 16px;
+  padding: 20px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -323,64 +333,72 @@
 .tea-sack-update-teasack-amount label {
   font-weight: 700;
   margin: 0;
-  margin-right: 16px;
+  margin-right: 20px;
   color: #2c3e50;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-size: 16px;
+  white-space: nowrap;
 }
 
 .tea-sack-update-teasack-amount label svg {
   color: #28a745;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .tea-sack-update-teasack-amount-wrapper {
   position: relative;
   flex: 1;
+  max-width: 300px;
 }
 
 .tea-sack-update-teasack-amount input {
   width: 100%;
-  padding: 12px;
+  padding: 12px 40px 12px 16px;
   border: 1px solid #c3e6cb;
   border-radius: 8px;
   background-color: #fff;
   font-weight: 600;
   color: #27ae60;
-  font-size: 16px;
+  font-size: 18px;
   text-align: right;
 }
 
 .net-amount-unit {
   position: absolute;
-  right: 12px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: #27ae60;
   font-weight: 500;
   font-size: 16px;
+  pointer-events: none;
 }
 
 /* Error Message */
 .tea-sack-update-error {
   color: #dc3545;
-  font-size: 0.9em;
-  margin: 16px 0;
-  padding: 10px 16px;
+  font-size: 0.95em;
+  margin: 20px 0 10px;
+  padding: 12px 16px;
   background-color: #f8d7da;
-  border-radius: 5px;
+  border-left: 4px solid #dc3545;
+  border-radius: 4px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .tea-sack-update-error svg {
   flex-shrink: 0;
+  font-size: 18px;
 }
 
 /* Submit Button */
 .tea-sack-update-form-actions {
-  margin-top: 28px;
+  margin-top: 32px;
   text-align: center;
 }
 
@@ -388,80 +406,100 @@
   background-color: #28a745;
   color: white;
   border: none;
-  padding: 12px 28px;
+  padding: 14px 32px;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
 }
 
 .tea-sack-update-submit-button:hover:not(:disabled) {
   background-color: #218838;
   transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(40, 167, 69, 0.25);
+}
+
+.tea-sack-update-submit-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
 .tea-sack-update-submit-button:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
   opacity: 0.7;
+  box-shadow: none;
 }
 
 .loading-spinner {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: #fff;
   animation: spin 0.8s linear infinite;
   display: inline-block;
+  flex-shrink: 0;
 }
 
-/* Mobile Responsiveness */
+/* Mobile Responsiveness - adjusted for the app layout */
 @media (max-width: 992px) {
   .tea-sack-update-form-row {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 16px;
+  }
+  
+  .tea-sack-update-deduction-fields {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .tea-sack-update-content-wrapper {
-    margin-left: 0;
-    padding: 16px;
-  }
-  
   .tea-sack-update-content {
     padding: 20px;
   }
   
   .tea-sack-update-deduction-fields {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 16px;
   }
   
   .selected-user-info {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
   
   .tea-sack-update-teasack-amount {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
   }
   
   .tea-sack-update-teasack-amount label {
     margin-bottom: 8px;
     margin-right: 0;
   }
+  
+  .tea-sack-update-teasack-amount-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
+  .tea-sack-update-content-wrapper {
+    padding: 12px;
+  }
+  
   .tea-sack-update-content {
     padding: 16px;
+    border-radius: 8px;
   }
   
   .tea-sack-update-form {
@@ -474,5 +512,11 @@
   
   .search-result-item span:last-child {
     grid-column: 1 / -1;
+  }
+  
+  .tea-sack-update-submit-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
   }
 }
