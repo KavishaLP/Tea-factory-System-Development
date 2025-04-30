@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Notifications.css';
 
-const Notifications = ({ onClose }) => {
+const ManagerNotifications = ({ onClose }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,10 +39,10 @@ const Notifications = ({ onClose }) => {
     const fetchNotifications = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:8081/api/admin/notifications', {
+        const response = await axios.get('http://localhost:8081/api/manager/notifications', {
           withCredentials: true
         });
-        setNotifications(response.data.notifications);
+        setNotifications(response.data.notifications || []);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching notifications:', err);
@@ -57,7 +57,7 @@ const Notifications = ({ onClose }) => {
   // Mark a notification as read
   const markAsRead = async (id) => {
     try {
-      await axios.post('http://localhost:8081/api/admin/notifications/mark-read', 
+      await axios.post('http://localhost:8081/api/manager/notifications/mark-read', 
         { notificationId: id },
         { withCredentials: true }
       );
@@ -76,7 +76,7 @@ const Notifications = ({ onClose }) => {
   // Mark all notifications as read
   const markAllAsRead = async () => {
     try {
-      await axios.post('http://localhost:8081/api/admin/notifications/mark-all-read', 
+      await axios.post('http://localhost:8081/api/manager/notifications/mark-all-read', 
         {},
         { withCredentials: true }
       );
@@ -95,21 +95,29 @@ const Notifications = ({ onClose }) => {
     <div className="notifications-panel" ref={notificationRef}>
       <div className="notifications-header">
         <h3>Notifications</h3>
-        <button 
-          className="mark-all-read-btn"
-          onClick={markAllAsRead}
-        >
-          Mark all as read
-        </button>
+        {notifications.some(n => !n.is_read) && (
+          <button 
+            className="mark-all-read-btn"
+            onClick={markAllAsRead}
+          >
+            Mark all as read
+          </button>
+        )}
       </div>
       
       <div className="notifications-list">
         {loading ? (
-          <div className="notification-loading">Loading notifications...</div>
+          <div className="notification-loading">
+            <div className="loading-spinner"></div>
+            <span>Loading notifications...</span>
+          </div>
         ) : error ? (
           <div className="notification-error">{error}</div>
         ) : notifications.length === 0 ? (
-          <div className="no-notifications">No notifications to display</div>
+          <div className="empty-notifications">
+            <i className="ri-notification-line"></i>
+            <span>No notifications to display</span>
+          </div>
         ) : (
           notifications.map(notification => (
             <div 
@@ -117,14 +125,15 @@ const Notifications = ({ onClose }) => {
               className={`notification-item ${!notification.is_read ? 'unread' : ''}`}
               onClick={() => markAsRead(notification.id)}
             >
+              {!notification.is_read && <div className="unread-indicator"></div>}
               <div className="notification-content">
                 <h4>{notification.title}</h4>
                 <p>{notification.message}</p>
                 <div className="notification-time">
+                  <i className="ri-time-line"></i>
                   {formatDate(notification.created_at)}
                 </div>
               </div>
-              {!notification.is_read && <div className="unread-indicator"></div>}
             </div>
           ))
         )}
@@ -133,4 +142,4 @@ const Notifications = ({ onClose }) => {
   );
 };
 
-export default Notifications;
+export default ManagerNotifications;

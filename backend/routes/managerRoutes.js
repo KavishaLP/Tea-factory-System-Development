@@ -10,7 +10,11 @@ import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmpl
     fetchTeaPriceHistory,
     fetchTotalEmployees,
     fetchFertilizerDetails,
-    fetchTeaInventory
+    fetchTeaInventory,
+    getManagerNotifications,
+    getManagerUnreadCount,
+    markManagerNotificationAsRead,
+    markAllManagerNotificationsAsRead
 } from '../controllers/managerControllers.js';
 
 const router = express.Router();
@@ -44,5 +48,11 @@ router.get('/fetch-fertilizer-details', fetchFertilizerDetails);
 router.get('/fetch-tea-inventory', fetchTeaInventory);
 
 router.post('/get-details-related-to-user', getDEtailsRelatedTOUser);
+
+// Add these notification routes
+router.get('/notifications', getManagerNotifications);
+router.get('/notifications/unread-count', getManagerUnreadCount);
+router.post('/notifications/mark-read', markManagerNotificationAsRead);
+router.post('/notifications/mark-all-read', markAllManagerNotificationsAsRead);
 
 export default router;

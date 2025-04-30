@@ -5,6 +5,8 @@
 import './App.css';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
+import ProtectedRoute from './Pages/ProtectedRoute';
+
 import Navbar from './Component/Navbar/Navbar';
 import Sidebar from './Component/Sidebar/Sidebar'; // User sidebar
 import Footer from './Component/Footer/Footer';
@@ -54,17 +56,14 @@ function App() {
             <Route path="/password-success" element={<ForgetPasswordSuccess />} />
             <Route path="/update-new-password" element={<UpdateNewPassword />} />
             
+            {/* Protected Routes */}
             <Route path="/Mng-Dashboard" element={<Dashboard />} />
             <Route path="/Mng-Create-Farmer-Account" element={<CreateFarmerAccount />} />
-
             <Route path="/Mng-Create-Employee-Account" element={<CreateEmployeeAccount />} />
             <Route path="/Mng-Employee-Payment" element={<Employeepayment />} />
-
-
             <Route path="/Mng-Payment-Logs" element={<AddNewPayment />} />
             <Route path="/test-Mng-Payment-Logs" element={<AddNewPaymentCopy />} />
             <Route path="/Mng-Productivity-Report" element={<ProductivityReport />} />
-
             <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
           </Routes>
         </main>

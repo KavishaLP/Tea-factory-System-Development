@@ -51,8 +51,12 @@ export const mngLogin = (req, res) => {
             }
 
             // Generate JWT token
+            const fullName = `${user.F_NAME || ''} ${user.L_NAME || ''}`.trim();
             const token = jwt.sign(
-                { id: user.id, username: user.username },
+                { 
+                    userId: user.ID, 
+                    name: fullName || 'Admin' // Default to 'Admin' if fullName is empty
+                },
                 SECRET_KEY,
                 { expiresIn: '1D' }
             );

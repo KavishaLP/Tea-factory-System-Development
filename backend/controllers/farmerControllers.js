@@ -7,15 +7,13 @@ export const requestAdvance = async (req, res) => {
 
     const { farmerId, amount } = req.body;
 
-    // Check for missing required fields
     if (!farmerId || !amount || amount <= 0) {
         return res.status(400).json({ message: 'All required fields must be provided.' });
     }
 
-    // Get the current date
-    const date = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-    // Check if the farmer exists in the farmeraccounts table
+    // Check if the farmer exists
     const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ?";
     sqldb.query(sqlCheck, [farmerId], (err, results) => {
         if (err) {
@@ -27,162 +25,61 @@ export const requestAdvance = async (req, res) => {
             return res.status(400).json({ message: 'Farmer with this user ID does not exist.' });
         }
 
-        // Insert the advance request into the advance_payment table
-        const sqlInsert = `
+        // Insert into advance_payment table
+        const sqlInsertAdvance = `
             INSERT INTO advance_payment (userId, amount, date, action)
             VALUES (?, ?, ?, 'Pending')
         `;
-        sqldb.query(sqlInsert, [farmerId, amount, date], (err, result) => {
+        sqldb.query(sqlInsertAdvance, [farmerId, amount, date], (err, result) => {
             if (err) {
                 console.error("Database Insert Error:", err);
                 return res.status(500).json({ message: 'Error inserting advance request into database', error: err });
             }
 
-            // Success response
-            return res.status(200).json({
-                message: 'Advance request submitted successfully.',
-                advanceId: result.insertId,
-                Status: "Success"
+            // Notify all managers (or you can target one manager if needed)
+            const getManagersSql = "SELECT ID FROM manageraccounts"; // assuming ID is primary key in manageraccounts
+            sqldb.query(getManagersSql, (err, managers) => {
+                if (err) {
+                    console.error("Error fetching managers:", err);
+                    return res.status(500).json({ message: 'Advance saved, but failed to notify manager(s)' });
+                }
+
+                const title = "New Advance Request";
+                const message = `Farmer ID ${farmerId} has requested an advance of Rs. ${amount}.`;
+
+                const insertNotificationSql = `
+                    INSERT INTO notifications (receiver_id, receiver_type, title, message)
+                    VALUES ?
+                `;
+
+                const values = managers.map(manager => [manager.ID, 'manager', title, message]);
+
+                if (values.length > 0) {
+                    sqldb.query(insertNotificationSql, [values], (err) => {
+                        if (err) {
+                            console.error("Error inserting notifications:", err);
+                            return res.status(500).json({ message: 'Advance request saved, but failed to notify manager(s)', error: err });
+                        }
+
+                        return res.status(200).json({
+                            message: 'Advance request submitted and managers notified successfully.',
+                            advanceId: result.insertId,
+                            Status: "Success"
+                        });
+                    });
+                } else {
+                    return res.status(200).json({
+                        message: 'Advance request submitted, but no managers found to notify.',
+                        advanceId: result.insertId,
+                        Status: "Success"
+                    });
+                }
             });
         });
     });
 };
 
-export const requestFertilizer = async (req, res) => {
-    console.log("Received Data:", req.body);
 
-    const { userId, paymentOption, items, totalAmount } = req.body;
-
-    // Check for missing required fields
-    if (!userId || !paymentOption || !items || !Array.isArray(items) || items.length === 0) {
-        console.log("All required fields must be provided.");
-        return res.status(400).json({ message: 'All required fields must be provided.' });
-    }
-
-    // Validate each item
-    for (const item of items) {
-        if (!item.fertilizer_veriance_id || !item.amount || item.amount <= 0) {
-            return res.status(400).json({ 
-                message: 'All items must have a valid fertilizer variance ID and positive amount' 
-            });
-        }
-    }
-
-    // Get the current date
-    const requestDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-
-    // Determine status based on payment option
-    const status = paymentOption.toLowerCase() === "cash" ? "Approved" : "Pending";
-
-    try {
-        // Check if the user exists in the farmeraccounts table
-        const userCheck = await new Promise((resolve, reject) => {
-            const sqlCheck = "SELECT * FROM farmeraccounts WHERE userId = ?";
-            sqldb.query(sqlCheck, [userId], (err, results) => {
-                if (err) return reject(err);
-                resolve(results);
-            });
-        });
-
-        if (userCheck.length === 0) {
-            return res.status(400).json({ message: 'User with this ID does not exist.' });
-        }
-
-        // Begin transaction
-        await new Promise((resolve, reject) => {
-            sqldb.query("START TRANSACTION", (err) => {
-                if (err) return reject(err);
-                resolve();
-            });
-        });
-
-        // Insert the main request record (if you have a table for request headers)
-        // This is optional if you only want to store individual items
-        // const requestInsert = await new Promise((resolve, reject) => {
-        //     const sqlInsert = `
-        //         INSERT INTO fertilizer_request_headers 
-        //         (userId, paymentOption, requestDate, status, totalAmount)
-        //         VALUES (?, ?, ?, ?, ?)
-        //     `;
-        //     sqldb.query(sqlInsert, 
-        //         [userId, paymentOption, requestDate, status, totalAmount], 
-        //         (err, result) => {
-        //             if (err) return reject(err);
-        //             resolve(result.insertId);
-        //         }
-        //     );
-        // });
-
-        // Insert each fertilizer request item
-        for (const item of items) {
-            // First get the fertilizer details from fertilizer_prices table
-            const fertilizerDetails = await new Promise((resolve, reject) => {
-                const sqlDetails = `
-                    SELECT fertilizerType, packetType, price 
-                    FROM fertilizer_prices 
-                    WHERE fertilizer_veriance_id = ?
-                `;
-                sqldb.query(sqlDetails, [item.fertilizer_veriance_id], (err, results) => {
-                    if (err) return reject(err);
-                    resolve(results[0]);
-                });
-            });
-
-            if (!fertilizerDetails) {
-                await new Promise((resolve) => sqldb.query("ROLLBACK", () => resolve()));
-                return res.status(400).json({ 
-                    message: `Invalid fertilizer variance ID: ${item.fertilizer_veriance_id}` 
-                });
-            }
-
-            // Insert into fertilizer_requests table
-            await new Promise((resolve, reject) => {
-                const sqlInsert = `
-                    INSERT INTO fertilizer_requests 
-                    (userId, fertilizer_veriance_id, amount, paymentoption, requestDate, status)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                `;
-                sqldb.query(sqlInsert, [
-                    userId,
-                    item.fertilizer_veriance_id,
-                    item.amount,
-                    paymentOption,
-                    requestDate,
-                    status,
-                ], (err) => {
-                    if (err) return reject(err);
-                    resolve();
-                });
-            });
-        }
-
-        // Commit transaction
-        await new Promise((resolve, reject) => {
-            sqldb.query("COMMIT", (err) => {
-                if (err) return reject(err);
-                resolve();
-            });
-        });
-
-        // Success response
-        return res.status(200).json({
-            message: 'Fertilizer request submitted successfully.',
-            status: status,
-            itemsCount: items.length,
-            totalAmount: totalAmount
-        });
-
-    } catch (error) {
-        // Rollback transaction if error occurs
-        await new Promise((resolve) => sqldb.query("ROLLBACK", () => resolve()));
-        
-        console.error("Database Error:", error);
-        return res.status(500).json({ 
-            message: 'Error processing fertilizer request', 
-            error: error.message 
-        });
-    }
-};
 
 export const FetchFertilizerPrices = async (req, res) => {
     console.log("Fetching fertilizer prices...");
@@ -328,8 +225,6 @@ export const getTeaDeliveryDetails = async (req, res) => {
     }
 };
 
-
-
 // Get payment summary for a specific month/year
 export const getPayments = async (req, res) => {
     try {
@@ -372,8 +267,6 @@ export const getPayments = async (req, res) => {
         });
     }
 };
-
-
 
 // Get advance summary for a specific month/year
 export const getAdvances = async (req, res) => {
@@ -457,8 +350,6 @@ export const getAdvanceDetails = async (req, res) => {
         });
     }
 };
-
-
 
 // Get fertilizer request summary for a specific month/year (only counts)
 export const getFertilizerRequests = async (req, res) => {
