@@ -268,37 +268,38 @@ const fetchFarmerSuggestions = async (query) => {
     }
   };
 
-  // Function to delete an advance request
-  const handleDelete = async (id) => {
-    setIsLoading(true);
-    setError("");
-  
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/api/admin/delete-advance",
-        { advanceId: id },
-        { withCredentials: true }
-      );
-  
-      if (response.data.status === "Success") {
-        const request = newRequests.find((req) => req.advn_id === id);
-        if (request) {
-          const updatedDeleted = [...deletedRequests, { ...request, action: "Rejected" }];
-          setDeletedRequests(updatedDeleted);
-          setFilteredDeleted(updatedDeleted);
-          setNewRequests(newRequests.filter((req) => req.advn_id !== id));
-        }
-        alert("Advance request deleted successfully!");
-      } else {
-        setError(response.data.message || "Failed to delete advance request.");
+  // Function to reject an advance request (renamed from handleDelete)
+const handleReject = async (id) => {
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const response = await axios.post(
+      "http://localhost:8081/api/admin/delete-advance", // Keep API endpoint the same
+      { advanceId: id },
+      { withCredentials: true }
+    );
+
+    if (response.data.status === "Success") {
+      const request = newRequests.find((req) => req.advn_id === id);
+      if (request) {
+        // Use deletedRequests instead of rejectedRequests
+        const updatedDeleted = [...deletedRequests, { ...request, action: "Rejected" }];
+        setDeletedRequests(updatedDeleted);
+        setFilteredDeleted(updatedDeleted);
+        setNewRequests(newRequests.filter((req) => req.advn_id !== id));
       }
-    } catch (error) {
-      console.error("Error deleting advance request:", error);
-      setError("An error occurred while deleting the advance request.");
-    } finally {
-      setIsLoading(false);
+      alert("Advance request rejected successfully!");
+    } else {
+      setError(response.data.message || "Failed to reject advance request.");
     }
-  };
+  } catch (error) {
+    console.error("Error rejecting advance request:", error);
+    setError("An error occurred while rejecting the advance request.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Generate years for dropdown (last 5 years)
   const generateYears = () => {
@@ -336,7 +337,7 @@ const fetchFarmerSuggestions = async (query) => {
               className={`tab-button ${activeTab === "deletedRequests" ? "active" : ""}`}
               onClick={() => setActiveTab("deletedRequests")}
             >
-              Deleted Requests
+              Rejected Requests
             </button>
           </div>
 
@@ -383,9 +384,9 @@ const fetchFarmerSuggestions = async (query) => {
                         </button>
                         <button
                           className="delete-button"
-                          onClick={() => handleDelete(request.advn_id)}
+                          onClick={() => handleReject(request.advn_id)}
                         >
-                          Delete
+                          Reject
                         </button>
                       </td>
                     </tr>

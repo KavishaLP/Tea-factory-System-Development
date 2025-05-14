@@ -24,15 +24,12 @@ const Sidebar = () => {
                 onClick={() => navigate('/Mng-Create-Farmer-Account')}>
                 <img src={assets.g} alt="Logo"/> <p>Create Farmer Account</p>
             </div>
-            <div className={`sidebar-item ${isActive('/Mng-Payment-Logs') ? 'active' : ''}`}
-                onClick={() => navigate('/Mng-Payment-Logs')}>
-                <img src={assets.h} alt="Logo"/> <p>Farmer Payment Logs</p>
-            </div>
+            
 
 {/* -------------------------------------------------------------------------------- */}
             <div className={`sidebar-item ${isActive('/test-Mng-Payment-Logs') ? 'active' : ''}`}
                 onClick={() => navigate('/test-Mng-Payment-Logs')}>
-                <img src={assets.h} alt="Logo"/> <p>Tast Farmer Payment Logs</p>
+                <img src={assets.h} alt="Logo"/> <p>Farmer Payment Logs</p>
             </div>
 
 
