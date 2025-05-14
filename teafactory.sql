@@ -575,7 +575,7 @@ ALTER TABLE `farmer_payments`
 --
 ALTER TABLE `fertilizer_prices`
   MODIFY `fertilizer_veriance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
+z
 --
 -- AUTO_INCREMENT for table `fertilizer_requests`
 --

@@ -324,6 +324,8 @@ function TeaSackUpdate() {
                   type="text" 
                   value={totalTeaSackAmount} 
                   readOnly 
+                  style={{ paddingRight: totalTeaSackAmount.length > 4 ? '50px' : '40px' }} 
+                  // Dynamic padding based on content length
                 />
                 <span className="net-amount-unit">kg</span>
               </div>
