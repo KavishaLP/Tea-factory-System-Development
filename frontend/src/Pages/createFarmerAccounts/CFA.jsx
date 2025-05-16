@@ -93,13 +93,22 @@ const CreateFarmerAccount = () => {
     return mobileRegex.test(number);
   };
 
-  // Validate email format
+  // Replace your current validateEmail function with this enhanced version
   const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
+    // Check if it's empty first
+    if (!email) return false;
+    
+    // Basic email format validation
+    const basicEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!basicEmailRegex.test(email)) return false;
+    
+    // Check if it's specifically a Gmail address
+    const isGmail = email.toLowerCase().endsWith('@gmail.com');
+    
+    return isGmail;
   };
 
-  // Handle input changes with validation
+  // Update the handleChange function for better feedback with Gmail-specific messaging
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -128,11 +137,26 @@ const CreateFarmerAccount = () => {
     }
 
     if (name === "gmail") {
-      if (value && !validateEmail(value)) {
+      if (!value) {
         setFieldErrors({
           ...fieldErrors,
-          [name]: "Please enter a valid email address"
+          [name]: "Email address is required"
         });
+      } else if (!validateEmail(value)) {
+        // Check if it's not even a valid email format
+        const basicEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!basicEmailRegex.test(value)) {
+          setFieldErrors({
+            ...fieldErrors,
+            [name]: "Please enter a valid email address format"
+          });
+        } else {
+          // It's a valid email but not Gmail
+          setFieldErrors({
+            ...fieldErrors,
+            [name]: "Please enter a valid Gmail address (ending with @gmail.com)"
+          });
+        }
       } else {
         setFieldErrors({
           ...fieldErrors,
