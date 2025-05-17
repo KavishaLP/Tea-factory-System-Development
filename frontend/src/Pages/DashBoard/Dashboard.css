@@ -1,13 +1,54 @@
+/* Modern Dashboard Styling */
+:root {
+  /* Color palette */
+  --primary: #2a6b4e;
+  --primary-dark: #1e4f3a;
+  --primary-light: rgba(42, 107, 78, 0.1);
+  --primary-lighter: rgba(42, 107, 78, 0.05);
+  --accent: #3a7e64;
+  --text-primary: #2c3e50;
+  --text-secondary: #546e7a;
+  --text-light: #78909c;
+  --surface: #ffffff;
+  --background: #f8f9fa;
+  --background-alt: #f0f4f3;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-light: rgba(0, 0, 0, 0.05);
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 /* Dashboard Container */
 .dashboard-admin {
   flex: 1;
-  padding: 2rem;
+  padding: var(--spacing-xl);
   margin-left: 280px; /* Adjust based on sidebar width */
   margin-top: 70px; /* Adjust based on navbar height */
   margin-bottom: 60px; /* Adjust based on footer height */
-  background-color: #f9f9f9;
+  background-color: var(--background);
   min-height: calc(100vh - 130px); /* Viewport minus navbar and footer */
-  transition: margin-left 0.3s ease;
+  transition: margin-left var(--transition-normal);
 }
 
 /* When sidebar is collapsed */
@@ -19,56 +60,344 @@
 .dashboard-grid {
   max-width: 1200px;
   margin: 0 auto;
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
-/* Dashboard Header */
+/* Dashboard Header with Modern Design */
 .dashboard-header {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
+  position: relative;
+  padding-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.dashboard-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  border-radius: var(--radius-full);
 }
 
 .dashboard-header h1 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 700;
   text-align: center;
+  letter-spacing: -0.5px;
 }
 
 .dashboard-subtitle {
-  color: #7f8c8d;
-  font-size: 1rem;
+  color: var(--text-secondary);
+  font-size: clamp(0.9rem, 2vw, 1rem);
   text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* Metrics Row */
+/* Metrics Row with Glass Morphism */
 .metrics-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
-  gap: 1rem; /* Space between cards */
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
-/* Metric Card */
+/* Metric Card with Modern Effects */
 .metric-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-bounce), box-shadow var(--transition-normal);
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Ensure content is spaced properly */
-  height: auto; /* Allow dynamic height */
-  overflow: hidden; /* Prevent content overflow */
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
 }
 
 .metric-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+}
+
+.metric-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Content with Improved Typography */
+.card-content h3 {
+  font-size: 1rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.card-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0.5rem 0;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card-description {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* Modern Icons */
+.card-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--spacing-sm);
+  font-size: 1.5rem;
+  background: var(--primary-lighter);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid rgba(42, 107, 78, 0.15);
+}
+
+/* Tea Weight Card with Special Styling */
+.tea-weight-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, var(--surface) 0%, var(--background-alt) 100%);
+  border: 1px solid var(--border-light);
+  backdrop-filter: blur(10px);
+}
+
+.tea-weight-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+}
+
+.tea-weight-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.tea-weight-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  margin: var(--spacing-sm) 0;
+  text-align: center;
+}
+
+.tea-weight-icon {
+  font-size: 2.2rem;
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Date Navigation with Neumorphic Design */
+.date-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: var(--background-alt);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-inset);
+}
+
+.nav-button {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-button:hover:not(:disabled) {
+  background: var(--primary-lighter);
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-button:disabled {
+  background-color: var(--background);
+  border-color: var(--border);
+  color: var(--text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.date-navigation span {
+  background: var(--surface);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 120px;
+  text-align: center;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Chart Controls with Modern Toggle Buttons */
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: linear-gradient(120deg, var(--background-alt) 0%, var(--surface) 100%);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-type-toggle {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.chart-type-toggle button, 
+.time-range-toggle button {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 120px;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-type-toggle button::before,
+.time-range-toggle button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.chart-type-toggle button:hover::before,
+.time-range-toggle button:hover::before {
+  opacity: 1;
+}
+
+.chart-type-toggle button:hover,
+.time-range-toggle button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+.chart-type-toggle button.active,
+.time-range-toggle button.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.chart-type-toggle button svg,
+.time-range-toggle button svg {
+  font-size: 1.1rem;
+}
+
+/* Chart Container with Glass Effect */
+.chart-container {
+  height: 400px;
+  width: 100%;
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid var(--border-light);
+}
+
+.chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(42, 107, 78, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
 }
 
 /* Tea Weight Card Specific Styles */

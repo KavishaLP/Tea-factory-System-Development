@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-left">
-          <p>&copy; {new Date().getFullYear()} YourCompany. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Fairy Mount Tea Factory. All rights reserved.</p>
         </div>
         <div className="footer-right">
           <ul>

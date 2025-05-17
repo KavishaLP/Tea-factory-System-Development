@@ -1,15 +1,38 @@
-/* Modern styling for AdvanceUpdate page */
+/* Modern styling for AdvanceUpdate page with Fluent UI-inspired design */
+:root {
+  --primary: #2a6b4e;
+  --primary-dark: #1e4f3a;
+  --primary-light: rgba(42, 107, 78, 0.1);
+  --primary-lighter: rgba(42, 107, 78, 0.05);
+  --accent: #3a7e64;
+  --text-primary: #2c3e50;
+  --text-secondary: #546e7a;
+  --surface: #ffffff;
+  --background: #f4f7f9;
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0px 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0px 8px 24px rgba(0, 0, 0, 0.12);
+  --danger: #e53935;
+  --danger-dark: #c62828;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --transition: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .advance-update-container {
-  background-color: #f4f4f9;
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 1200px;
+  background-color: var(--background);
+  padding: clamp(1rem, 3vw, 2.5rem);
+  border-radius: var(--radius-lg);
+  max-width: 1280px;
   margin: 2rem auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   min-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1.5rem;
 }
 
 .content-wrapper {
@@ -20,67 +43,115 @@
   width: 100%;
 }
 
-/* Page Header */
+/* Page Header with frosted glass effect */
 .page-header {
-  background: linear-gradient(135deg, #00a000, #008000);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
-  padding: 1.5rem;
+  padding: clamp(1rem, 2vw, 1.8rem);
   width: 100%;
   text-align: center;
-  font-size: 1.75rem;
+  font-size: clamp(1.2rem, 3vw, 1.75rem);
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
-/* Tabs Container */
+.page-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 0;
+}
+
+.page-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Modern tab design with smooth transitions */
 .tabs-container {
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
-  gap: 1rem;
+  gap: 0.6rem;
   width: 100%;
+  padding: 0.3rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(5px);
 }
 
 .tab-button {
-  background: #e0f7e0;
-  color: #2c3e50;
+  background: var(--primary-lighter);
+  color: var(--text-primary);
   border: none;
-  padding: 1rem 2rem;
+  padding: 1rem clamp(1rem, 3vw, 2rem);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);
+  height: 3px;
+  background: var(--primary);
+  transition: transform 0.3s ease;
 }
 
 .tab-button.active {
-  background: white;
-  color: #00a000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
-.tab-button:hover {
-  background: #d0f0d0;
+.tab-button.active::before {
+  transform: translateY(0);
+}
+
+.tab-button:hover:not(.active) {
+  background: var(--primary-light);
   transform: translateY(-2px);
 }
 
-.addpeymentbut{
+.addpeymentbut {
   margin-bottom: 20px !important;
 }
 
-/* Filter Controls */
+/* Modern filter controls with neumorphic design */
 .filter-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
   align-items: flex-end;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(42, 107, 78, 0.08);
 }
 
 .filter-group {
@@ -88,163 +159,270 @@
   flex-direction: column;
   min-width: 180px;
   flex-grow: 1;
+  gap: 0.4rem;
 }
 
 .filter-group label {
   font-size: 0.85rem;
-  color: #555;
-  margin-bottom: 0.3rem;
-  font-weight: 500;
+  color: var(--primary);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .filter-group input,
 .filter-group select {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  background-color: white;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  background-color: var(--surface);
+  transition: var(--transition);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(42, 107, 78, 0.2);
 }
 
 .reset-filters {
-  padding: 0.5rem 1rem;
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.7rem 1.2rem;
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   font-size: 0.9rem;
+  font-weight: 500;
   align-self: flex-end;
   margin-left: auto;
 }
 
 .reset-filters:hover {
-  background-color: #e0e0e0;
+  background-color: var(--primary-lighter);
+  border-color: var(--primary-light);
+  color: var(--primary);
 }
 
-/* Results Count */
+/* Results count with modern typography */
 .results-count {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.7rem;
   font-style: italic;
   text-align: right;
   padding: 0 0.5rem;
 }
 
-/* Requests Table Container */
+/* Modern table with sticky header and smooth hover effects */
 .requests-table {
   width: 100%;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
   overflow-x: auto;
   flex-grow: 1;
   max-height: 60vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-light) transparent;
+}
+
+.requests-table::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.requests-table::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.requests-table::-webkit-scrollbar-thumb {
+  background-color: var(--primary-light);
+  border-radius: 10px;
 }
 
 .requests-table table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
 }
 
 .requests-table th,
 .requests-table td {
   padding: 1rem;
-  border: 1px solid #e2e8f0;
   text-align: center;
   word-wrap: break-word;
+  border-bottom: 1px solid var(--border);
 }
 
 .requests-table th {
-  background-color: #f8f9fa;
+  background-color: var(--primary-lighter);
   font-weight: 600;
-  color: #4a5568;
+  color: var(--primary-dark);
   position: sticky;
   top: 0;
+  z-index: 10;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.requests-table tr {
+  transition: var(--transition);
 }
 
 .requests-table tr:hover {
-  background-color: #f0f4f8;
+  background-color: var(--primary-lighter);
+  transform: scale(1.01);
 }
 
-/* Buttons */
+/* Modern gradient buttons with micro interactions */
 .confirm-button {
-  background: linear-gradient(135deg, #00a000, #008000);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   margin-right: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.confirm-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .confirm-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 160, 0, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 7px 14px rgba(42, 107, 78, 0.25);
+}
+
+.confirm-button:hover::after {
+  opacity: 1;
+}
+
+.confirm-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(42, 107, 78, 0.3);
 }
 
 .delete-button {
-  background: linear-gradient(135deg, #ff4d4d, #cc0000);
+  background: linear-gradient(135deg, var(--danger), var(--danger-dark));
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.delete-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .delete-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 7px 14px rgba(229, 57, 53, 0.25);
 }
 
-/* Loading and Error Messages */
+.delete-button:hover::after {
+  opacity: 1;
+}
+
+.delete-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(229, 57, 53, 0.3);
+}
+
+/* Loading and error states with modern styling */
 .loading,
 .error {
   text-align: center;
   font-size: 1.2rem;
-  margin: 1rem 0;
-  padding: 1rem;
-  border-radius: 8px;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .loading {
-  color: #00a000;
+  color: var(--primary);
+  background: var(--primary-lighter);
 }
 
 .error {
-  color: #ff4d4d;
-  background-color: #ffe6e6;
+  color: var(--danger);
+  background: rgba(229, 57, 53, 0.1);
 }
 
-/* Add Advance Button */
+/* Add advance button with modern style */
 .add-advance-button {
-  background-color: #4CAF50;
+  background-color: var(--primary);
   color: white;
   border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
   margin-left: auto;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-advance-button svg {
+  font-size: 1.2rem;
 }
 
 .add-advance-button:hover {
-  background-color: #45a049;
+  background-color: var(--primary-dark);
+  box-shadow: 0 4px 10px rgba(42, 107, 78, 0.3);
+  transform: translateY(-2px);
 }
 
-/* Modal Styles */
+/* Modern modal with frosted glass effect */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -252,64 +430,108 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
+  background-color: var(--surface);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.4s ease;
+  border: 1px solid var(--border);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #333;
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .close-button {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-button:hover {
+  background-color: var(--primary-lighter);
+  color: var(--primary);
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .cancel-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  background-color: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.cancel-button:hover {
+  background-color: rgba(229, 57, 53, 0.1);
 }
 
 .submit-button {
-  background-color: #4CAF50;
+  background-color: var(--primary);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(42, 107, 78, 0.2);
 }
 
 .submit-button:disabled {
@@ -317,48 +539,65 @@
   cursor: not-allowed;
 }
 
-/* Suggestions dropdown */
+/* Modern autocomplete with suggestions */
 .suggestions-dropdown {
   position: absolute;
   z-index: 1000;
   width: calc(100% - 2px);
   max-height: 200px;
   overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-top: none;
-  border-radius: 0 0 4px 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow-md);
   margin-top: -1px;
   list-style: none;
   padding: 0;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .suggestions-dropdown li {
-  padding: 8px 12px;
+  padding: 0.8rem 1rem;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.suggestions-dropdown li:last-child {
+  border-bottom: none;
 }
 
 .suggestions-dropdown li:hover {
-  background-color: #f5f5f5;
+  background-color: var(--primary-lighter);
+  color: var(--primary);
 }
 
 .input-group {
   position: relative;
-  margin-bottom: 15px;
+  margin-bottom: 1.2rem;
 }
 
 .error-message {
-  color: #f44336;
-  margin-top: 10px;
+  color: var(--danger);
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* Responsive Design */
+/* Responsive design with modern approach */
 @media screen and (max-width: 768px) {
   .advance-update-container {
     padding: 1.5rem;
     margin: 1rem;
+    border-radius: var(--radius-md);
   }
 
   .page-header {
@@ -378,6 +617,7 @@
 
   .filter-controls {
     flex-direction: column;
+    padding: 1rem;
   }
 
   .filter-group {
@@ -387,11 +627,14 @@
   .reset-filters {
     align-self: flex-start;
     margin-left: 0;
+    width: 100%;
+    margin-top: 0.5rem;
   }
 
   .requests-table {
     padding: 1rem;
     max-height: 50vh;
+    border-radius: var(--radius-sm);
   }
 
   .requests-table th,
@@ -401,9 +644,15 @@
 
   .confirm-button,
   .delete-button {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
+    width: 100%;
+  }
+  
+  .modal-content {
+    margin: 0 1rem;
+    padding: 1.5rem;
   }
 }
 
@@ -419,7 +668,7 @@
   }
 
   .requests-table {
-    padding: 0.5rem;
+    padding: 0.75rem;
     max-height: 40vh;
   }
 
@@ -433,5 +682,13 @@
   .delete-button {
     padding: 0.5rem;
     font-size: 0.8rem;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .modal-content {
+    padding: 1rem;
   }
 }
