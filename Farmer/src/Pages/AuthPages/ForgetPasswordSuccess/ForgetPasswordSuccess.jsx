@@ -7,9 +7,7 @@ const ForgetPasswordSuccess = () => {
 
     return (
         <>
-            <div className="upper-bar">
-                <h1>Tea Factory Management System</h1>
-            </div>
+            
             <div className="password-success-container">
                 <div className="success-content">
                     <div className="icon-container">

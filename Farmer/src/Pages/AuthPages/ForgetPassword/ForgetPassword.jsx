@@ -40,9 +40,7 @@ const ForgetPassword = () => {
 
     return (
         <>
-            <div className="upper-bar">
-                <h1>Tea Factory Management System</h1>
-            </div>
+           
             <div className="forgot-password-container">
                 <div className="form-container">
                     <h2>Forgot Password</h2>

@@ -53,10 +53,7 @@ const Login = () => {
 
   return (
     <div>
-      <div className="upper-bar">
-        <h1>Tea Factory Management System</h1>
-      </div>
-
+      
       <div className="signup-container">
         <div className="form-container">
           <h2>Login</h2>

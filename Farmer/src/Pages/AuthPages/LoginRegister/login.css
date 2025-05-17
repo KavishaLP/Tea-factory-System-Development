@@ -1,22 +1,34 @@
-/* Upper white bar */
-.upper-bar {
-    width: 100%;
-    height: 60px; /* Fixed height */
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    position: fixed; /* Fixed position */
-    top: 0; /* Position it at the top */
-    left: 0;
-    z-index: 1000; /* Ensure it stays above other content */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+
+
+/* Hide navigation elements on login page */
+body.login-page .navbar,
+body.login-page .header,
+body.login-page nav,
+body.login-page .sidebar,
+body.login-page .top-bar,
+body.login-page .upper-bar {
+    display: none !important;
 }
 
-.upper-bar h1 {
-    color: #2a6b4e; /* Dark green for contrast */
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
+
+/* Main container with complete coverage */
+.signup-container {
+    position: fixed !important; /* Fixed position to cover everything */
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw !important; /* Full viewport width */
+    height: 100vh !important; /* Full viewport height */
+    background-color: #a8d5b5 !important; /* Same green background */
+    padding: 0 !important; /* Remove padding */
+    margin: 0 !important; /* Remove margin */
+    overflow: hidden !important; /* Prevent scrolling */
+    box-sizing: border-box; /* Include padding in height */
+    z-index: 9999 !important; /* Highest z-index to cover everything */
 }
 
 

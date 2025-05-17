@@ -51,9 +51,7 @@ const Login = () => {
 
   return (
     <div className="tfms-login__wrapper">
-      <div className="tfms-login__header-bar">
-        <h1 className="tfms-login__title">Tea Factory Management System</h1>
-      </div>
+      
 
       <div className="tfms-login__main-container">
         <div className="tfms-login__form-container">

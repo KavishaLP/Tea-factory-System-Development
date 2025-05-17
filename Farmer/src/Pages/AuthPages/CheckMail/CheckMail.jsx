@@ -114,9 +114,7 @@ const CheckMail = () => {
 
     return (
         <>
-            <div className="upper-bar">
-                <h1>Tea Factory Management System</h1>
-            </div>
+            
             <div className="check-mail-container">
                 <div className="mail-content">
                     <div className="icon-container">

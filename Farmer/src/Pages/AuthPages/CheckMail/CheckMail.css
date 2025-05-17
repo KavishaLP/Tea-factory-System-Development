@@ -1,10 +1,20 @@
 .check-mail-container {
+    position: fixed !important; /* Fixed position to cover everything */
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: calc(100vh - 60px);
-    background: linear-gradient(135deg, #d4e8d9, #a8d5b5);
+    width: 100vw !important; /* Full viewport width */
+    height: 100vh !important; /* Full viewport height */
+    background-color: #a8d5b5 !important; /* Same green background as login */
+    padding: 0 !important; /* Remove padding */
+    margin: 0 !important; /* Remove margin */
+    overflow: hidden !important; /* Prevent scrolling */
+    box-sizing: border-box; /* Include padding in height */
+    z-index: 9999 !important; /* Highest z-index to cover everything */
 }
 
 .mail-content {
