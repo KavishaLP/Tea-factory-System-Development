@@ -1,5 +1,5 @@
 import './Navbar.css';
-// import assets from '../../assets/assets.js';
+import { FaUser } from 'react-icons/fa'; // Import FaUser icon
 
 const Navbar = ({userId}) => {
   return (
@@ -13,7 +13,9 @@ const Navbar = ({userId}) => {
       <div className="navbar-right">
         <i className="ri-notification-3-fill"></i>
         <div className="profile">
-          {/* <img src={assets.profile} alt="Profile" className="profile-img" /> */}
+          <div className="profile-icon">
+            <FaUser />
+          </div>
           <span className="farmer-name">{userId}</span>
         </div>
       </div>
