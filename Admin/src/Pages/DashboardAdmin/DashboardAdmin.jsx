@@ -358,7 +358,7 @@ const DashboardAdmin = () => {
                 <FaMoneyBillWave />
               </div>
               <div className="card-content">
-                <h3>Pending Requests</h3>
+                <h3>Pending Advance Requests</h3>
                 <p className="card-value">{pendingRequests}</p>
                 <p className="card-description">Awaiting approval</p>
               </div>
