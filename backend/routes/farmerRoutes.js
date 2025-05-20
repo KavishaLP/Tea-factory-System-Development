@@ -31,7 +31,7 @@ router.get('/tea-delivery-details', getTeaDeliveryDetails);
 router.get('/advance-details', getAdvanceDetails);
 router.get('/fertilizer-request-details', getFertilizerDetails);
 
-// Add these routes to your existing farmerRoutes
+// Notification routes
 router.get('/notifications', getFarmerNotifications);
 router.get('/notifications/unread-count', getUnreadCount);
 router.post('/notifications/mark-read', markAsRead);

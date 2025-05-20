@@ -3,7 +3,6 @@ import axios from 'axios';
 import './Navbar.css';
 import FarmerNotifications from './FarmerNotifications';
 import { FaBell, FaRegBell, FaUser } from 'react-icons/fa';
-// import assets from '../../assets/assets.js';
 
 const Navbar = ({ userId }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -21,34 +20,19 @@ const Navbar = ({ userId }) => {
     }
   };
 
-  // Fetch notification count on component mount and set interval
+  // Fetch unread count on component mount and set up periodic refresh
   useEffect(() => {
-    if (userId) {
-      // Initial fetch
-      fetchUnreadCount();
-
-      // Set interval to fetch count every minute
-      const intervalId = setInterval(fetchUnreadCount, 60000);
-
-      // Clean up interval on component unmount
-      return () => clearInterval(intervalId);
-    }
+    fetchUnreadCount();
+    
+    // Refresh notification count every minute
+    const intervalId = setInterval(fetchUnreadCount, 60000);
+    
+    return () => clearInterval(intervalId);
   }, [userId]);
 
-  // Toggle notifications panel visibility
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-    
-    // If we're opening the panel, reset unread count
-    if (!showNotifications && unreadCount > 0) {
-      fetchUnreadCount();
-    }
-  };
-
-  // Close notifications panel
-  const closeNotifications = () => {
+  // Update count when notifications panel is closed (in case notifications were read)
+  const handleCloseNotifications = () => {
     setShowNotifications(false);
-    // Refresh count when closing panel
     fetchUnreadCount();
   };
 
@@ -62,7 +46,7 @@ const Navbar = ({ userId }) => {
       </div>
       <div className="navbar-right">
         <div className="notification-container">
-          <div className="notification-icon" onClick={toggleNotifications} title="Notifications">
+          <div className="notification-icon" onClick={() => setShowNotifications(!showNotifications)} title="Notifications">
             {unreadCount > 0 ? (
               <FaBell className="animated-icon" />
             ) : (
@@ -72,7 +56,7 @@ const Navbar = ({ userId }) => {
               <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
             )}
           </div>
-          {showNotifications && <FarmerNotifications onClose={closeNotifications} userId={userId} />}
+          {showNotifications && <FarmerNotifications onClose={handleCloseNotifications} userId={userId} />}
         </div>
         <div className="profile">
           <div className="profile-pic">
@@ -83,8 +67,6 @@ const Navbar = ({ userId }) => {
       </div>
     </nav>
   );
-
-  
 };
 
 export default Navbar;

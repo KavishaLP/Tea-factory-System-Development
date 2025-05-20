@@ -37,6 +37,7 @@ const FarmerNotifications = ({ onClose, userId }) => {
   // Fetch notifications on component mount
   useEffect(() => {
     const fetchNotifications = async () => {
+      console.log('Fetching notifications for userId:', userId);
       try {
         setLoading(true);
         const response = await axios.get(`http://localhost:8081/api/farmer/notifications?userId=${userId}`, {

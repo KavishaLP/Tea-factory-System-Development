@@ -68,7 +68,7 @@ export const confirmFertilizer = async (req, res) => {
         // First get the request details including payment option
         const getRequestQuery = `
             SELECT fr.*, fp.price, fp.fertilizerType, fp.packetType, fr.amount * fp.price AS total_cost, 
-                   fa.gmail, fa.firstName, fa.lastName
+                   fa.gmail, fa.firstName, fa.lastName, fa.userId
             FROM fertilizer_requests fr
             JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
             JOIN farmeraccounts fa ON fr.userId = fa.userId
@@ -92,6 +92,7 @@ export const confirmFertilizer = async (req, res) => {
             const fertilizerDetails = `${request.fertilizerType} (${request.packetType})`;
             const quantity = request.amount;
             const unitPrice = request.price;
+            const userId = request.userId;
 
             // Update request status to Approved
             const updateRequestQuery = "UPDATE fertilizer_requests SET status = 'Approved' WHERE request_id = ?";
@@ -100,6 +101,22 @@ export const confirmFertilizer = async (req, res) => {
                     console.error("Error updating request status:", updateErr);
                     return res.status(500).json({ message: "Error updating request", error: updateErr });
                 }
+
+                // Create notification record
+                const notificationTitle = "Fertilizer Request Approved";
+                const notificationMessage = `Your request for ${quantity} packets of ${fertilizerDetails} has been approved. Total cost: Rs.${totalCost}. Payment method: ${request.paymentOption === 'deductpayment' ? 'Monthly Payment Deduction' : 'Cash Payment'}.`;
+                
+                const createNotificationQuery = `
+                    INSERT INTO notifications (receiver_id, receiver_type, title, message)
+                    VALUES (?, 'farmer', ?, ?)
+                `;
+                
+                sqldb.query(createNotificationQuery, [userId, notificationTitle, notificationMessage], (notifyErr) => {
+                    if (notifyErr) {
+                        console.error("Error creating notification:", notifyErr);
+                        // Continue with the process even if notification creation fails
+                    }
+                });
 
                 // Only update payment record if payment option is 'deductpayment'
                 if (request.paymentOption === 'deductpayment') {
@@ -438,7 +455,7 @@ export const deleteFertilizer = async (req, res) => {
         // Get the request details first
         const getRequestQuery = `
             SELECT fr.*, fp.fertilizerType, fp.packetType, fr.amount * fp.price AS total_cost, 
-                   fa.gmail, fa.firstName, fa.lastName
+                   fa.gmail, fa.firstName, fa.lastName, fa.userId
             FROM fertilizer_requests fr
             JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
             JOIN farmeraccounts fa ON fr.userId = fa.userId
@@ -460,6 +477,7 @@ export const deleteFertilizer = async (req, res) => {
             const userName = `${request.firstName} ${request.lastName}`;
             const fertilizerDetails = `${request.fertilizerType} (${request.packetType})`;
             const quantity = request.amount;
+            const userId = request.userId;
 
             // Update request status to Rejected
             const sqlQuery = "UPDATE fertilizer_requests SET status = 'Rejected' WHERE request_id = ?";
@@ -472,6 +490,22 @@ export const deleteFertilizer = async (req, res) => {
                 if (result.affectedRows === 0) {
                     return res.status(404).json({ message: "Fertilizer request not found." });
                 }
+
+                // Create notification record
+                const notificationTitle = "Fertilizer Request Rejected";
+                const notificationMessage = `Your request for ${quantity} packets of ${fertilizerDetails} has been rejected. Please contact the factory office for more information.`;
+                
+                const createNotificationQuery = `
+                    INSERT INTO notifications (receiver_id, receiver_type, title, message)
+                    VALUES (?, 'farmer', ?, ?)
+                `;
+                
+                sqldb.query(createNotificationQuery, [userId, notificationTitle, notificationMessage], (notifyErr) => {
+                    if (notifyErr) {
+                        console.error("Error creating notification:", notifyErr);
+                        // Continue with the process even if notification creation fails
+                    }
+                });
 
                 // Send rejection email
                 sendRejectionEmail(userEmail, userName, fertilizerDetails, quantity, res);
