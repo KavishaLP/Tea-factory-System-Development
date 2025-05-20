@@ -52,7 +52,7 @@ export const requestAdvance = async (req, res) => {
                     VALUES ?
                 `;
 
-                const values = managers.map(manager => [manager.ID, 'manager', title, message]);
+                const values = managers.map(manager => [manager.ID, 'admin', title, message]);
 
                 if (values.length > 0) {
                     sqldb.query(insertNotificationSql, [values], (err) => {
@@ -185,7 +185,7 @@ export const requestFertilizer = async (req, res) => {
                 INSERT INTO notifications (receiver_id, receiver_type, title, message)
                 VALUES ?
             `;
-            const values = admins.map(admin => [admin.ID, 'admin', title, message]);
+            const values = admins.map(admin => [admin.ID, 'manager', title, message]);
 
             if (values.length > 0) {
                 await new Promise((resolve, reject) => {
@@ -258,7 +258,8 @@ export const getPaymentsByUserId = (req, res) => {
       teaPackets,
       fertilizer,
       finalPayment,
-      created_at
+      created_at,
+      status
     FROM farmer_payments
     WHERE userId = ?
     ORDER BY created_at DESC

@@ -8,8 +8,13 @@ const Sidebar3 = () => {
     const location = useLocation(); // Hook to get the current path
 
     const handleLogout = () => {
-        localStorage.removeItem("userRole"); // Clear stored user role
+        localStorage.clear(); // Clear all local storage items
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("token");
         navigate("/"); // Redirect to login page
+        setTimeout(() => {
+                window.location.reload(true);
+        }, 100);
     };
 
     // Function to determine if the current path matches the route

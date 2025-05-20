@@ -33,9 +33,9 @@ const app = express();
 app.use(express.json()); // ✅ Must be placed before routes
 
 app.use(cors({
-    origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5175"],
-    methods: ["POST", "GET", "PUT", "DELETE"],
-    credentials: true
+  origin: ["http://localhost:3000","http://localhost:3001","http://localhost:3002"],
+  methods: ["POST", "GET", "PUT", "DELETE"],
+  credentials: true
 }));
 
 app.use(cookieParser());

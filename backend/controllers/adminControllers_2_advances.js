@@ -118,6 +118,28 @@ export const confirmAdvance = async (req, res) => {
       });
     });
 
+    // Create notification record
+    const notificationTitle = "Advance Payment Approved";
+    const formattedAmount = new Intl.NumberFormat('en-LK', {
+      style: 'currency',
+      currency: 'LKR',
+      minimumFractionDigits: 2
+    }).format(amount);
+    
+    const notificationMessage = `Your advance payment request of ${formattedAmount} has been approved. You can collect it from the factory office.`;
+    
+    const createNotificationQuery = `
+      INSERT INTO notifications (receiver_id, receiver_type, title, message)
+      VALUES (?, 'farmer', ?, ?)
+    `;
+    
+    sqldb.query(createNotificationQuery, [userId, notificationTitle, notificationMessage], (notifyErr) => {
+      if (notifyErr) {
+        console.error("Error creating notification:", notifyErr);
+        // Continue with the process even if notification creation fails
+      }
+    });
+
     // Step 3: Update the advances column in farmer_payments for the specific user
     const advanceMonth = new Date(date).getMonth() + 1; // Months are 0-based in JavaScript
     const advanceYear = new Date(date).getFullYear();
@@ -297,7 +319,7 @@ export const confirmAdvance = async (req, res) => {
   }
 };
 
-// Updated deleteAdvance function with email notification
+// Updated deleteAdvance function with notification creation
 export const deleteAdvance = async (req, res) => {
     console.log("Rejecting advance request:", req.body);
 
@@ -328,7 +350,7 @@ export const deleteAdvance = async (req, res) => {
           return res.status(404).json({ message: 'Advance request not found.' });
         }
 
-        const { amount, date, firstName, lastName, gmail } = advanceDetails[0];
+        const { userId, amount, date, firstName, lastName, gmail } = advanceDetails[0];
 
         // Query to update the action to "Rejected"
         const sqlQuery = "UPDATE advance_payment SET action = 'Rejected' WHERE advn_id = ?";
@@ -342,6 +364,28 @@ export const deleteAdvance = async (req, res) => {
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Advance request not found.' });
         }
+
+        // Create notification record
+        const notificationTitle = "Advance Payment Request Declined";
+        const formattedAmount = new Intl.NumberFormat('en-LK', {
+          style: 'currency',
+          currency: 'LKR',
+          minimumFractionDigits: 2
+        }).format(amount);
+        
+        const notificationMessage = `Your advance payment request of ${formattedAmount} has been declined. Please contact the factory office for more information.`;
+        
+        const createNotificationQuery = `
+            INSERT INTO notifications (receiver_id, receiver_type, title, message)
+            VALUES (?, 'farmer', ?, ?)
+        `;
+        
+        sqldb.query(createNotificationQuery, [userId, notificationTitle, notificationMessage], (notifyErr) => {
+            if (notifyErr) {
+                console.error("Error creating notification:", notifyErr);
+                // Continue with the process even if notification creation fails
+            }
+        });
 
         // Send email notification if email is available
         let emailStatus = 'No email available';

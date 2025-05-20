@@ -9,6 +9,7 @@ const Sidebar2 = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("userRole"); // Clear stored user role
+        localStorage.removeItem("token"); // Clear stored token
         navigate("/"); // Redirect to login page
     };
 

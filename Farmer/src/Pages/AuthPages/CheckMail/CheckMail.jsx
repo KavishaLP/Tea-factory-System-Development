@@ -91,7 +91,7 @@ const CheckMail = () => {
         setMessage('');
         try {
             // Assuming the email is stored in state or props (e.g., email state)
-            const response = await fetch('http://localhost:8081/auth/fmr-check-code', {
+            const response = await fetch('http://localhost:8081/api/auth/fmr-check-code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

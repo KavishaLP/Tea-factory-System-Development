@@ -1,3 +1,5 @@
+// controller/managerControllers_2_fertilizer.js
+
 import sqldb from '../config/sqldb.js';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
@@ -88,7 +90,7 @@ export const confirmFertilizer = async (req, res) => {
             const request = requestResults[0];
             const userEmail = request.gmail;
             const userName = `${request.firstName} ${request.lastName}`;
-            const totalCost = request.total_cost;
+            const totalCost = parseFloat(request.total_cost);
             const fertilizerDetails = `${request.fertilizerType} (${request.packetType})`;
             const quantity = request.amount;
             const unitPrice = request.price;
@@ -104,7 +106,7 @@ export const confirmFertilizer = async (req, res) => {
 
                 // Create notification record
                 const notificationTitle = "Fertilizer Request Approved";
-                const notificationMessage = `Your request for ${quantity} packets of ${fertilizerDetails} has been approved. Total cost: Rs.${totalCost}. Payment method: ${request.paymentOption === 'deductpayment' ? 'Monthly Payment Deduction' : 'Cash Payment'}.`;
+                const notificationMessage = `Your request for ${quantity} packets of ${fertilizerDetails} has been approved. Total cost: Rs.${totalCost.toFixed(2)}. Payment method: ${request.paymentOption === 'deductpayment' ? 'Monthly Payment Deduction' : 'Cash Payment'}.`;
                 
                 const createNotificationQuery = `
                     INSERT INTO notifications (receiver_id, receiver_type, title, message)
@@ -121,101 +123,158 @@ export const confirmFertilizer = async (req, res) => {
                 // Only update payment record if payment option is 'deductpayment'
                 if (request.paymentOption === 'deductpayment') {
                     try {
-                        // Find the payment record for the same month as the request
-                        const requestMonth = new Date(request.requestDate).getMonth() + 1; // 1-12
-                        const requestYear = new Date(request.requestDate).getFullYear();
+                        // Calculate 1/3 of the fertilizer cost for each month
+                        const fertilizerAmountPerMonth = parseFloat((totalCost / 3).toFixed(2));
+                        console.log(`Dividing total fertilizer cost ${totalCost} into 3 monthly installments of ${fertilizerAmountPerMonth}`);
                         
-                        // Calculate amount per month (divide by 3)
-                        const amountPerMonth = parseFloat((totalCost / 3).toFixed(2));
+                        // Get current date from request
+                        const requestDate = new Date(request.requestDate);
+                        const currentMonth = requestDate.getMonth(); // 0-11
+                        const currentYear = requestDate.getFullYear();
                         
-                        // Array to store the months we need to update
-                        const monthsToUpdate = [];
+                        // Array to store the months to process
+                        const monthsToProcess = [];
                         
-                        // Add current month and next two months to the array
+                        // Add current month and next 2 months to the array
                         for (let i = 0; i < 3; i++) {
-                            let targetMonth = requestMonth + i;
-                            let targetYear = requestYear;
+                            let month = currentMonth + i;
+                            let year = currentYear;
                             
-                            // Adjust year if months exceed 12
-                            if (targetMonth > 12) {
-                                targetMonth = targetMonth - 12;
-                                targetYear++;
+                            // Handle year transition
+                            if (month > 11) {
+                                month = month - 12;
+                                year = year + 1;
                             }
                             
-                            monthsToUpdate.push({ month: targetMonth, year: targetYear });
+                            monthsToProcess.push({
+                                month: month + 1, // Convert to 1-12 format for MySQL
+                                year: year,
+                                firstDayOfMonth: new Date(year, month, 1)
+                            });
                         }
                         
-                        // Process updates for all three months
-                        const processAllMonths = async () => {
-                            let successCount = 0;
+                        console.log(`Processing payments for months: ${monthsToProcess.map(m => `${m.month}/${m.year}`).join(', ')}`);
+                        
+                        // Process each month
+                        for (const monthData of monthsToProcess) {
+                            // Check if a payment record exists for this month
+                            const checkQuery = `
+                                SELECT *
+                                FROM farmer_payments
+                                WHERE userId = ?
+                                AND MONTH(created_at) = ?
+                                AND YEAR(created_at) = ?
+                            `;
                             
-                            // Process each month
-                            for (const { month, year } of monthsToUpdate) {
-                                // Check if record exists for this month
-                                const checkExistingQuery = `
-                                    SELECT * FROM farmer_payments
-                                    WHERE userId = ? 
-                                    AND MONTH(created_at) = ? 
+                            // Execute the check query
+                            const existingRecords = await new Promise((resolve, reject) => {
+                                sqldb.query(checkQuery, [userId, monthData.month, monthData.year], (err, results) => {
+                                    if (err) {
+                                        console.error(`Error checking payment record for ${monthData.month}/${monthData.year}:`, err);
+                                        reject(err);
+                                    } else {
+                                        resolve(results);
+                                    }
+                                });
+                            });
+                            
+                            if (existingRecords && existingRecords.length > 0) {
+                                // Record exists - update only the fertilizer column
+                                console.log(`Found existing payment record for ${monthData.month}/${monthData.year}`);
+                                
+                                const updateQuery = `
+                                    UPDATE farmer_payments
+                                    SET fertilizer = fertilizer + ?
+                                    WHERE userId = ?
+                                    AND MONTH(created_at) = ?
                                     AND YEAR(created_at) = ?
                                 `;
                                 
-                                const existingRecord = await new Promise((resolve, reject) => {
-                                    sqldb.query(checkExistingQuery, [request.userId, month, year], (err, results) => {
-                                        if (err) reject(err);
-                                        resolve(results);
+                                await new Promise((resolve, reject) => {
+                                    sqldb.query(updateQuery, [
+                                        fertilizerAmountPerMonth,
+                                        userId,
+                                        monthData.month,
+                                        monthData.year
+                                    ], (err, result) => {
+                                        if (err) {
+                                            console.error(`Error updating fertilizer amount for ${monthData.month}/${monthData.year}:`, err);
+                                            reject(err);
+                                        } else {
+                                            console.log(`Successfully updated fertilizer amount for ${monthData.month}/${monthData.year}`);
+                                            resolve(result);
+                                        }
                                     });
                                 });
+                            } else {
+                                // No record exists - create a new one with the fertilizer amount
+                                console.log(`No payment record found for ${monthData.month}/${monthData.year} - creating new record`);
                                 
-                                if (existingRecord.length > 0) {
-                                    // Update existing record
-                                    const updateQuery = `
-                                        UPDATE farmer_payments 
-                                        SET fertilizer = COALESCE(fertilizer, 0) + ?
-                                        WHERE userId = ? 
-                                        AND MONTH(created_at) = ? 
-                                        AND YEAR(created_at) = ?
-                                    `;
-                                    
-                                    await new Promise((resolve, reject) => {
-                                        sqldb.query(updateQuery, [amountPerMonth, request.userId, month, year], (err) => {
-                                            if (err) reject(err);
-                                            successCount++;
-                                            resolve();
-                                        });
+                                const insertQuery = `
+                                    INSERT INTO farmer_payments (
+                                        userId,
+                                        paymentPerKilo,
+                                        finalTeaKilos,
+                                        paymentForFinalTeaKilos,
+                                        additionalPayments,
+                                        transport,
+                                        directPayments,
+                                        finalAmount,
+                                        advances,
+                                        teaPackets,
+                                        fertilizer,
+                                        finalPayment,
+                                        status,
+                                        created_at
+                                    ) VALUES (
+                                        ?,  -- userId
+                                        0,  -- paymentPerKilo
+                                        0,  -- finalTeaKilos
+                                        0,  -- paymentForFinalTeaKilos
+                                        0,  -- additionalPayments
+                                        0,  -- transport
+                                        0,  -- directPayments
+                                        0,  -- finalAmount
+                                        0,  -- advances
+                                        0,  -- teaPackets
+                                        ?,  -- fertilizer (installment amount)
+                                        0,  -- finalPayment
+                                        'Pending',  -- status
+                                        ?   -- created_at (first day of the month)
+                                    )
+                                `;
+                                
+                                await new Promise((resolve, reject) => {
+                                    sqldb.query(insertQuery, [
+                                        userId,
+                                        fertilizerAmountPerMonth,
+                                        monthData.firstDayOfMonth
+                                    ], (err, result) => {
+                                        if (err) {
+                                            console.error(`Error creating payment record for ${monthData.month}/${monthData.year}:`, err);
+                                            reject(err);
+                                        } else {
+                                            console.log(`Successfully created payment record for ${monthData.month}/${monthData.year}`);
+                                            resolve(result);
+                                        }
                                     });
-                                } else {
-                                    // Create new record for this month
-                                    let recordDate = new Date(year, month - 1, 1); // month is 0-based in Date constructor
-                                    
-                                    const insertQuery = `
-                                        INSERT INTO farmer_payments 
-                                        (userId, paymentPerKilo, finalTeaKilos, paymentForFinalTeaKilos, 
-                                        additionalPayments, transport, directPayments, finalAmount, 
-                                        advances, teaPackets, fertilizer, finalPayment, status, created_at)
-                                        VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0, 0, ?, 0, 'Pending', ?)
-                                    `;
-                                    
-                                    await new Promise((resolve, reject) => {
-                                        sqldb.query(insertQuery, [request.userId, amountPerMonth, recordDate], (err) => {
-                                            if (err) reject(err);
-                                            successCount++;
-                                            resolve();
-                                        });
-                                    });
-                                }
+                                });
                             }
-                            
-                            return successCount;
-                        };
+                        }
                         
-                        // Process all months and then send email
-                        const updatedMonths = await processAllMonths();
+                        console.log("Successfully updated fertilizer costs for all three months");
                         
-                        console.log(`Successfully updated/created ${updatedMonths} payment records for fertilizer distribution`);
+                        // Create monthly payment description for email
+                        const monthNames = ["January", "February", "March", "April", "May", "June", 
+                                           "July", "August", "September", "October", "November", "December"];
                         
-                        // Send approval email with explanation about distributed payment
-                        const distributionNote = `The fertilizer cost of ${totalCost} has been divided into 3 equal installments of ${amountPerMonth} each, to be deducted over the next 3 months.`;
+                        const monthsDescription = monthsToProcess.map(m => 
+                            `${monthNames[m.month-1]} ${m.year}`
+                        ).join(", ");
                         
+                        const distributionNote = `The total fertilizer cost of Rs.${totalCost.toFixed(2)} has been divided into 3 equal installments of Rs.${fertilizerAmountPerMonth.toFixed(2)}, which will be deducted from your payments for: ${monthsDescription}.`;
+                        
+                        // Send email with payment distribution details
                         sendApprovalEmail(
                             userEmail, 
                             userName, 
@@ -227,12 +286,12 @@ export const confirmFertilizer = async (req, res) => {
                             res, 
                             distributionNote
                         );
-                        
                     } catch (error) {
-                        console.error("Error in payment update process:", error);
-                        return res.status(500).json({ 
-                            message: "Request approved but error in payment update", 
-                            error: error 
+                        console.error("Error updating fertilizer payments:", error);
+                        return res.status(200).json({
+                            status: "Warning",
+                            message: "Fertilizer request approved, but there was an error updating payment records",
+                            error: error.message
                         });
                     }
                 } else {

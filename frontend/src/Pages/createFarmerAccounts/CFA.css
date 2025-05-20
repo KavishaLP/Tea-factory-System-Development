@@ -226,6 +226,74 @@ button.loading::after {
   padding: 0.25rem;
 }
 
+/* User ID input container */
+.id-input-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Auto-generated input styling */
+input.auto-generated {
+  background-color: #f8f9ff;
+  border-color: #c0d6e4;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Regenerate button styling */
+.regenerate-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 36px;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.regenerate-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Auto-ID note */
+.auto-id-note {
+  display: block;
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Add to your CFA.css file */
+.auto-generated {
+  background-color: #f0f8ff; /* Light blue background */
+  border: 1px solid #add8e6;
+}
+
+.manually-edited {
+  background-color: #fff; /* Normal background */
+}
+
+.id-status-note {
+  font-size: 0.8rem;
+  color: #666;
+  display: block;
+  margin-top: 4px;
+}
+
+.id-info-note {
+  font-size: 0.8rem;
+  color: #666;
+  display: block;
+  margin-top: 4px;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
   .input-group.two-column {
