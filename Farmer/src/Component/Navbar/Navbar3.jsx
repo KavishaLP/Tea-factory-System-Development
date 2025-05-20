@@ -3,7 +3,7 @@ import axios from 'axios';
 import './Navbar.css';
 import FarmerNotifications from './FarmerNotifications';
 import { FaBell, FaRegBell, FaUser } from 'react-icons/fa';
-import assets from '../../assets/assets.js';
+// import assets from '../../assets/assets.js';
 
 const Navbar = ({ userId }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -55,7 +55,7 @@ const Navbar = ({ userId }) => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <img src={assets.logo} alt="Logo" className="logo" />
+        {/* <img src={assets.logo} alt="Logo" className="logo" /> */}
       </div>
       <div className="navbar-center">
         <i className="ri-menu-2-line"></i>
