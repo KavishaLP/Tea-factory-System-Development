@@ -142,27 +142,6 @@ function ToPayments() {
         </button>
       </div>
 
-      <div className="tea-price-section">
-        {isEditingPrice ? (
-          <div className="price-edit-form">
-            <input
-              type="number"
-              step="0.01"
-              value={newTeaPrice}
-              onChange={(e) => setNewTeaPrice(e.target.value)}
-              placeholder="Enter price per kilo"
-            />
-            <button onClick={handlePriceUpdate}>Save Price</button>
-            <button onClick={() => setIsEditingPrice(false)}>Cancel</button>
-          </div>
-        ) : (
-          <div className="price-display">
-            <span>Current Tea Price: {teaPrice ? `LKR ${teaPrice}` : 'Not set'}</span>
-            <button onClick={() => setIsEditingPrice(true)}>Edit Price</button>
-          </div>
-        )}
-      </div>
-
       {error && <p className="error-message">{error}</p>}
 
       {historyLoading ? (

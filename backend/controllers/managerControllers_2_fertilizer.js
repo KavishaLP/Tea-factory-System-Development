@@ -86,7 +86,7 @@ export const confirmFertilizer = async (req, res) => {
             if (requestResults.length === 0) {
                 return res.status(404).json({ message: "Fertilizer request not found." });
             }
-
+            console.log("Request results:", requestResults);
             const request = requestResults[0];
             const userEmail = request.gmail;
             const userName = `${request.firstName} ${request.lastName}`;
@@ -104,6 +104,8 @@ export const confirmFertilizer = async (req, res) => {
                     return res.status(500).json({ message: "Error updating request", error: updateErr });
                 }
 
+                console.log("Fertilizer request approved successfully.");
+
                 // Create notification record
                 const notificationTitle = "Fertilizer Request Approved";
                 const notificationMessage = `Your request for ${quantity} packets of ${fertilizerDetails} has been approved. Total cost: Rs.${totalCost.toFixed(2)}. Payment method: ${request.paymentOption === 'deductpayment' ? 'Monthly Payment Deduction' : 'Cash Payment'}.`;
@@ -120,8 +122,10 @@ export const confirmFertilizer = async (req, res) => {
                     }
                 });
 
+                console.log("Sending email notification...");
+
                 // Only update payment record if payment option is 'deductpayment'
-                if (request.paymentOption === 'deductpayment') {
+                if (request.paymentoption === 'deductpayment') {
                     try {
                         // Calculate 1/3 of the fertilizer cost for each month
                         const fertilizerAmountPerMonth = parseFloat((totalCost / 3).toFixed(2));
