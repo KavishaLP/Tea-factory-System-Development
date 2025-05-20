@@ -1,12 +1,13 @@
 //routes/adminRoutes
 
 import express from 'express';
-import { getAdvanceRequests, confirmAdvance, deleteAdvance, addTeaSack, fetchRequestAdvance, fetchTotalUsers, getTeaPacketsRequests, confirmTeaPackets, deleteTeaPackets, searchUsers,
-    fetchTeaInventory, addTeaProduction, distributeTea, addAdvancePayment,
+import { addTeaSack, fetchRequestAdvance, fetchTotalUsers, getTeaPacketsRequests, confirmTeaPackets, deleteTeaPackets, searchUsers,
+    fetchTeaInventory, addTeaProduction, distributeTea,
     fetchTotalTeaWeight,  fetchDailyTeaWeights,fetchWeeklyTeaWeights,fetchMonthlyTeaWeights,fetchYearlyTeaWeights,
     getNotifications, getUnreadCount, markAsRead, markAllAsRead
- } from '../controllers/adminControllers.js'
+ } from '../controllers/adminControllers_1.js'
 
+import { getAdvanceRequests, confirmAdvance, deleteAdvance,addAdvancePayment } from '../controllers/adminControllers_2_advances.js';
 
 const router = express.Router();
 

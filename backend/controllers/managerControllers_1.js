@@ -5,7 +5,6 @@ import util from 'util';
 import sqldb from '../config/sqldb.js';
 import moment  from 'moment-timezone';
 import nodemailer from 'nodemailer'; // make sure you import it at the top
-import { console } from 'inspector';
 
 
 const query = util.promisify(sqldb.query).bind(sqldb);
@@ -493,295 +492,6 @@ export const getEmployeePaymentHistory = (req, res) => {
 
 //---------------------------------------------------------------------------------------------------
 
-// Get fertilizer requests
-export const getFertilizerRequests = (req, res) => {
-    // Updated query to fetch fertilizer request + fertilizer details
-    const query = `
-      SELECT 
-        fr.request_id,
-        fr.userId,
-        fr.fertilizer_veriance_id,
-        fr.amount,
-        fr.requestDate,
-        fr.status,
-        fr.paymentOption,
-        fa.userName,
-        fp.fertilizerType,
-        fp.packetType,
-        fp.price
-      FROM fertilizer_requests fr
-      JOIN farmeraccounts fa ON fr.userId = fa.userId
-      JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
-      ORDER BY fr.requestDate DESC;
-    `;
-
-    // Execute the query
-    sqldb.query(query, (err, results) => {
-      if (err) {
-        console.error("Error fetching fertilizer requests:", err);
-        return res.status(500).json({
-          status: "Error",
-          message: "An error occurred while fetching fertilizer requests.",
-        });
-      }
-
-      // Check if requests exist
-      if (results.length === 0) {
-        return res.status(404).json({
-          status: "Success",
-          message: "No fertilizer requests found.",
-          fertilizerRequests: [],
-        });
-      }
-
-      // Return the fetched requests
-      res.status(200).json({
-        status: "Success",
-        message: "Fertilizer requests fetched successfully.",
-        fertilizerRequests: results,
-      });
-    });
-};
-
-// Approve fertilizer request and send email
-export const confirmFertilizer = async (req, res) => {
-    console.log("Confirming fertilizer request:", req.body);
-
-    const { requestId } = req.body;
-
-    if (!requestId) {
-        return res.status(400).json({ message: "Request ID is required." });
-    }
-
-    try {
-        // First get the request details including payment option
-        const getRequestQuery = `
-            SELECT fr.*, fp.price, fr.amount * fp.price AS total_cost, fa.gmail
-            FROM fertilizer_requests fr
-            JOIN fertilizer_prices fp ON fr.fertilizer_veriance_id = fp.fertilizer_veriance_id
-            JOIN farmeraccounts fa ON fr.userId = fa.userId
-            WHERE fr.request_id = ?
-        `;
-        
-        sqldb.query(getRequestQuery, [requestId], async (err, requestResults) => {
-            if (err) {
-                console.error("Database Query Error:", err);
-                return res.status(500).json({ message: "Database error", error: err });
-            }
-
-            if (requestResults.length === 0) {
-                return res.status(404).json({ message: "Fertilizer request not found." });
-            }
-
-            const request = requestResults[0];
-            const userEmail = request.gmail;
-            const totalCost = request.total_cost;
-
-            // Update request status to Approved
-            const updateRequestQuery = "UPDATE fertilizer_requests SET status = 'Approved' WHERE request_id = ?";
-            sqldb.query(updateRequestQuery, [requestId], async (updateErr) => {
-                if (updateErr) {
-                    console.error("Error updating request status:", updateErr);
-                    return res.status(500).json({ message: "Error updating request", error: updateErr });
-                }
-
-                // Only update payment record if payment option is 'deductpayment'
-                if (request.paymentoption === 'deductpayment') {
-                    try {
-                        // Find the payment record for the same month as the request
-                        const requestMonth = new Date(request.requestDate).getMonth() + 1; // 1-12
-                        const requestYear = new Date(request.requestDate).getFullYear();
-
-                        // Update the fertilizer column in farmer_payments
-                        const updatePaymentQuery = `
-                            UPDATE farmer_payments 
-                            SET fertilizer = COALESCE(fertilizer, 0) + ?
-                            WHERE userId = ? 
-                            AND MONTH(created_at) = ? 
-                            AND YEAR(created_at) = ?
-                        `;
-                        
-                        sqldb.query(updatePaymentQuery, 
-                            [totalCost, request.userId, requestMonth, requestYear], 
-                            (paymentErr, paymentResult) => {
-                                if (paymentErr) {
-                                    console.error("Error updating payment record:", paymentErr);
-                                    return res.status(500).json({ 
-                                        message: "Request approved but failed to update payment record", 
-                                        error: paymentErr 
-                                    });
-                                }
-
-                                if (paymentResult.affectedRows === 0) {
-                                    console.warn("No payment record found for the month - creating new one");
-                                    // Optionally create a new payment record if none exists
-                                    return handleEmailNotification(userEmail, res, true);
-                                }
-
-                                handleEmailNotification(userEmail, res);
-                            });
-                    } catch (error) {
-                        console.error("Error in payment update process:", error);
-                        return res.status(500).json({ 
-                            message: "Request approved but error in payment update", 
-                            error: error 
-                        });
-                    }
-                } else {
-                    // For cash payments, just send email
-                    handleEmailNotification(userEmail, res);
-                }
-            });
-        });
-    } catch (error) {
-        console.error("Unexpected Error:", error);
-        return res.status(500).json({ message: "An unexpected error occurred.", error: error });
-    }
-};
-
-// Helper function to handle email notification
-function handleEmailNotification(userEmail, res, noPaymentRecord = false) {
-    if (!userEmail) {
-        return res.status(200).json({
-            status: "Success",
-            message: noPaymentRecord 
-                ? "Fertilizer approved but no payment record found for the month" 
-                : "Fertilizer request confirmed successfully. (No email sent - user has no email)",
-        });
-    }
-
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: userEmail,
-        subject: 'Tea Factory Fertilizer Request Approved',
-        text: `Dear Farmer,
-
-Your fertilizer request has been approved successfully.
-
-Please follow the next steps as informed by the Tea Factory.
-
-Thank you,
-Tea Factory Management`,
-    };
-
-    transporter.sendMail(mailOptions, (mailErr) => {
-        if (mailErr) {
-            console.error("Error sending email:", mailErr);
-            return res.status(500).json({ 
-                message: noPaymentRecord 
-                    ? "Fertilizer approved but failed to send email and no payment record found" 
-                    : "Request approved but error sending email", 
-                error: mailErr 
-            });
-        }
-
-        return res.status(200).json({
-            status: "Success",
-            message: noPaymentRecord 
-                ? "Fertilizer approved (email sent) but no payment record found for the month" 
-                : "Fertilizer request confirmed and email notification sent successfully.",
-        });
-    });
-}
-
-// Delete fertilizer request
-export const deleteFertilizer = async (req, res) => {
-    console.log("Deleting fertilizer request:", req.body);
-
-    const { requestId } = req.body;
-
-    if (!requestId) {
-        return res.status(400).json({ message: "Request ID is required." });
-    }
-
-    try {
-        const sqlQuery = "UPDATE fertilizer_requests SET status = 'Rejected' WHERE request_id = ?";
-        sqldb.query(sqlQuery, [requestId], (err, result) => {
-            if (err) {
-                console.error("Database Query Error:", err);
-                return res.status(500).json({ message: "Database error", error: err });
-            }
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ message: "Fertilizer request not found." });
-            }
-
-            // After rejecting, get user's email
-            const getEmailQuery = `
-                SELECT fa.gmail 
-                FROM fertilizer_requests fr
-                JOIN farmeraccounts fa ON fr.userId = fa.userId
-                WHERE fr.request_id = ?
-            `;
-            sqldb.query(getEmailQuery, [requestId], (emailErr, emailResults) => {
-                if (emailErr) {
-                    console.error("Error fetching user email:", emailErr);
-                    return res.status(500).json({ message: "Error fetching user email", error: emailErr });
-                }
-
-                if (emailResults.length === 0) {
-                    return res.status(404).json({ message: "User email not found." });
-                }
-
-                const userEmail = emailResults[0].gmail;
-
-                if (!userEmail) {
-                    // User has no email -> just return success
-                    return res.status(200).json({
-                        status: "Success",
-                        message: "Fertilizer request rejected successfully. (No email sent - user has no email)",
-                    });
-                }
-
-                // If user has email -> send rejection email
-                const transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: process.env.EMAIL_USER,
-                        pass: process.env.EMAIL_PASS
-                    }
-                });
-
-                const mailOptions = {
-                    from: process.env.EMAIL_USER,
-                    to: userEmail,
-                    subject: 'Tea Factory Fertilizer Request Update',
-                    text: `Dear Farmer,\n\nWe regret to inform you that your fertilizer request has been rejected.\n\nPlease contact the Tea Factory for more details if needed.\n\nThank you.`,
-                };
-
-                transporter.sendMail(mailOptions, (mailErr, info) => {
-                    if (mailErr) {
-                        console.error("Error sending rejection email:", mailErr);
-                        // Even if email fails, we still treat the request as rejected
-                        return res.status(200).json({
-                            status: "Success",
-                            message: "Fertilizer request rejected successfully. (Failed to send email)",
-                        });
-                    }
-
-                    return res.status(200).json({
-                        status: "Success",
-                        message: "Fertilizer request rejected successfully and email notification sent.",
-                    });
-                });
-            });
-        });
-    } catch (error) {
-        console.error("Unexpected Error:", error);
-        return res.status(500).json({ message: "An unexpected error occurred.", error: error });
-    }
-};
-
-//---------------------------------------------------------------------------------------------------
-
 // Backend function to search farmers by ID only
 export const searchFarmersInDB = async (req, res) => {
     
@@ -877,54 +587,6 @@ export const searchEmployeesInDB = async (req, res) => {
             Status: 'Error', 
             Error: 'Internal server error' 
         });
-    }
-};
-
-//-------------------------------------------------
-//-----------------------------------------------
-
-// Function to initialize empty payment records every month start
-export const initializeMonthlyPayments = async (req, res) => {
-    try {
-      // Fetch all farmer userIds
-      const [farmers] = await sqldb.promise().query('SELECT userId FROM farmeraccounts');
-  
-      if (farmers.length === 0) {
-        return res.status(404).json({ message: 'No farmers found to initialize payments.' });
-      }
-  
-      // Prepare insert values
-      const paymentValues = farmers.map(farmer => [
-        farmer.userId,
-        0.00, // paymentPerKilo
-        0.00, // finalTeaKilos
-        0.00, // paymentForFinalTeaKilos
-        0.00, // additionalPayments
-        0.00, // transport
-        0.00, // directPayments
-        0.00, // finalAmount
-        0.00, // advances
-        0.00, // teaPackets
-        0.00, // fertilizer
-        0.00, // finalPayment
-        'Pending' // status
-      ]);
-  
-      // Insert query
-      const insertQuery = `
-        INSERT INTO farmer_payments 
-          (userId, paymentPerKilo, finalTeaKilos, paymentForFinalTeaKilos, 
-           additionalPayments, transport, directPayments, finalAmount, 
-           advances, teaPackets, fertilizer, finalPayment, status)
-        VALUES ?
-      `;
-  
-      await sqldb.promise().query(insertQuery, [paymentValues]);
-  
-      return res.status(200).json({ message: 'Monthly payment records initialized successfully.' });
-    } catch (error) {
-      console.error('Error initializing monthly payments:', error);
-      return res.status(500).json({ message: 'Server error while initializing payments.', error: error.message });
     }
 };
 
@@ -1359,7 +1021,94 @@ export const markAllManagerNotificationsAsRead = async (req, res) => {
   }
 };
 
+//---------------------------------------------------------------
+//---------------------------------------------------------------
 
+// Function to initialize empty payment records every month start
+export const initializeMonthlyPayments = async (req, res) => {
+  try {
+    // Get the current month and year
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // 1-12
+    const currentYear = currentDate.getFullYear();
+    
+    console.log(`Initializing monthly payments for ${currentMonth}/${currentYear}`);
+
+    // Fetch all farmer userIds
+    const [farmers] = await sqldb.promise().query('SELECT userId FROM farmeraccounts');
+
+    if (farmers.length === 0) {
+      return res.status(404).json({ message: 'No farmers found to initialize payments.' });
+    }
+
+    // Check which farmers already have records for this month
+    const checkQuery = `
+      SELECT userId 
+      FROM farmer_payments 
+      WHERE MONTH(created_at) = ? 
+      AND YEAR(created_at) = ?
+    `;
+    
+    const [existingRecords] = await sqldb.promise().query(checkQuery, [currentMonth, currentYear]);
+    
+    // Create a Set of userIds who already have records for easier lookup
+    const existingUserIds = new Set(existingRecords.map(record => record.userId));
+    
+    // Filter out farmers who already have records
+    const farmersToAdd = farmers.filter(farmer => !existingUserIds.has(farmer.userId));
+    
+    if (farmersToAdd.length === 0) {
+      return res.status(200).json({ 
+        message: 'All farmers already have payment records for this month.',
+        existing: existingUserIds.size,
+        added: 0
+      });
+    }
+
+    // Prepare insert values only for farmers without existing records
+    const paymentValues = farmersToAdd.map(farmer => [
+      farmer.userId,
+      0.00, // paymentPerKilo
+      0.00, // finalTeaKilos
+      0.00, // paymentForFinalTeaKilos
+      0.00, // additionalPayments
+      0.00, // transport
+      0.00, // directPayments
+      0.00, // finalAmount
+      0.00, // advances
+      0.00, // teaPackets
+      0.00, // fertilizer
+      0.00, // finalPayment
+      'Pending' // status
+    ]);
+
+    // Insert query
+    const insertQuery = `
+      INSERT INTO farmer_payments 
+        (userId, paymentPerKilo, finalTeaKilos, paymentForFinalTeaKilos, 
+         additionalPayments, transport, directPayments, finalAmount, 
+         advances, teaPackets, fertilizer, finalPayment, status)
+      VALUES ?
+    `;
+
+    // Only execute insert if there are farmers to add
+    if (paymentValues.length > 0) {
+      await sqldb.promise().query(insertQuery, [paymentValues]);
+    }
+
+    return res.status(200).json({ 
+      message: 'Monthly payment records initialized successfully.', 
+      existing: existingUserIds.size,
+      added: farmersToAdd.length
+    });
+  } catch (error) {
+    console.error('Error initializing monthly payments:', error);
+    return res.status(500).json({ 
+      message: 'Server error while initializing payments.', 
+      error: error.message 
+    });
+  }
+};
 
 
 

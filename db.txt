@@ -1,3 +1,22 @@
+CREATE TABLE farmeraccounts (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    userId VARCHAR(100) NOT NULL UNIQUE,
+    userName VARCHAR(100) NOT NULL,
+    firstName VARCHAR(100) NOT NULL,
+    lastName VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    mobile1 VARCHAR(15) NOT NULL,
+    mobile2 VARCHAR(15),
+    gmail VARCHAR(150),
+    password VARCHAR(255) NOT NULL,
+    RESET_CODE VARCHAR(6),
+    RESET_EXPIRY DATETIME,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tea_delivery_method ENUM('farmer_vehicle','factory_vehicle') NOT NULL,
+    PRIMARY KEY (id)
+);
+
+
 CREATE TABLE farmer_payments (
   id INT AUTO_INCREMENT PRIMARY KEY,
   userId INT,  -- Changed to INT to match users' id

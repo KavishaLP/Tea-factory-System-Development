@@ -4,7 +4,6 @@ import "./requestfertilizer.css";
 
 const RequestFertilizer = ({userId} ) => {
   console.log("User ID:", userId); // Log the userId prop
-  // const [userId, setUserId] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -178,6 +177,7 @@ const RequestFertilizer = ({userId} ) => {
     };
 
     try {
+      console.log("Request Data:", requestData); // Log the request data
       const response = await axios.post(
         "http://localhost:8081/api/farmer/fertilizer-request",
         requestData,

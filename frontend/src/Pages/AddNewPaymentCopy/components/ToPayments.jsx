@@ -1,3 +1,5 @@
+// pages/AddNewPaymentCopy/components/ToPayments.jsx
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -155,7 +157,7 @@ function ToPayments() {
           </div>
         ) : (
           <div className="price-display">
-            <span>Current Tea Price: {teaPrice ? `$${teaPrice}` : 'Not set'}</span>
+            <span>Current Tea Price: {teaPrice ? `LKR ${teaPrice}` : 'Not set'}</span>
             <button onClick={() => setIsEditingPrice(true)}>Edit Price</button>
           </div>
         )}

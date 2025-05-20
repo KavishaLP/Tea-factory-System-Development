@@ -11,11 +11,13 @@
 
 //server.js
 import verifyUser from './middleware/authMiddleware.js'
+import verifyUser2 from './middleware/authMiddleware2.js'
+
 import  authRoutes from './routes/authRoutes.js';
 import managerRoutes from './routes/managerRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import { initializeMonthlyPayments } from './controllers/managerControllers.js';
+import { initializeMonthlyPayments } from './controllers/managerControllers_1.js';
 
 import dotenv from 'dotenv';
 import express from 'express';
@@ -38,7 +40,8 @@ app.use(cors({
 
 app.use(cookieParser());
 
-cron.schedule('1 0 1 * *', async () => {
+// Run at 00:05 AM (12:05 AM) on the 1st day of every month
+cron.schedule('5 0 1 * *', async () => {
   console.log('Running monthly payment initialization...');
   try {
     await initializeMonthlyPayments(
@@ -59,6 +62,12 @@ app.use('/api/farmer', farmerRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.post('/verify-token', verifyUser, (req, res) => {
+  return res.json({
+    Status: "Success",
+    userId: req.userId, // sending userId
+  });
+});
+app.post('/verify-token-2', verifyUser2, (req, res) => {
   return res.json({
     Status: "Success",
     userId: req.userId, // sending userId

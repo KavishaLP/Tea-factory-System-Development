@@ -11,7 +11,8 @@ import {
   FaChevronLeft, 
   FaChevronRight,
   FaChartBar,
-  FaChartLine 
+  FaChartLine,
+  FaDollarSign
 } from 'react-icons/fa';
 import { Bar, Line } from 'react-chartjs-2';
 import {
@@ -39,7 +40,7 @@ ChartJS.register(
   Legend
 );
 
-const Dashboard = () => {
+const Dashboard = ({userId}) => {
   const [pendingRequests, setPendingRequests] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalTeaWeight, setTotalTeaWeight] = useState(null);
@@ -53,9 +54,108 @@ const Dashboard = () => {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [fertilizerData, setFertilizerData] = useState(null);
   const [teaInventory, setTeaInventory] = useState(null);
+  
+  // Tea price management states
+  const [teaPrice, setTeaPrice] = useState(null);
+  const [newTeaPrice, setNewTeaPrice] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [message, setMessage] = useState({ text: "", type: "" });
+  const [priceLoading, setPriceLoading] = useState(false);
 
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
+  };
+
+  // Get current month and year in YYYY-MM format
+  const getCurrentMonthYear = () => {
+    const date = new Date();
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  };
+
+  // Format month year for display
+  const formatMonthYear = (monthYearStr) => {
+    const [year, month] = monthYearStr.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  };
+
+  // Fetch current month's tea price
+  const fetchTeaPrice = async () => {
+    console.log(userId)
+    try {
+      const monthYear = getCurrentMonthYear();
+      const response = await axios.get(
+        `http://localhost:8081/api/manager/fetch-tea-price?month_year=${monthYear}`,
+        { withCredentials: true }
+      );
+        
+      if (response.data.price) {
+        // Ensure we're storing a number
+        setTeaPrice(parseFloat(response.data.price));
+        setNewTeaPrice(response.data.price);
+      } else {
+        setTeaPrice(null);
+      }
+    } catch (error) {
+      console.error("Error fetching tea price:", error);
+      setMessage({
+        text: "Failed to load tea price. Please try again.",
+        type: "error"
+      });
+    }
+  };
+
+  // Update tea price
+  const handleUpdateTeaPrice = async () => {
+    if (!newTeaPrice || isNaN(newTeaPrice) || parseFloat(newTeaPrice) <= 0) {
+      setMessage({
+        text: "Please enter a valid price (greater than zero).",
+        type: "error"
+      });
+      return;
+    }
+
+    setPriceLoading(true);
+    try {
+      const monthYear = getCurrentMonthYear();
+      await axios.post(
+        "http://localhost:8081/api/manager/update-tea-price", 
+        {
+          price: parseFloat(newTeaPrice),
+          month_year: monthYear
+        },
+        { withCredentials: true }
+      );
+
+      setTeaPrice(parseFloat(newTeaPrice));
+      setIsEditing(false);
+      setMessage({
+        text: "Tea price updated successfully!",
+        type: "success"
+      });
+
+      // Refresh tea price history chart
+      fetchTeaPriceHistory();
+
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setMessage({ text: "", type: "" });
+      }, 3000);
+    } catch (error) {
+      console.error("Error updating tea price:", error);
+      setMessage({
+        text: "Failed to update tea price. Please try again.",
+        type: "error"
+      });
+    } finally {
+      setPriceLoading(false);
+    }
+  };
+
+  // Handle cancel edit
+  const handleCancelEdit = () => {
+    setNewTeaPrice(teaPrice || "");
+    setIsEditing(false);
   };
 
   useEffect(() => {
@@ -76,6 +176,7 @@ const Dashboard = () => {
     };
 
     fetchData();
+    fetchTeaPrice(); // Add this to fetch tea price on component mount
   }, []);
 
   useEffect(() => {
@@ -148,33 +249,33 @@ const Dashboard = () => {
     fetchChartData();
   }, [timeRange]);
 
+  const fetchTeaPriceHistory = async () => {
+    try {
+      const res = await axios.get(
+        'http://localhost:8081/api/manager/fetch-tea-price-history',
+        { withCredentials: true }
+      );
+
+      const labels = res.data.map(item => item.month_year);
+      const prices = res.data.map(item => item.price);
+
+      setTeaPriceData({
+        labels,
+        datasets: [{
+          label: 'Tea Price per Kilo (Rs)',
+          data: prices,
+          borderColor: '#e74c3c',
+          backgroundColor: '#e74c3c',
+          borderWidth: 2,
+          tension: 0.1
+        }]
+      });
+    } catch (error) {
+      console.error("Error fetching tea price history:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchTeaPriceHistory = async () => {
-      try {
-        const res = await axios.get(
-          'http://localhost:8081/api/manager/fetch-tea-price-history',
-          { withCredentials: true }
-        );
-
-        const labels = res.data.map(item => item.month_year);
-        const prices = res.data.map(item => item.price);
-
-        setTeaPriceData({
-          labels,
-          datasets: [{
-            label: 'Tea Price per Kilo (Rs)',
-            data: prices,
-            borderColor: '#e74c3c',
-            backgroundColor: '#e74c3c',
-            borderWidth: 2,
-            tension: 0.1
-          }]
-        });
-      } catch (error) {
-        console.error("Error fetching tea price history:", error);
-      }
-    };
-
     fetchTeaPriceHistory();
   }, []);
 
@@ -338,6 +439,71 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
+          {/* Tea kilo updating and view */}
+          <div className="tea-price-section">
+            <div className="tea-price-card">
+              <h3>Tea Price for {formatMonthYear(getCurrentMonthYear())}</h3>
+              
+              {message.text && (
+                <div className={`message ${message.type}`}>
+                  {message.text}
+                </div>
+              )}
+              
+              {!isEditing ? (
+                <div className="tea-price-display">
+                  <div className="current-price">
+                    {teaPrice !== null ? (
+                      <>
+                        <span className="price-label">Current Price:</span>
+                        <span className="price-value">Rs. {Number(teaPrice).toFixed(2)}/kg</span>
+                      </>
+                    ) : (
+                      <span className="no-price">No price set for this month</span>
+                    )}
+                  </div>
+                  <button 
+                    className="edit-price-btn"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    {teaPrice ? "Update Price" : "Set Price"}
+                  </button>
+                </div>
+              ) : (
+                <div className="tea-price-edit">
+                  <div className="price-input-group">
+                    <label htmlFor="teaPrice">Enter Tea Price (Rs/kg)</label>
+                    <input
+                      type="number"
+                      id="teaPrice"
+                      value={newTeaPrice}
+                      onChange={(e) => setNewTeaPrice(e.target.value)}
+                      placeholder="Enter price per kg"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                  <div className="price-actions">
+                    <button 
+                      className="save-price-btn"
+                      onClick={handleUpdateTeaPrice}
+                      disabled={priceLoading}
+                    >
+                      {priceLoading ? "Saving..." : "Save Price"}
+                    </button>
+                    <button 
+                      className="cancel-btn"
+                      onClick={handleCancelEdit}
+                      disabled={priceLoading}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="metrics-row">
             {/* Total Users */}
             <div className="metric-card">
@@ -389,7 +555,7 @@ const Dashboard = () => {
             {/* Employee Accounts */}
             <div className="metric-card">
               <div className="card-icon employees-icon">
-                <FaUsers /> {/* You can keep using FaUsers or choose a different icon */}
+                <FaUsers />
               </div>
               <div className="card-content">
                 <h3>Employee Accounts</h3>

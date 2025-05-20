@@ -1,0 +1,170 @@
+.notifications-panel {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 380px;
+  max-height: 500px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notifications-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background-color: #fcfcfc;
+}
+
+.notifications-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.mark-all-read-btn {
+  background: none;
+  border: none;
+  color: #1976d2;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.mark-all-read-btn:hover {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.notifications-list {
+  overflow-y: auto;
+  max-height: 440px;
+  padding: 8px 0;
+}
+
+.notification-item {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  display: flex;
+  align-items: flex-start;
+}
+
+.notification-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.notification-item.unread {
+  background-color: rgba(25, 118, 210, 0.05);
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-content h4 {
+  margin: 0 0 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.notification-content p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.notification-time {
+  font-size: 11px;
+  color: #888;
+  display: flex;
+  align-items: center;
+}
+
+.notification-time i {
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.unread-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #1976d2;
+  border-radius: 50%;
+  margin-right: 12px;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.notification-loading,
+.notification-error,
+.empty-notifications {
+  padding: 30px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #1976d2;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  animation: spinner 0.8s linear infinite;
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+.notification-error {
+  color: #d32f2f;
+}
+
+.empty-notifications {
+  padding: 40px 20px;
+  color: #888;
+}
+
+.empty-notifications i {
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+/* Animation for the bell icon */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.animated-icon {
+  color: #2e7d32;
+  animation: pulse 2s infinite;
+}

@@ -9,7 +9,9 @@ import { requestAdvance, requestFertilizer, FetchFertilizerPrices, getPaymentsBy
     getAdvanceDetails,
     getFertilizerRequests,
     getFertilizerDetails
- } from '../controllers/farmerControllers.js';
+ } from '../controllers/farmerControllers_1.js';
+
+ import {getFarmerNotifications, getUnreadCount, markAsRead, markAllAsRead} from '../controllers/farmerControllers_2.js';
 
 const router = express.Router();
 
@@ -28,4 +30,11 @@ router.get('/fertilizer-requests', getFertilizerRequests);
 router.get('/tea-delivery-details', getTeaDeliveryDetails);
 router.get('/advance-details', getAdvanceDetails);
 router.get('/fertilizer-request-details', getFertilizerDetails);
+
+// Add these routes to your existing farmerRoutes
+router.get('/notifications', getFarmerNotifications);
+router.get('/notifications/unread-count', getUnreadCount);
+router.post('/notifications/mark-read', markAsRead);
+router.post('/notifications/mark-all-read', markAllAsRead);
+
 export default router;

@@ -6,7 +6,10 @@ import axios from 'axios';
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
+  const [userData, setUserData] = useState({
+    userId: null,
+    name: null
+  });
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -16,11 +19,14 @@ const ProtectedRoute = ({ children }) => {
           withCredentials: true 
         });
         
-        console.log('Token verified, userId:', response.data.userId);
-        setUserId(response.data.userId);
+        console.log('Token verified:', response.data);
+        setUserData({
+          userId: response.data.userId,
+          name: response.data.name
+        });
         setLoading(false);
       } catch (error) {
-        console.log('Invalid token. Redirecting to login...');
+        console.error('Token verification failed:', error);
         navigate('/');
       }
     };
@@ -29,14 +35,21 @@ const ProtectedRoute = ({ children }) => {
   }, [navigate]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading-container">Loading...</div>;
   }
 
-  // Clone children and pass userId as prop
+  // Clone children and pass userData as props
   return (
     <>
       {React.Children.map(children, child => {
-        return React.cloneElement(child, { userId });
+        // Make sure child is a valid React element before cloning
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { 
+            userId: userData.userId,
+            userName: userData.name 
+          });
+        }
+        return child;
       })}
     </>
   );

@@ -1,7 +1,7 @@
 //routes/managerRoutes.js
 import express from 'express';
 import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmployeePayment, 
-    getEmployeePaymentHistory, getFertilizerRequests, confirmFertilizer, deleteFertilizer, 
+    getEmployeePaymentHistory,
     searchFarmersInDB, getDEtailsRelatedTOUser, getAllFarmers, getAllEmployers,searchEmployeesInDB,
     fetchToPayments, 
     fetchTeaPrice,
@@ -15,7 +15,9 @@ import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmpl
     getManagerUnreadCount,
     markManagerNotificationAsRead,
     markAllManagerNotificationsAsRead
-} from '../controllers/managerControllers.js';
+} from '../controllers/managerControllers_1.js';
+
+import {getFertilizerRequests, confirmFertilizer, deleteFertilizer} from '../controllers/managerControllers_2_fertilizer.js';
 
 const router = express.Router();
 
@@ -36,12 +38,12 @@ router.post('/search-farmers-indb', searchFarmersInDB);
 router.post('/search-employees-indb', searchEmployeesInDB);
 
 //--------------------------------
-router.get('/fetch-to-payments', fetchToPayments);
 router.post('/fetch-Payment-History', fectchpaymentHistory);
 router.get('/fetch-to-payments', fetchToPayments);  // Fetch TO payments for month/year
 router.get('/fetch-tea-price', fetchTeaPrice);      // Fetch tea price for month/year
 router.post('/update-tea-price', updateTeaPrice);   // Update tea price
 router.put('/approve-payment', approvePayment);     // Approve payment
+
 router.get('/fetch-tea-price-history', fetchTeaPriceHistory);
 router.get('/fetch-total-employees', fetchTotalEmployees);
 router.get('/fetch-fertilizer-details', fetchFertilizerDetails);
