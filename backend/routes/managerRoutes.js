@@ -19,6 +19,13 @@ import { addFarmer, addFarmerPayment, fectchpaymentHistory, addEmployee, addEmpl
 
 import {getFertilizerRequests, confirmFertilizer, deleteFertilizer} from '../controllers/managerControllers_2_fertilizer.js';
 
+import { 
+    getAllFertilizerPrices, 
+    addFertilizerPrice, 
+    updateFertilizerPrice, 
+    deleteFertilizerPrice 
+} from '../controllers/managerControllers_3.js';
+
 const router = express.Router();
 
 router.post('/add-farmer', addFarmer);
@@ -56,5 +63,11 @@ router.get('/notifications', getManagerNotifications);
 router.get('/notifications/unread-count', getManagerUnreadCount);
 router.post('/notifications/mark-read', markManagerNotificationAsRead);
 router.post('/notifications/mark-all-read', markAllManagerNotificationsAsRead);
+
+// Fertilizer prices management
+router.get('/fertilizer-prices', getAllFertilizerPrices);
+router.post('/fertilizer-prices/add', addFertilizerPrice);
+router.put('/fertilizer-prices/update', updateFertilizerPrice);
+router.post('/fertilizer-prices/delete', deleteFertilizerPrice);
 
 export default router;

@@ -24,7 +24,7 @@ import Employeepayment from './Pages/EmployeePayment/Employeepayment';
 import CreateFarmerAccount from './Pages/createFarmerAccounts/CFA';
 import CreateEmployeeAccount from './Pages/createEmployeeAccounts/CEA';
 import Fertilizer from './Pages/fertilizer/fertilizer';
-import ProductivityReport from './Pages/ProductivityReport/ProductivityReport';
+import FertilizerConfigurations from './Pages/Configurations/FertilizerConfigurations';
 
 function App() {
   const location = useLocation();
@@ -61,7 +61,7 @@ function App() {
             <Route path="/Mng-Create-Employee-Account" element={<CreateEmployeeAccount />} />
             <Route path="/Mng-Employee-Payment" element={<Employeepayment />} />
             <Route path="/test-Mng-Payment-Logs" element={<AddNewPaymentCopy />} />
-            <Route path="/Mng-Productivity-Report" element={<ProductivityReport />} />
+            <Route path="/Mng-configurations" element={<FertilizerConfigurations />} />
             <Route path="/Mng-Fertilizer-dis" element={<Fertilizer />} />
           </Routes>
         </main>

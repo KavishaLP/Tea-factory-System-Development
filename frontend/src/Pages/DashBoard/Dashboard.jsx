@@ -12,7 +12,9 @@ import {
   FaChevronRight,
   FaChartBar,
   FaChartLine,
-  FaDollarSign
+  FaDollarSign,
+  FaFilePdf,
+  FaSpinner
 } from 'react-icons/fa';
 import { Bar, Line } from 'react-chartjs-2';
 import {
@@ -27,6 +29,7 @@ import {
   Legend
 } from 'chart.js';
 import "./Dashboard.css";
+import { generateDashboardReport } from './DashboardPdf';
 
 // Register ChartJS components
 ChartJS.register(
@@ -54,6 +57,7 @@ const Dashboard = ({userId}) => {
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [fertilizerData, setFertilizerData] = useState(null);
   const [teaInventory, setTeaInventory] = useState(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   
   // Tea price management states
   const [teaPrice, setTeaPrice] = useState(null);
@@ -156,6 +160,53 @@ const Dashboard = ({userId}) => {
   const handleCancelEdit = () => {
     setNewTeaPrice(teaPrice || "");
     setIsEditing(false);
+  };
+
+  // Handle PDF report generation
+  const handleGenerateReport = async () => {
+    setIsGeneratingPdf(true);
+    
+    try {
+      // Collect all the data needed for the report
+      const dashboardData = {
+        totalUsers,
+        totalEmployees,
+        totalTeaWeight,
+        selectedDate,
+        teaPrice
+      };
+      
+      // Generate the PDF report
+      await generateDashboardReport(
+        dashboardData, 
+        chartData, 
+        timeRange, 
+        teaPriceData, 
+        fertilizerData, 
+        teaInventory,
+        chartType,
+        "Tea Factory" // You can customize the factory name here
+      );
+      
+      // Set success message
+      setMessage({
+        text: "Report generated successfully!",
+        type: "success"
+      });
+      
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setMessage({ text: "", type: "" });
+      }, 3000);
+    } catch (error) {
+      console.error('Error generating PDF report:', error);
+      setMessage({
+        text: "Failed to generate report. Please try again.",
+        type: "error"
+      });
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
   useEffect(() => {
@@ -430,7 +481,30 @@ const Dashboard = ({userId}) => {
       <div className="dashboard-header">
         <h1>Manager Dashboard</h1>
         <p className="dashboard-subtitle">System Overview</p>
+        
+        {/* PDF Download Button */}
+        <button 
+          className={`download-report-btn ${isGeneratingPdf ? 'generating' : ''}`} 
+          onClick={handleGenerateReport}
+          disabled={isGeneratingPdf || loading || chartLoading}
+        >
+          {isGeneratingPdf ? (
+            <>
+              <FaSpinner className="spinner-icon" /> Generating Report...
+            </>
+          ) : (
+            <>
+              <FaFilePdf /> Download Dashboard Report
+            </>
+          )}
+        </button>
       </div>
+
+      {message.text && (
+        <div className={`message ${message.type}`}>
+          {message.text}
+        </div>
+      )}
 
       {loading ? (
         <div className="loading-state">

@@ -41,15 +41,17 @@ const Sidebar = () => {
                 onClick={() => navigate('/Mng-Employee-Payment')}>
                 <img src={assets.h} alt="Logo"/> <p>Employee Payment Logs</p>
             </div>
-            <div className={`sidebar-item ${isActive('/Mng-Productivity-Report') ? 'active' : ''}`}
-                onClick={() => navigate('/Mng-Productivity-Report')}>
-                <img src={assets.k} alt="Logo"/> <p>Productivity Reports</p>
-            </div>
+
             <div className={`sidebar-item ${isActive('/Mng-Fertilizer-dis') ? 'active' : ''}`}
                 onClick={() => navigate('/Mng-Fertilizer-dis')}>
                 <img src={assets.i} alt="Logo"/> <p>Fertilizer Distribution</p>
             </div>
-           
+
+            <div className={`sidebar-item ${isActive('/Mng-configurations') ? 'active' : ''}`}
+                onClick={() => navigate('/Mng-configurations')}>
+                <img src={assets.k} alt="Logo"/> <p>Updates</p>
+            </div>           
+
             <div className="sidebar-item" onClick={() => navigate('/')}>
                 <img src={assets.j} alt="Logo"/> <p>Logout</p>
             </div>

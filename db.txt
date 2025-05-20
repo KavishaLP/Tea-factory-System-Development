@@ -111,6 +111,7 @@ CREATE TABLE fertilizer_prices (
     fertilizerType VARCHAR(50) NOT NULL, -- Type of fertilizer (e.g., Urea, Compost)
     packetType VARCHAR(50) NOT NULL, -- Packet size (e.g., 5kg, 10kg)
     price DECIMAL(10,2) NOT NULL -- Price of each packet
+    count INT DEFAULT 0
 );
 
 CREATE TABLE fertilizer_requests (
