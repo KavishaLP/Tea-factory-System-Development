@@ -1049,7 +1049,7 @@ export const fetchTeaPrice = async (req, res) => {
 export const updateTeaPrice = async (req, res) => {
     try {
         const { price, month_year } = req.body;
-
+        console.log("Received formData:", req.body);
         if (!price || !month_year) {
             return res.status(400).json({ 
                 success: false,

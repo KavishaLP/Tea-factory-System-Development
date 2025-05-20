@@ -406,3 +406,158 @@ button.loading::after {
       flex: 1; /* Take full width */
   }
 }
+
+/* Tea Price Section */
+.tea-price-section {
+  margin-bottom: 2rem;
+}
+
+.tea-price-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tea-price-card h3 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.tea-price-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+
+.current-price {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.price-label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.price-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.no-price {
+  font-style: italic;
+  color: #a0aec0;
+}
+
+.tea-price-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.price-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.price-input-group label {
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.price-input-group input {
+  padding: 0.75rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.price-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.edit-price-btn, .save-price-btn, .cancel-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-price-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.edit-price-btn:hover {
+  background-color: #2563eb;
+}
+
+.save-price-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+.save-price-btn:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.cancel-btn {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.message {
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.message.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .tea-price-display {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .current-price {
+    justify-content: center;
+  }
+  
+  .price-actions {
+    justify-content: center;
+  }
+}
