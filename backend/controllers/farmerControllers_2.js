@@ -1,6 +1,5 @@
 import sqldb from '../config/sqldb.js';
 
-
 // Get notifications for a specific farmer
 export const getFarmerNotifications = async (req, res) => {
   const { userId } = req.query;
@@ -11,8 +10,9 @@ export const getFarmerNotifications = async (req, res) => {
 
   try {
     const query = `
-      SELECT * FROM notifications 
-      WHERE recipient_id = ? 
+      SELECT id, title, message, is_read, created_at
+      FROM notifications 
+      WHERE receiver_id = ? AND receiver_type = 'farmer'
       ORDER BY created_at DESC 
       LIMIT 50
     `;
@@ -46,7 +46,7 @@ export const getUnreadCount = async (req, res) => {
     const query = `
       SELECT COUNT(*) AS count 
       FROM notifications 
-      WHERE recipient_id = ? AND is_read = 0
+      WHERE receiver_id = ? AND receiver_type = 'farmer' AND is_read = FALSE
     `;
     
     sqldb.query(query, [userId], (err, results) => {
@@ -76,8 +76,8 @@ export const markAsRead = async (req, res) => {
   try {
     const query = `
       UPDATE notifications 
-      SET is_read = 1 
-      WHERE id = ? AND recipient_id = ?
+      SET is_read = TRUE 
+      WHERE id = ? AND receiver_id = ? AND receiver_type = 'farmer'
     `;
     
     sqldb.query(query, [notificationId, userId], (err, result) => {
@@ -108,8 +108,8 @@ export const markAllAsRead = async (req, res) => {
   try {
     const query = `
       UPDATE notifications 
-      SET is_read = 1 
-      WHERE recipient_id = ? AND is_read = 0
+      SET is_read = TRUE 
+      WHERE receiver_id = ? AND receiver_type = 'farmer' AND is_read = FALSE
     `;
     
     sqldb.query(query, [userId], (err, result) => {
