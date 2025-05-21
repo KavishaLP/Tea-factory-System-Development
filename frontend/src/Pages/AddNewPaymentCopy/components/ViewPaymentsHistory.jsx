@@ -131,6 +131,19 @@ function ViewPaymentsHistory() {
         return parseFloat(value || 0).toFixed(2);
     };
 
+    // Complete calculation for Final Payment
+    const calculateFinalPayment = (payment) => {
+        const teaAmount = parseFloat(payment.finalTeaKilos) * parseFloat(payment.paymentPerKilo);
+        const additions = parseFloat(payment.additionalPayments || 0) + 
+                        parseFloat(payment.transport || 0) + 
+                        parseFloat(payment.directPayments || 0);
+        const deductions = parseFloat(payment.advances || 0) + 
+                        parseFloat(payment.teaPackets || 0) + 
+                        parseFloat(payment.fertilizer || 0);
+                        
+        return (teaAmount + additions - deductions).toFixed(2);
+    };
+
     // Pagination
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;

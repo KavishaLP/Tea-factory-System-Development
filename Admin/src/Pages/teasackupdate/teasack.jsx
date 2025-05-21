@@ -84,16 +84,26 @@ function TeaSackUpdate() {
 
   // Calculate total tea sack amount
   const calculateTotalTeaSackAmount = (weight, deductions) => {
-    const numericWeight = parseFloat(weight) || 0;
-    const totalDeductions = 
-      (parseFloat(deductions.water) || 0) +
-      (parseFloat(deductions.damageTea) || 0) +
-      (parseFloat(deductions.sackWeight) || 0) +
-      (parseFloat(deductions.sharpedTea) || 0) +
-      (parseFloat(deductions.other) || 0);
-
-    const finalAmount = numericWeight - totalDeductions;
-    setTotalTeaSackAmount(finalAmount > 0 ? finalAmount.toFixed(2) : '0');
+    // Convert inputs to numbers with 2 decimal precision to avoid floating point errors
+    const numericWeight = parseFloat(parseFloat(weight || 0).toFixed(2));
+    
+    // Convert all deduction values to numbers with 2 decimal precision
+    const waterDeduction = parseFloat(parseFloat(deductions.water || 0).toFixed(2));
+    const damageTeaDeduction = parseFloat(parseFloat(deductions.damageTea || 0).toFixed(2));
+    const sackWeightDeduction = parseFloat(parseFloat(deductions.sackWeight || 0).toFixed(2));
+    const sharpedTeaDeduction = parseFloat(parseFloat(deductions.sharpedTea || 0).toFixed(2));
+    const otherDeduction = parseFloat(parseFloat(deductions.other || 0).toFixed(2));
+  
+    // Calculate total deductions, ensuring 2 decimal precision
+    const totalDeductions = parseFloat(
+      (waterDeduction + damageTeaDeduction + sackWeightDeduction + sharpedTeaDeduction + otherDeduction).toFixed(2)
+    );
+  
+    // Calculate final amount with proper precision
+    const finalAmount = parseFloat((numericWeight - totalDeductions).toFixed(2));
+    
+    // Set the state with a properly formatted string
+    setTotalTeaSackAmount(finalAmount > 0 ? finalAmount.toFixed(2) : '0.00');
   };
 
   // Handle form submission

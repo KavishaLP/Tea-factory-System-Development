@@ -11,6 +11,7 @@ function ToPayments() {
     month: new Date().getMonth() + 1,
   });
   const [error, setError] = useState(null);
+  
   const [teaPrice, setTeaPrice] = useState('');
   const [newTeaPrice, setNewTeaPrice] = useState('');
   const [isEditingPrice, setIsEditingPrice] = useState(false);
@@ -188,6 +189,8 @@ function ToPayments() {
                 <th>Rate/kg</th>
                 <th>Amount</th>
                 <th>Advances</th>
+                <th>Fertilizer</th>
+                <th>Tea Packets</th>
                 <th>Final Payment</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -200,11 +203,18 @@ function ToPayments() {
                   <td>{formatCurrency(payment.finalTeaKilos)}</td>
                   <td>{formatCurrency(teaPrice || payment.paymentPerKilo)}</td>
                   <td>{formatCurrency(payment.finalTeaKilos * (teaPrice || payment.paymentPerKilo))}</td>
-                  <td>{formatCurrency(payment.advances)}</td>
+                  <td className="deduction-cell">{formatCurrency(payment.advances)}</td>
+                  <td className="deduction-cell">{formatCurrency(payment.fertilizer)}</td>
+                  <td className="deduction-cell">{formatCurrency(payment.teaPackets)}</td>
                   <td>
                     {formatCurrency(
                       payment.finalTeaKilos * (teaPrice || payment.paymentPerKilo) - 
-                      payment.advances
+                      parseFloat(payment.advances || 0) -
+                      parseFloat(payment.fertilizer || 0) - 
+                      parseFloat(payment.teaPackets || 0) +
+                      parseFloat(payment.additionalPayments || 0) +
+                      parseFloat(payment.transport || 0) +
+                      parseFloat(payment.directPayments || 0)
                     )}
                   </td>
                   <td>

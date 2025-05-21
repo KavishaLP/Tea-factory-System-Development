@@ -44,12 +44,7 @@ const Sidebar2 = () => {
             >
                 <FaBox className="sidebar-icon" /> <p>Tea Packet Distribution</p>
             </div>
-            <div
-                className={`sidebar-item ${isActive("/settings") ? "active" : ""}`}
-                onClick={() => navigate("/settings")}
-            >
-                <FaCog className="sidebar-icon" /> <p>Settings</p>
-            </div>
+            
             <div className="sidebar-item logout" onClick={handleLogout}>
                 <FaSignOutAlt className="sidebar-icon" /> <p>Logout</p>
             </div>
