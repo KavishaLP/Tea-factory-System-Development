@@ -1,4 +1,4 @@
-//controllers/managerControllers.js
+//controllers/managerControllers_1.js
 
 import bcrypt from 'bcryptjs';
 import util from 'util';
@@ -749,9 +749,10 @@ export const updateTeaPrice = async (req, res) => {
 };
 
 // Approve a payment
+// Approve a payment
 export const approvePayment = async (req, res) => {
     try {
-        const { paymentId } = req.body;
+        const { paymentId, finalPayment } = req.body;
 
         if (!paymentId) {
             return res.status(400).json({ 
@@ -760,13 +761,20 @@ export const approvePayment = async (req, res) => {
             });
         }
 
+        if (finalPayment === undefined || finalPayment === null) {
+            return res.status(400).json({
+                success: false,
+                message: 'Final payment amount is required'
+            });
+        }
+
         const query = `
             UPDATE farmer_payments
-            SET status = 'Approved'
+            SET status = 'Approved', finalPayment = ?
             WHERE id = ?
         `;
         
-        const [result] = await sqldb.promise().query(query, [paymentId]);
+        const [result] = await sqldb.promise().query(query, [finalPayment, paymentId]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ 
@@ -775,13 +783,13 @@ export const approvePayment = async (req, res) => {
             });
         }
 
-        res.status(200).json({ 
+        return res.status(200).json({ 
             success: true,
             message: 'Payment approved successfully'
         });
     } catch (error) {
         console.error('Error approving payment:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Internal server error while approving payment'
         });

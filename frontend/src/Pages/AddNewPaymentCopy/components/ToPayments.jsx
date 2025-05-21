@@ -115,17 +115,37 @@ function ToPayments() {
     }
   };
 
-  const handleApprovePayment = async (paymentId) => {
-    try {
-      await axios.put(`http://localhost:8081/api/manager/approve-payment`, {
-        paymentId
-      });
-      fetchPaymentsHistory(); // Refresh the list
-    } catch (error) {
-      console.error('Error approving payment:', error);
-      setError('Failed to approve payment. Please try again.');
+const handleApprovePayment = async (paymentId) => {
+  try {
+    // Get the payment object from the payments array
+    const payment = paymentsHistory.find(p => p.id === paymentId);
+    
+    if (!payment) {
+      setError('Payment not found');
+      return;
     }
-  };
+    
+    // Calculate the final payment amount
+    const finalPaymentAmount = 
+      payment.finalTeaKilos * (teaPrice || payment.paymentPerKilo) - 
+      parseFloat(payment.advances || 0) -
+      parseFloat(payment.fertilizer || 0) - 
+      parseFloat(payment.teaPackets || 0) +
+      parseFloat(payment.additionalPayments || 0) +
+      parseFloat(payment.transport || 0) +
+      parseFloat(payment.directPayments || 0);
+    
+    await axios.put(`http://localhost:8081/api/manager/approve-payment`, {
+      paymentId,
+      finalPayment: finalPaymentAmount
+    });
+    
+    fetchPaymentsHistory(); // Refresh the list
+  } catch (error) {
+    console.error('Error approving payment:', error);
+    setError('Failed to approve payment. Please try again.');
+  }
+};
 
   const openDetailsPopup = (payment) => {
     setSelectedPayment(payment);
